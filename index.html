@@ -633,15 +633,17 @@ function getYoYChannelData(dateInt) {
     for (const dstr in DATA.newdev) {
       const d=parseInt(dstr); if(d<start||d>end) continue;
       for (const dist in DATA.newdev[dstr]) {
+        if(dist==='政企') continue;
         if(!districts[dist]) { districts[dist]={}; inds.forEach(i=>districts[dist][i]=0); districts[dist]['FTTR-B']=0; }
-        for (const l4 in DATA.newdev[dstr][dist]) for (const l5 in DATA.newdev[dstr][dist][l4]) for (const ind of inds) districts[dist][ind] += DATA.newdev[dstr][dist][l4][l5][ind]||0;
+        for (const l4 in DATA.newdev[dstr][dist]) { if(l4.includes('政企')) continue; for (const l5 in DATA.newdev[dstr][dist][l4]) for (const ind of inds) districts[dist][ind] += DATA.newdev[dstr][dist][l4][l5][ind]||0; }
       }
     }
     for (const dstr in DATA.fttrb) {
       const d=parseInt(dstr); if(d<start||d>end) continue;
       for (const dist in DATA.fttrb[dstr]) {
+        if(dist==='政企') continue;
         if(!districts[dist]) { districts[dist]={}; inds.forEach(i=>districts[dist][i]=0); districts[dist]['FTTR-B']=0; }
-        for (const l4 in DATA.fttrb[dstr][dist]) for (const l5 in DATA.fttrb[dstr][dist][l4]) districts[dist]['FTTR-B'] += DATA.fttrb[dstr][dist][l4][l5]||0;
+        for (const l4 in DATA.fttrb[dstr][dist]) { if(l4.includes('政企')) continue; for (const l5 in DATA.fttrb[dstr][dist][l4]) districts[dist]['FTTR-B'] += DATA.fttrb[dstr][dist][l4][l5]||0; }
       }
     }
     // 电渠
@@ -670,7 +672,7 @@ function getYoYChannelData(dateInt) {
     cityRow.cells[ind] = { thisMonth: tv, lastMonth: lv, yoy: tv-lv };
   });
   rows.push(cityRow);
-  rows.sort((a,b)=>{ if(a.district==='全市') return 1; if(b.district==='全市') return -1; if(a.district==='政企') return 1; if(b.district==='政企') return -1; return (b.cells['宽带'].yoy||0)-(a.cells['宽带'].yoy||0); });
+  rows.sort((a,b)=>{ if(a.district==='全市') return 1; if(b.district==='全市') return -1; return (b.cells['宽带'].yoy||0)-(a.cells['宽带'].yoy||0); });
   return rows;
 }
 
