@@ -517,11 +517,12 @@ function getDailyData(dateInt) {
     for (const l4 in dayFttrb[dist]) for (const l5 in dayFttrb[dist][l4]) cnt += dayFttrb[dist][l4][l5] || 0;
     districts[dist]['FTTR-B'] = cnt;
   }
-  // FTTR-B政企侧 → 归入政企区县
-  if (districts['政企']) {
+  // FTTR-B政企侧 → 归入各自区县
+  for (const dist in dayFttrbZq) {
+    if (!districts[dist]) districts[dist] = {};
     let cnt = 0;
-    for (const dist in dayFttrbZq) for (const l4 in dayFttrbZq[dist]) for (const l5 in dayFttrbZq[dist][l4]) cnt += dayFttrbZq[dist][l4][l5] || 0;
-    districts['政企']['FTTR-B'] = cnt;
+    for (const l4 in dayFttrbZq[dist]) for (const l5 in dayFttrbZq[dist][l4]) cnt += dayFttrbZq[dist][l4][l5] || 0;
+    districts[dist]['FTTR-B'] = (districts[dist]['FTTR-B'] || 0) + cnt;
   }
   const rows = [];
   for (const dist in districts) {
@@ -569,12 +570,14 @@ function getMonthlyData(dateInt) {
       for (const l4 in DATA.fttrb[dstr][dist]) for (const l5 in DATA.fttrb[dstr][dist][l4]) districts[dist]['FTTR-B'] += DATA.fttrb[dstr][dist][l4][l5]||0;
     }
   }
-  // FTTR-B政企侧 → 归入政企
-  if (!districts['政企']) { districts['政企']={}; inds.forEach(i=>districts['政企'][i]=0); }
-  districts['政企']['FTTR-B'] = 0;
+  // FTTR-B政企侧 → 归入各自区县
   for (const dstr in DATA.fttrbZq) {
     const d = parseInt(dstr); if (d<monthStart||d>dateInt) continue;
-    for (const dist in DATA.fttrbZq[dstr]) for (const l4 in DATA.fttrbZq[dstr][dist]) for (const l5 in DATA.fttrbZq[dstr][dist][l4]) districts['政企']['FTTR-B'] += DATA.fttrbZq[dstr][dist][l4][l5]||0;
+    for (const dist in DATA.fttrbZq[dstr]) {
+      if (!districts[dist]) { districts[dist]={}; inds.forEach(i=>districts[dist][i]=0); }
+      if (!districts[dist]['FTTR-B']) districts[dist]['FTTR-B'] = 0;
+      for (const l4 in DATA.fttrbZq[dstr][dist]) for (const l5 in DATA.fttrbZq[dstr][dist][l4]) districts[dist]['FTTR-B'] += DATA.fttrbZq[dstr][dist][l4][l5]||0;
+    }
   }
   // 电渠累计
   const dianquTotal = {}; CH_IND.forEach(i=>dianquTotal[i]=0);
