@@ -967,7 +967,7 @@ function renderMainTable(tableWrap, data, mode, drillSrc) {
   }
 
   const excludeForRanking = mode === 'rate' ? ['全市'] : [];
-  const excludeForDrill = ['政企','全市','电渠'];
+  const excludeForDrill = mode === 'rate' ? ['全市','电渠'] : ['政企','全市','电渠'];
 
   if (mode === 'rate') {
     html += '<thead><tr class="rh1"><th style="text-align:left;background:var(--bl);color:var(--bd);position:sticky;left:0;z-index:15">经营单位</th>';
