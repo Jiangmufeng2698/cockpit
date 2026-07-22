@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>大庆分公司营销驾驶舱</title>
+<style>
+/* ========== 主题变量 ========== */
+:root, [data-theme="light"] {
+  --bg-body: #F8FAFC; --bg-card: #ffffff; --bg-nav: #ffffff;
+  --bg-nav-active: #2563EB; --bg-hover: #E8EDF8; --bg-table-header: #EFF4FF;
+  --bg-table-stripe: #F4F6F9; --bg-top3: rgba(255,77,79,0.06); --bg-bottom3: rgba(82,196,26,0.06);
+  --text-primary: #1F2937; --text-secondary: #6B7280; --text-tertiary: #9CA3AF;
+  --text-on-accent: #ffffff; --accent-blue: #2563EB; --accent-blue-light: #EFF4FF;
+  --accent-gold: #F59E0B; --accent-gold-light: #FFFBEB; --accent-red: #DC2626;
+  --accent-green: #059669; --accent-purple: #7C3AED; --accent-cyan: #0891B2;
+  --border-color: #E5E7EB; --border-light: #F3F4F6;
+  --shadow-sm: 0 1px 4px rgba(37,99,235,0.06); --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  --shadow-card: 0 2px 8px rgba(37,99,235,0.06);
+  --radius-sm: 6px; --radius-md: 10px; --radius-lg: 12px;
+  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); --glow: none;
+  /* 日报技能变量 */
+  --b: #2563EB; --bd: #1E3A5F; --bl: #EFF4FF; --r: #DC2626; --w: #FFF; --g: #6B7280;
+  --gl: #F8FAFC; --bd2: #E2E8F0;
+}
+[data-theme="dark"] {
+  --bg-body: #0a0e27; --bg-card: rgba(16,24,56,0.75); --bg-nav: rgba(8,12,32,0.92);
+  --bg-nav-active: #00b4d8; --bg-hover: rgba(255,255,255,0.05); --bg-table-header: rgba(255,255,255,0.06);
+  --bg-table-stripe: rgba(255,255,255,0.02); --bg-top3: rgba(255,71,87,0.12); --bg-bottom3: rgba(46,213,115,0.12);
+  --text-primary: #e8ecf1; --text-secondary: #8899bb; --text-tertiary: #556688;
+  --text-on-accent: #ffffff; --accent-blue: #00d4ff; --accent-blue-light: rgba(0,212,255,0.1);
+  --accent-gold: #ffd700; --accent-gold-light: rgba(255,215,0,0.1); --accent-red: #ff4757;
+  --accent-green: #2ed573; --accent-purple: #a855f7; --accent-cyan: #22d3ee;
+  --border-color: rgba(255,255,255,0.08); --border-light: rgba(255,255,255,0.04);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.2); --shadow-md: 0 4px 16px rgba(0,0,0,0.3);
+  --shadow-card: 0 4px 20px rgba(0,0,0,0.25);
+  --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px;
+  --transition: 0.4s cubic-bezier(0.4,0,0.2,1); --glow: 0 0 20px rgba(0,212,255,0.1);
+  --b: #00d4ff; --bd: #e8ecf1; --bl: rgba(0,212,255,0.1); --r: #ff4757; --w: rgba(16,24,56,0.9); --g: #8899bb;
+  --gl: #0a0e27; --bd2: rgba(255,255,255,0.08);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: var(--bg-body); color: var(--text-primary); line-height: 1.6;
+  transition: background var(--transition), color var(--transition); overflow-x: hidden;
+}
+[data-theme="dark"] body {
+  background-image: radial-gradient(ellipse at 20% 50%, rgba(0,100,200,0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(100,0,200,0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(0,200,100,0.03) 0%, transparent 50%);
+}
+::-webkit-scrollbar { width:6px; height:6px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--border-color); border-radius:3px; }
+
+/* 顶部导航 */
+.top-nav {
+  position: fixed; top:0; left:0; right:0; z-index:100; height:52px;
+  background: var(--bg-nav); backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-color); box-shadow: var(--shadow-sm);
+  display: flex; align-items: center; padding: 0 20px; transition: all var(--transition);
+}
+.nav-brand {
+  display:flex; align-items:center; gap:8px; font-size:16px; font-weight:700;
+  color: var(--b); letter-spacing:1px; white-space:nowrap; min-width:180px;
+}
+.nav-brand svg { width:24px; height:24px; }
+.nav-tabs {
+  display:flex; align-items:center; gap:2px; margin:0 auto; padding:3px;
+  background: var(--bg-hover); border-radius: var(--radius-sm);
+}
+.nav-tab {
+  padding:5px 18px; border:none; background:transparent; color:var(--text-secondary);
+  font-size:13px; font-weight:500; cursor:pointer; border-radius:var(--radius-sm);
+  transition: all 0.2s; white-space:nowrap;
+}
+.nav-tab:hover { color:var(--text-primary); background:var(--bg-card); }
+.nav-tab.active {
+  background: var(--bg-nav-active); color:var(--text-on-accent);
+  box-shadow: 0 2px 8px rgba(37,99,235,0.3);
+}
+[data-theme="dark"] .nav-tab.active {
+  box-shadow: 0 2px 12px rgba(0,212,255,0.3);
+  background: linear-gradient(135deg, #00b4d8, #0077b6);
+}
+.nav-right { display:flex; align-items:center; gap:12px; margin-left:auto; }
+.theme-toggle {
+  width:44px; height:24px; border-radius:12px; background:var(--text-tertiary);
+  border:none; cursor:pointer; position:relative; transition: background 0.3s;
+}
+.theme-toggle::after {
+  content:''; position:absolute; top:2px; left:2px; width:20px; height:20px;
+  border-radius:50%; background:white; transition: transform 0.3s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+[data-theme="dark"] .theme-toggle { background: var(--accent-blue); }
+[data-theme="dark"] .theme-toggle::after { transform: translateX(20px); }
+.nav-date { font-size:13px; color:var(--text-secondary); font-weight:500; white-space:nowrap; }
+
+/* 主内容 */
+.main-content { margin-top:52px; padding:16px; min-height: calc(100vh - 52px); }
+.page { display:none; animation: fadeIn 0.4s ease; }
+.page.active { display:block; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+.page-title {
+  font-size:20px; font-weight:700; margin-bottom:16px;
+  display:flex; align-items:center; gap:8px;
+}
+.page-title::before {
+  content:''; display:inline-block; width:4px; height:20px;
+  background:var(--b); border-radius:2px;
+}
+
+/* KPI卡片 — 营销日报样式 */
+.kpi-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:8px; padding:8px; background:var(--bg-body); border-radius:var(--radius-md); margin-bottom:10px; }
+@media(min-width:768px) { .kpi-grid { grid-template-columns:repeat(4,1fr); padding:10px; } }
+.kc { background:var(--bg-card); border-radius:10px; padding:10px 12px; display:flex; align-items:center; justify-content:space-between; box-shadow:var(--shadow-card); transition:all var(--transition); border:1px solid var(--border-color); }
+.kc:hover { transform:translateY(-1px); box-shadow:var(--shadow-md); }
+[data-theme="dark"] .kc { backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.08); box-shadow:var(--shadow-card),var(--glow); }
+.kc-l { flex:1; min-width:0; }
+.kc-title { font-size:11px; color:var(--text-tertiary); font-weight:500; margin-bottom:3px; }
+.kc-num { font-size:24px; font-weight:700; line-height:1.2; }
+.kc-num .u { font-size:11px; color:var(--text-tertiary); font-weight:400; margin-left:2px; }
+.kc-rate { font-size:11px; color:var(--text-tertiary); margin-top:2px; }
+.kc-rate b { color:var(--accent-red); font-weight:700; }
+.kc-target { font-size:10px; color:var(--text-tertiary); margin-top:2px; }
+.kc-target b { font-weight:700; }
+.kc-bar { height:4px; background:var(--border-light); border-radius:2px; margin-top:4px; overflow:hidden; }
+.kc-bar-inner { height:100%; border-radius:2px; transition:width .6s; }
+.kc-r { display:none; }
+
+/* 7日趋势独立区域 */
+.trend-section { margin-top:10px; }
+.trend-section-title { font-size:13px; font-weight:700; color:var(--b); margin-bottom:8px; display:flex; align-items:center; gap:6px; }
+.trend-section-title::before { content:''; display:inline-block; width:3px; height:14px; background:var(--b); border-radius:2px; }
+.trend-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:8px; }
+@media(min-width:768px) { .trend-grid { grid-template-columns:repeat(4,1fr); } }
+.trend-card {
+  background:var(--bg-card); border-radius:10px; padding:10px 14px;
+  border:1px solid var(--border-color); box-shadow:var(--shadow-card);
+  transition:all var(--transition);
+}
+.trend-card:hover { transform:translateY(-1px); box-shadow:var(--shadow-md); }
+[data-theme="dark"] .trend-card { backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.08); box-shadow:var(--shadow-card),var(--glow); }
+.trend-card-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+.trend-card-name { font-size:13px; font-weight:700; }
+.trend-card-range { font-size:11px; color:var(--text-tertiary); }
+.trend-card-chart { margin-bottom:2px; }
+
+/* 快捷入口 */
+.quick-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap:8px; margin-bottom:14px; }
+.quick-card {
+  background:var(--bg-card); border:1px solid var(--border-color);
+  border-radius:var(--radius-md); padding:12px; cursor:pointer;
+  display:flex; align-items:center; gap:10px; transition: all 0.2s; box-shadow:var(--shadow-sm);
+}
+.quick-card:hover { border-color:var(--b); transform:translateY(-1px); box-shadow:var(--shadow-md); }
+.quick-card .icon-wrap {
+  width:34px; height:34px; border-radius:var(--radius-sm);
+  display:flex; align-items:center; justify-content:center; font-size:15px;
+}
+.quick-card .icon-wrap.blue { background:var(--accent-blue-light); color:var(--b); }
+.quick-card .icon-wrap.cyan { background:rgba(19,194,194,0.08); color:var(--accent-cyan); }
+.quick-card .icon-wrap.gold { background:var(--accent-gold-light); color:var(--accent-gold); }
+[data-theme="dark"] .quick-card .icon-wrap.blue { background:rgba(0,212,255,0.12); }
+[data-theme="dark"] .quick-card .icon-wrap.cyan { background:rgba(34,211,238,0.12); }
+[data-theme="dark"] .quick-card .icon-wrap.gold { background:rgba(255,215,0,0.12); }
+.quick-card .label { font-size:13px; font-weight:600; }
+.quick-card .sub { font-size:11px; color:var(--text-tertiary); }
+
+/* 报告页 */
+.report-header {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:12px; flex-wrap:wrap; gap:10px;
+}
+.report-title { font-size:17px; font-weight:700; }
+.report-meta { font-size:12px; color:var(--text-tertiary); display:flex; align-items:center; gap:6px; }
+.report-meta .dot { width:6px; height:6px; border-radius:50%; background:var(--accent-green); display:inline-block; }
+
+/* 日期选择器 */
+.date-picker-row { display:flex; align-items:center; gap:6px; margin-bottom:10px; flex-wrap:wrap; }
+.date-picker-row label { font-size:12px; color:var(--text-secondary); font-weight:500; white-space:nowrap; }
+.date-input {
+  padding:4px 8px; border:1px solid var(--border-color); border-radius:var(--radius-sm);
+  font-size:12px; background:var(--bg-card); color:var(--text-primary); transition: border-color 0.2s; outline:none;
+}
+.date-input:focus { border-color:var(--b); }
+[data-theme="dark"] .date-input { background:rgba(16,24,56,0.6); border-color:rgba(255,255,255,0.08); color:var(--text-primary); }
+.date-range-hint { font-size:11px; color:var(--text-tertiary); margin-left:6px; }
+.date-quick-btns { display:flex; gap:4px; margin-left:6px; }
+.date-quick-btn {
+  padding:3px 10px; font-size:11px; border:1px solid var(--border-color);
+  background:var(--bg-card); color:var(--text-secondary); border-radius:var(--radius-sm);
+  cursor:pointer; transition: all 0.2s;
+}
+.date-quick-btn:hover { border-color:var(--b); color:var(--b); }
+
+/* SubTab */
+.sub-tabs {
+  display:flex; gap:2px; margin-bottom:12px; background:var(--bg-hover);
+  padding:3px; border-radius:var(--radius-sm); width:fit-content;
+}
+.sub-tab {
+  padding:5px 14px; font-size:12px; font-weight:500; border:none; background:transparent;
+  cursor:pointer; border-radius:4px; color:var(--text-secondary); transition: all 0.2s;
+}
+.sub-tab:hover { color:var(--text-primary); }
+.sub-tab.active { background:var(--bg-card); color:var(--b); box-shadow:var(--shadow-sm); }
+
+/* ========== 表格 — 营销日报技能风格 ========== */
+.tw { padding:2px; overflow:auto; max-height:68vh; position:relative; }
+.tw table { width:100%; border-collapse:separate; border-spacing:0; font-size:12px; border-radius:6px; box-shadow:0 1px 6px rgba(30,58,95,0.06); overflow:hidden; }
+
+/* 表头：双层 rh1=指标名 rh2=子列 */
+.tw thead th {
+  padding:6px 6px; text-align:center; font-weight:600; font-size:12px;
+  border-bottom:1px solid var(--bd2); white-space:nowrap; position:sticky; top:0; z-index:10;
+}
+.tw thead tr.rh1 th { color:#fff; }
+.tw thead tr.rh2 th { color:var(--text-secondary); font-size:11px; }
+.tw thead th:first-child {
+  text-align:left; padding-left:10px; min-width:70px;
+  position:sticky; left:0; z-index:15;
+}
+/* 指标组配色 */
+.hb1{background:#14B8A6;color:#fff} .hb2{background:#2563EB;color:#fff} .hb3{background:#22C55E;color:#fff}
+.hb4{background:#F59E0B;color:#fff} .hb5{background:#06B6D4;color:#fff} .hb6{background:#8B5CF6;color:#fff}
+.hb7{background:#F43F5E;color:#fff}
+.hb1s{background:#F0FDFA;color:#0D9488} .hb2s{background:#EFF6FF;color:#1E40AF}
+.hb3s{background:#F0FDF4;color:#166534} .hb4s{background:#FFFBEB;color:#92400E}
+.hb5s{background:#ECFEFF;color:#0E7490} .hb6s{background:#F5F3FF;color:#5B21B6}
+.hb7s{background:#FFF1F2;color:#9F1239}
+[data-theme="dark"] .hb1s{background:rgba(20,184,166,0.15);color:#5EEAD4}
+[data-theme="dark"] .hb2s{background:rgba(37,99,235,0.15);color:#93C5FD}
+[data-theme="dark"] .hb3s{background:rgba(34,197,94,0.15);color:#86EFAC}
+[data-theme="dark"] .hb4s{background:rgba(245,158,11,0.15);color:#FCD34D}
+[data-theme="dark"] .hb5s{background:rgba(6,182,212,0.15);color:#67E8F9}
+[data-theme="dark"] .hb6s{background:rgba(139,92,246,0.15);color:#C4B5FD}
+[data-theme="dark"] .hb7s{background:rgba(244,63,94,0.15);color:#FDA4AF}
+
+/* 数据行 */
+.tw tbody td { padding:5px 5px; text-align:center; border-bottom:1px solid rgba(0,0,0,0.04); white-space:nowrap; font-variant-numeric:tabular-nums; }
+.tw tbody td:first-child {
+  text-align:left; padding-left:10px; font-weight:700; color:var(--b);
+  position:sticky; left:0; z-index:5; cursor:pointer; min-width:70px;
+  max-width:80px; white-space:normal; word-break:break-all; max-height:3.9em; overflow:hidden;
+}
+.tw tbody td:first-child:hover { color:var(--r); }
+.tw tbody tr:nth-child(even) td:first-child { background:var(--bg-table-stripe); }
+.tw tbody tr:hover td:first-child { background:var(--bg-hover); }
+
+/* 指标列底色 */
+.db1{background:#F0FDFA} .db2{background:#EFF6FF} .db3{background:#F0FDF4}
+.db4{background:#FFFBEB} .db5{background:#ECFEFF} .db6{background:#F5F3FF} .db7{background:#FFF1F2}
+[data-theme="dark"] .db1{background:rgba(20,184,166,0.08)} [data-theme="dark"] .db2{background:rgba(37,99,235,0.08)}
+[data-theme="dark"] .db3{background:rgba(34,197,94,0.08)} [data-theme="dark"] .db4{background:rgba(245,158,11,0.08)}
+[data-theme="dark"] .db5{background:rgba(6,182,212,0.08)} [data-theme="dark"] .db6{background:rgba(139,92,246,0.08)}
+[data-theme="dark"] .db7{background:rgba(244,63,94,0.08)}
+
+/* 完成率着色 — 无竖线，仅文字颜色 */
+.rate-cell { font-weight:700; font-variant-numeric:tabular-nums; }
+.rate-cell.high { color:var(--r); }
+.rate-cell.low { color:var(--accent-green); }
+.rate-cell.zero { color:var(--accent-green); }
+.rate-cell.dash { color:var(--text-tertiary); }
+.tw tbody td.no-drill { cursor:default; }
+.tw tbody td.no-drill:hover { color:var(--b); }
+.trend-cell { font-weight:700; font-variant-numeric:tabular-nums; }
+.trend-cell.positive { color:var(--r); }
+.trend-cell.negative { color:var(--accent-green); }
+.trend-cell.neutral { color:var(--text-tertiary); }
+
+/* ========== 模态框 — 营销日报技能风格 ========== */
+.modal { display:none; position:fixed; top:0; left:0; right:0; bottom:0; z-index:200; background:rgba(0,0,0,0.45); animation: fadeIn 0.2s; }
+.modal.show { display:flex; align-items:center; justify-content:center; }
+[data-theme="dark"] .modal { background:rgba(0,0,0,0.6); }
+.mbox {
+  background:var(--bg-card); border-radius:8px; box-shadow:0 4px 20px rgba(0,0,0,0.3);
+  max-width:95vw; max-height:85vh; width:auto; min-width:320px; overflow:hidden;
+  display:flex; flex-direction:column; animation: mboxIn 0.2s;
+}
+[data-theme="dark"] .mbox { backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.1); }
+@keyframes mboxIn { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+.mbox-head { padding:10px 14px; border-bottom:1px solid var(--border-color); display:flex; align-items:center; justify-content:space-between; }
+.mbox-head h3 { font-size:14px; font-weight:700; color:var(--bd); margin:0; }
+[data-theme="dark"] .mbox-head h3 { color:var(--text-primary); }
+.mbox-body { padding:8px; overflow:auto; flex:1; }
+.mbox-foot { padding:8px 14px; text-align:right; border-top:1px solid var(--border-color); }
+.bcbtn {
+  padding:6px 24px; border:none; border-radius:4px; background:var(--b); color:#fff;
+  font-size:12px; font-weight:600; cursor:pointer; transition:0.15s;
+}
+.bcbtn:hover { opacity:0.85; }
+.bk { color:var(--b); cursor:pointer; font-size:11px; display:inline-flex; align-items:center; gap:2px; margin-bottom:6px; }
+.bk:hover { color:var(--r); }
+
+/* 下钻表格(模态框内) */
+.drt { width:100%; border-collapse:separate; border-spacing:0; font-size:12px; border-radius:6px; box-shadow:0 1px 6px rgba(30,58,95,0.06); overflow:hidden; }
+.drt thead th { background:var(--bl); color:var(--bd); padding:6px 6px; text-align:center; font-weight:600; font-size:12px; border-bottom:1px solid var(--bd2); white-space:nowrap; position:sticky; top:0; z-index:10; }
+[data-theme="dark"] .drt thead th { background:var(--bl); color:var(--text-primary); }
+.drt thead th:first-child { text-align:left; padding-left:10px; width:120px; position:sticky; left:0; z-index:15; }
+.drt tbody td { padding:5px 5px; text-align:center; border-bottom:1px solid rgba(0,0,0,0.04); white-space:nowrap; font-variant-numeric:tabular-nums; }
+.drt tbody td:first-child {
+  text-align:left; font-weight:700; color:var(--b); cursor:pointer;
+  position:sticky; left:0; z-index:5; background:var(--bg-card);
+  white-space:normal; word-break:break-all; max-width:140px; max-height:3.9em; overflow:hidden; padding-left:10px;
+}
+.drt tbody td:first-child:hover { color:var(--r); }
+.drt tbody tr:nth-child(even) td:first-child { background:var(--bg-table-stripe); }
+.drt tbody tr:hover td:first-child { background:var(--bg-hover); }
+.drt tbody td.drt-fn { color:var(--b); font-weight:700; cursor:default !important; }
+.drt tbody td.drt-fn:hover { color:var(--b); }
+/* 下钻表指标列底色 */
+.drt .db1{background:#F0FDFA} .drt .db2{background:#EFF6FF} .drt .db3{background:#F0FDF4}
+.drt .db4{background:#FFFBEB} .drt .db5{background:#ECFEFF} .drt .db6{background:#F5F3FF} .drt .db7{background:#FFF1F2}
+[data-theme="dark"] .drt .db1{background:rgba(20,184,166,0.08)} [data-theme="dark"] .drt .db2{background:rgba(37,99,235,0.08)}
+[data-theme="dark"] .drt .db3{background:rgba(34,197,94,0.08)} [data-theme="dark"] .drt .db4{background:rgba(245,158,11,0.08)}
+[data-theme="dark"] .drt .db5{background:rgba(6,182,212,0.08)} [data-theme="dark"] .drt .db6{background:rgba(139,92,246,0.08)}
+[data-theme="dark"] .drt .db7{background:rgba(244,63,94,0.08)}
+/* 下钻表合计行 */
+.drt tbody tr.drt-sum td { background:#F0F4F8; font-weight:700; }
+[data-theme="dark"] .drt tbody tr.drt-sum td { background:rgba(255,255,255,0.06); }
+
+/* 通报摘要 */
+.bulletin {
+  background:var(--bg-card); border:1px solid var(--border-color);
+  border-radius:var(--radius-lg); padding:14px 18px; margin-top:14px; box-shadow:var(--shadow-card);
+}
+[data-theme="dark"] .bulletin { backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.08); }
+.bulletin-title { font-size:14px; font-weight:700; margin-bottom:8px; color:var(--b); }
+.bulletin-body { font-size:13px; line-height:1.9; color:var(--text-primary); }
+.bulletin-body .highlight { color:var(--r); font-weight:600; }
+
+/* 模块占位 */
+.module-placeholder {
+  background:var(--bg-card); border:2px dashed var(--border-color);
+  border-radius:var(--radius-lg); padding:40px; text-align:center; color:var(--text-tertiary);
+}
+.module-placeholder .icon { font-size:40px; margin-bottom:14px; opacity:0.4; }
+.module-placeholder .text { font-size:15px; font-weight:500; margin-bottom:6px; }
+.module-placeholder .hint { font-size:12px; }
+
+@media (max-width:768px) {
+  .top-nav { padding:0 10px; }
+  .nav-brand { font-size:14px; min-width:auto; }
+  .nav-tab { padding:4px 10px; font-size:12px; }
+  .main-content { padding:12px; }
+  .kpi-grid { grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap:6px; }
+  .report-header { flex-direction:column; align-items:flex-start; }
+}
+@media (max-width:480px) {
+  .nav-brand span { display:none; }
+  .kpi-grid { grid-template-columns:1fr 1fr; }
+  .quick-grid { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <div class="nav-brand">
+    <svg viewBox="0 0 28 28" fill="none">
+      <rect x="2" y="2" width="24" height="24" rx="6" fill="currentColor" opacity="0.15"/>
+      <path d="M8 18V10l6 4-6 4z" fill="currentColor"/>
+      <path d="M16 18V10l6 4-6 4z" fill="currentColor" opacity="0.5"/>
+    </svg>
+    <span>营销驾驶舱</span>
+  </div>
+  <div class="nav-tabs" id="navTabs"></div>
+  <div class="nav-right">
+    <button class="theme-toggle" id="themeToggle" title="切换主题"></button>
+    <span class="nav-date" id="navDate"></span>
+  </div>
+</nav>
+
+<div class="main-content">
+  <!-- 概览页 -->
+  <div class="page" id="page-overview">
+    <div class="page-title">经营概览</div>
+    <div class="quick-grid" id="quickGrid"></div>
+    <div class="kpi-grid" id="kpiGrid"></div>
+    <div class="trend-section" id="trendSection"></div>
+  </div>
+
+  <!-- 日报页 -->
+  <div class="page" id="page-daily">
+    <div class="report-header">
+      <div class="report-title" id="dailyTitle"></div>
+      <div class="report-meta"><span class="dot"></span> 数据已更新</div>
+    </div>
+    <div class="date-picker-row" id="dailyDatePicker"></div>
+    <div class="tw" id="dailyTableWrap"></div>
+    <div class="bulletin" id="dailyBulletin"></div>
+  </div>
+
+  <!-- 月报页 -->
+  <div class="page" id="page-monthly">
+    <div class="report-header">
+      <div class="report-title" id="monthlyTitle"></div>
+      <div class="report-meta"><span class="dot"></span> 数据已更新</div>
+    </div>
+    <div class="date-picker-row" id="monthlyDatePicker"></div>
+    <div class="sub-tabs" id="monthlySubTabs">
+      <button class="sub-tab active" data-subtab="completion">完成月报</button>
+      <button class="sub-tab" data-subtab="yoy_channel">同比变化（渠道侧）</button>
+      <button class="sub-tab" data-subtab="yoy_zq">同比变化（政企侧）</button>
+    </div>
+    <div class="tw" id="monthlyTableWrap"></div>
+    <div class="bulletin" id="monthlyBulletin"></div>
+  </div>
+
+  <!-- 更多模块 -->
+  <div class="page" id="page-more">
+    <div class="page-title">更多模块</div>
+    <div class="quick-grid" id="moreGrid"></div>
+    <div class="module-placeholder" style="margin-top:20px">
+      <div class="icon">&#x1F4E6;</div>
+      <div class="text">模块扩展区</div>
+      <div class="hint">新功能模块在此注册后自动出现</div>
+    </div>
+  </div>
+</div>
+
+<!-- 模态框 -->
+<div class="modal" id="ml"><div class="mbox" id="mbox"></div></div>
+
+<script src="report_data.js"></script>
+<script>
+/* ================================================================
+ *  全局数据与口径
+ * ================================================================ */
+const DATA = window.REPORT_DATA;
+const CH_IND = ['宽带','融合','融合副卡','FTTR-H','FTTR-B','智屏','高清'];
+const ZQ_IND = ['FTTR-B','双线新增','移动新增'];
+const IND_COLORS = ['#14B8A6','#2563EB','#22C55E','#F59E0B','#06B6D4','#8B5CF6','#F43F5E'];
+const HB_CLS = ['hb1','hb2','hb3','hb4','hb5','hb6','hb7'];
+const HBS_CLS = ['hb1s','hb2s','hb3s','hb4s','hb5s','hb6s','hb7s'];
+const DB_CLS = ['db1','db2','db3','db4','db5','db6','db7'];
+
+// 区县排序：按宽带完成率降序，政企/全市固定末位
+function sortDistricts(rows) {
+  return rows.sort((a,b) => {
+    if (a.district === '政企' || a.district === '全市') return 1;
+    if (b.district === '政企' || b.district === '全市') return -1;
+    const ra = a.cells['宽带'] ? a.cells['宽带'].rate : 0;
+    const rb = b.cells['宽带'] ? b.cells['宽带'].rate : 0;
+    return rb - ra;
+  });
+}
+
+// 日期工具
+function intToDateStr(d) { const s=String(d); return s.slice(0,4)+'-'+s.slice(4,6)+'-'+s.slice(6,8); }
+function dateStrToInt(s) { return parseInt(s.replace(/-/g,'')); }
+function formatMD(d) { const s=String(d); return parseInt(s.slice(4,6))+'.'+parseInt(s.slice(6,8)); }
+
+// 7日折线图SVG
+function sparklineSvg(values, color, w, h, dateLabels) {
+  w=w||260; h=h||80;
+  const padL=8, padR=8, padT=14, padB=dateLabels?18:8;
+  const chartH=h-padT-padB;
+  const max=Math.max(...values,1), min=Math.min(...values,0);
+  const range=max-min||1;
+  const pts=values.map((v,i)=>({
+    x:padL+(i/(values.length-1))*(w-padL-padR),
+    y:padT+chartH-((v-min)/range)*chartH
+  }));
+  let pathD='M'+pts.map(p=>p.x+','+p.y).join(' L');
+  let areaD=pathD+' L'+pts[pts.length-1].x+','+(padT+chartH)+' L'+pts[0].x+','+(padT+chartH)+' Z';
+  const gid='sg'+color.replace('#','');
+  let svg='<svg width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'">'+
+    '<defs><linearGradient id="'+gid+'" x1="0" y1="0" x2="0" y2="1">'+
+    '<stop offset="0%" stop-color="'+color+'" stop-opacity="0.25"/>'+
+    '<stop offset="100%" stop-color="'+color+'" stop-opacity="0.02"/>'+
+    '</linearGradient></defs>'+
+    '<path d="'+areaD+'" fill="url(#'+gid+')"/>'+
+    '<path d="'+pathD+'" fill="none" stroke="'+color+'" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>';
+  pts.forEach((p,i)=>{
+    svg+='<circle cx="'+p.x+'" cy="'+p.y+'" r="2.5" fill="'+color+'" opacity="0.8"/>';
+    svg+='<text x="'+p.x+'" y="'+(p.y-4)+'" text-anchor="middle" font-size="9" fill="'+color+'" font-weight="600">'+values[i]+'</text>';
+  });
+  if(dateLabels){
+    pts.forEach((p,i)=>{
+      svg+='<text x="'+p.x+'" y="'+(h-3)+'" text-anchor="middle" font-size="9" fill="var(--text-tertiary)">'+dateLabels[i]+'</text>';
+    });
+  }
+  svg+='</svg>';
+  return svg;
+}
+
+/* ================================================================
+ *  数据聚合函数（含政企FTTR-B + 全市行）
+ * ================================================================ */
+function getDailyData(dateInt) {
+  const dayData = DATA.newdev[String(dateInt)] || {};
+  const dayFttrb = DATA.fttrb[String(dateInt)] || {};
+  const dayFttrbZq = DATA.fttrbZq[String(dateInt)] || {};
+  const dayDianqu = DATA.dianqu[String(dateInt)] || {};
+  const districts = {};
+  for (const dist in DATA.target) districts[dist] = {};
+  // 渠道6项
+  for (const dist in dayData) {
+    if (!districts[dist]) districts[dist] = {};
+    for (const ind of CH_IND) {
+      if (ind === 'FTTR-B') continue;
+      let cnt = 0;
+      for (const l4 in dayData[dist]) for (const l5 in dayData[dist][l4]) cnt += dayData[dist][l4][l5][ind] || 0;
+      districts[dist][ind] = cnt;
+    }
+  }
+  // FTTR-B渠道侧
+  for (const dist in dayFttrb) {
+    if (!districts[dist]) districts[dist] = {};
+    let cnt = 0;
+    for (const l4 in dayFttrb[dist]) for (const l5 in dayFttrb[dist][l4]) cnt += dayFttrb[dist][l4][l5] || 0;
+    districts[dist]['FTTR-B'] = cnt;
+  }
+  // FTTR-B政企侧 → 归入政企区县
+  if (districts['政企']) {
+    let cnt = 0;
+    for (const dist in dayFttrbZq) for (const l4 in dayFttrbZq[dist]) for (const l5 in dayFttrbZq[dist][l4]) cnt += dayFttrbZq[dist][l4][l5] || 0;
+    districts['政企']['FTTR-B'] = cnt;
+  }
+  const rows = [];
+  for (const dist in districts) {
+    const row = { district: dist, cells: {} };
+    for (const ind of CH_IND) {
+      const val = districts[dist][ind] || 0;
+      const target = (DATA.target[dist] && DATA.target[dist][ind]) || 0;
+      const rate = target > 0 ? +(val/target*100).toFixed(1) : 0;
+      row.cells[ind] = { val, rate, target };
+    }
+    rows.push(row);
+  }
+  // 全市行
+  const cityRow = { district: '全市', cells: {} };
+  CH_IND.forEach(ind => {
+    let total = 0; rows.forEach(r => total += r.cells[ind].val);
+    total += dayDianqu[ind] || 0;
+    let dt = 0; for (const dist in DATA.target) dt += (DATA.target[dist][ind]||0);
+    const rate = dt > 0 ? +(total/dt*100).toFixed(1) : 0;
+    cityRow.cells[ind] = { val: total, rate, target: dt };
+  });
+  rows.push(cityRow);
+  return sortDistricts(rows);
+}
+
+function getMonthlyData(dateInt) {
+  const month = Math.floor(dateInt/100);
+  const monthStart = month*100+1;
+  const districts = {};
+  const inds = ['宽带','融合','融合副卡','FTTR-H','智屏','高清'];
+  // 渠道6项
+  for (const dstr in DATA.newdev) {
+    const d = parseInt(dstr); if (d<monthStart||d>dateInt) continue;
+    for (const dist in DATA.newdev[dstr]) {
+      if (!districts[dist]) { districts[dist]={}; inds.forEach(i=>districts[dist][i]=0); }
+      for (const l4 in DATA.newdev[dstr][dist]) for (const l5 in DATA.newdev[dstr][dist][l4]) for (const ind of inds) districts[dist][ind] += DATA.newdev[dstr][dist][l4][l5][ind]||0;
+    }
+  }
+  // FTTR-B渠道侧
+  for (const dstr in DATA.fttrb) {
+    const d = parseInt(dstr); if (d<monthStart||d>dateInt) continue;
+    for (const dist in DATA.fttrb[dstr]) {
+      if (!districts[dist]) { districts[dist]={}; inds.forEach(i=>districts[dist][i]=0); }
+      if (!districts[dist]['FTTR-B']) districts[dist]['FTTR-B'] = 0;
+      for (const l4 in DATA.fttrb[dstr][dist]) for (const l5 in DATA.fttrb[dstr][dist][l4]) districts[dist]['FTTR-B'] += DATA.fttrb[dstr][dist][l4][l5]||0;
+    }
+  }
+  // FTTR-B政企侧 → 归入政企
+  if (!districts['政企']) { districts['政企']={}; inds.forEach(i=>districts['政企'][i]=0); }
+  districts['政企']['FTTR-B'] = 0;
+  for (const dstr in DATA.fttrbZq) {
+    const d = parseInt(dstr); if (d<monthStart||d>dateInt) continue;
+    for (const dist in DATA.fttrbZq[dstr]) for (const l4 in DATA.fttrbZq[dstr][dist]) for (const l5 in DATA.fttrbZq[dstr][dist][l4]) districts['政企']['FTTR-B'] += DATA.fttrbZq[dstr][dist][l4][l5]||0;
+  }
+  // 电渠累计
+  const dianquTotal = {}; CH_IND.forEach(i=>dianquTotal[i]=0);
+  for (const dstr in DATA.dianqu) {
+    const d = parseInt(dstr); if (d<monthStart||d>dateInt) continue;
+    for (const ind in DATA.dianqu[dstr]) dianquTotal[ind] += DATA.dianqu[dstr][ind]||0;
+  }
+  const days = dateInt - monthStart + 1;
+  const rows = [];
+  for (const dist in districts) {
+    const row = { district: dist, cells: {} };
+    for (const ind of CH_IND) {
+      const val = districts[dist][ind] || 0;
+      const dailyTarget = (DATA.target[dist]&&DATA.target[dist][ind]) || 0;
+      const monthTarget = dailyTarget * days;
+      const rate = monthTarget > 0 ? +(val/monthTarget*100).toFixed(1) : 0;
+      row.cells[ind] = { val, rate, target: monthTarget };
+    }
+    rows.push(row);
+  }
+  // 全市行
+  const cityRow = { district: '全市', cells: {} };
+  CH_IND.forEach(ind => {
+    let total = 0; rows.forEach(r => total += r.cells[ind].val);
+    total += dianquTotal[ind] || 0;
+    let dt = 0; for (const dist in DATA.target) dt += (DATA.target[dist][ind]||0);
+    const mt = dt * days;
+    const rate = mt > 0 ? +(total/mt*100).toFixed(1) : 0;
+    cityRow.cells[ind] = { val: total, rate, target: mt };
+  });
+  rows.push(cityRow);
+  return sortDistricts(rows);
+}
+
+function getYoYChannelData(dateInt) {
+  const month = Math.floor(dateInt/100); const monthStart = month*100+1;
+  let lastMonth = month%100===1 ? month-100+12 : month-1;
+  const lastStart = lastMonth*100+1, lastEnd = lastMonth*100+(dateInt%100);
+  function aggregate(start, end) {
+    const districts = {}; const inds = ['宽带','融合','融合副卡','FTTR-H','智屏','高清'];
+    for (const dstr in DATA.newdev) {
+      const d=parseInt(dstr); if(d<start||d>end) continue;
+      for (const dist in DATA.newdev[dstr]) {
+        if(!districts[dist]) { districts[dist]={}; inds.forEach(i=>districts[dist][i]=0); districts[dist]['FTTR-B']=0; }
+        for (const l4 in DATA.newdev[dstr][dist]) for (const l5 in DATA.newdev[dstr][dist][l4]) for (const ind of inds) districts[dist][ind] += DATA.newdev[dstr][dist][l4][l5][ind]||0;
+      }
+    }
+    for (const dstr in DATA.fttrb) {
+      const d=parseInt(dstr); if(d<start||d>end) continue;
+      for (const dist in DATA.fttrb[dstr]) {
+        if(!districts[dist]) { districts[dist]={}; inds.forEach(i=>districts[dist][i]=0); districts[dist]['FTTR-B']=0; }
+        for (const l4 in DATA.fttrb[dstr][dist]) for (const l5 in DATA.fttrb[dstr][dist][l4]) districts[dist]['FTTR-B'] += DATA.fttrb[dstr][dist][l4][l5]||0;
+      }
+    }
+    // 电渠
+    if (!districts['电渠']) { districts['电渠']={}; inds.forEach(i=>districts['电渠'][i]=0); districts['电渠']['FTTR-B']=0; }
+    for (const dstr in DATA.dianqu) { const d=parseInt(dstr); if(d<start||d>end) continue; for (const ind in DATA.dianqu[dstr]) { if(CH_IND.includes(ind)) districts['电渠'][ind] += DATA.dianqu[dstr][ind]||0; } }
+    return districts;
+  }
+  const tm = aggregate(monthStart, dateInt); const lm = aggregate(lastStart, lastEnd);
+  const dianquTm = {}; const dianquLm = {}; CH_IND.forEach(i=>{dianquTm[i]=0;dianquLm[i]=0;});
+  if (tm['电渠']) { CH_IND.forEach(i=>dianquTm[i]=tm['电渠'][i]||0); delete tm['电渠']; }
+  if (lm['电渠']) { CH_IND.forEach(i=>dianquLm[i]=lm['电渠'][i]||0); delete lm['电渠']; }
+  const rows = [];
+  for (const dist in tm) {
+    const row = { district: dist, cells: {} };
+    for (const ind of CH_IND) {
+      const tv = tm[dist][ind]||0; const lv = (lm[dist]&&lm[dist][ind])||0;
+      row.cells[ind] = { thisMonth: tv, lastMonth: lv, yoy: tv-lv };
+    }
+    rows.push(row);
+  }
+  // 全市行（含电渠）
+  const cityRow = { district: '全市', cells: {} };
+  CH_IND.forEach(ind => {
+    let tv=0,lv=0; rows.forEach(r=>{tv+=r.cells[ind].thisMonth;lv+=r.cells[ind].lastMonth;});
+    tv+=dianquTm[ind]||0; lv+=dianquLm[ind]||0;
+    cityRow.cells[ind] = { thisMonth: tv, lastMonth: lv, yoy: tv-lv };
+  });
+  rows.push(cityRow);
+  rows.sort((a,b)=>{ if(a.district==='全市') return 1; if(b.district==='全市') return -1; if(a.district==='政企') return 1; if(b.district==='政企') return -1; return (b.cells['宽带'].yoy||0)-(a.cells['宽带'].yoy||0); });
+  return rows;
+}
+
+function getYoYZQData(dateInt) {
+  const month = Math.floor(dateInt/100); const monthStart = month*100+1;
+  let lastMonth = month%100===1 ? month-100+12 : month-1;
+  const lastStart = lastMonth*100+1, lastEnd = lastMonth*100+(dateInt%100);
+  function aggregate(start, end) {
+    const districts = {};
+    for (const dstr in DATA.fttrbZq) {
+      const d=parseInt(dstr); if(d<start||d>end) continue;
+      for (const dist in DATA.fttrbZq[dstr]) {
+        if(!districts[dist]) districts[dist] = { 'FTTR-B':0, '移动新增':0, '专线':0, '电路':0 };
+        for (const l4 in DATA.fttrbZq[dstr][dist]) for (const l5 in DATA.fttrbZq[dstr][dist][l4]) districts[dist]['FTTR-B'] += DATA.fttrbZq[dstr][dist][l4][l5]||0;
+      }
+    }
+    for (const dstr in DATA.zq) {
+      const d=parseInt(dstr); if(d<start||d>end) continue;
+      for (const dist in DATA.zq[dstr]) {
+        if(!districts[dist]) districts[dist] = { 'FTTR-B':0, '移动新增':0, '专线':0, '电路':0 };
+        for (const l4 in DATA.zq[dstr][dist]) for (const l5 in DATA.zq[dstr][dist][l4]) {
+          districts[dist]['移动新增'] += DATA.zq[dstr][dist][l4][l5]['移动新增']||0;
+          districts[dist]['专线'] += DATA.zq[dstr][dist][l4][l5]['专线']||0;
+          districts[dist]['电路'] += DATA.zq[dstr][dist][l4][l5]['电路']||0;
+        }
+      }
+    }
+    for (const dist in districts) districts[dist]['双线新增'] = (districts[dist]['专线']||0)+(districts[dist]['电路']||0);
+    return districts;
+  }
+  const tm = aggregate(monthStart, dateInt); const lm = aggregate(lastStart, lastEnd);
+  const rows = [];
+  for (const dist in tm) {
+    const row = { district: dist, cells: {} };
+    for (const ind of ZQ_IND) {
+      const tv = tm[dist][ind]||0; const lv = (lm[dist]&&lm[dist][ind])||0;
+      row.cells[ind] = { thisMonth: tv, lastMonth: lv, yoy: tv-lv };
+    }
+    rows.push(row);
+  }
+  // 全市行
+  const cityRow = { district: '全市', cells: {} };
+  ZQ_IND.forEach(ind => {
+    let tv=0,lv=0; rows.forEach(r=>{tv+=r.cells[ind].thisMonth;lv+=r.cells[ind].lastMonth;});
+    cityRow.cells[ind] = { thisMonth: tv, lastMonth: lv, yoy: tv-lv };
+  });
+  rows.push(cityRow);
+  return rows.sort((a,b)=>{ if(a.district==='全市') return 1; if(b.district==='全市') return -1; if(a.district==='政企') return 1; if(b.district==='政企') return -1; return (b.cells['FTTR-B']?b.cells['FTTR-B'].yoy:0)-(a.cells['FTTR-B']?a.cells['FTTR-B'].yoy:0); });
+}
+
+/* ================================================================
+ *  下钻数据函数
+ * ================================================================ */
+// 日报四级
+function getDailyLevel4(dateInt, district) {
+  const dayData = DATA.newdev[String(dateInt)]?.[district] || {};
+  const dayFttrb = DATA.fttrb[String(dateInt)]?.[district] || {};
+  const l4Map = {};
+  for (const l4 in dayData) { if(!l4Map[l4]) l4Map[l4]={}; for (const ind of CH_IND) { if(ind==='FTTR-B') continue; let cnt=0; for (const l5 in dayData[l4]) cnt+=dayData[l4][l5][ind]||0; l4Map[l4][ind]=cnt; } }
+  for (const l4 in dayFttrb) { if(!l4Map[l4]) l4Map[l4]={}; let cnt=0; for (const l5 in dayFttrb[l4]) cnt+=dayFttrb[l4][l5]||0; l4Map[l4]['FTTR-B']=cnt; }
+  // 政企FTTR-B
+  const dayFttrbZq = DATA.fttrbZq[String(dateInt)]?.[district] || {};
+  for (const l4 in dayFttrbZq) { if(!l4Map[l4]) l4Map[l4]={}; let cnt=0; for (const l5 in dayFttrbZq[l4]) cnt+=dayFttrbZq[l4][l5]||0; l4Map[l4]['FTTR-B']=(l4Map[l4]['FTTR-B']||0)+cnt; }
+  return Object.entries(l4Map).map(([name,cells])=>({ name, cells: Object.fromEntries(CH_IND.map(ind=>[ind,{val:cells[ind]||0}])) }));
+}
+function getDailyLevel5(dateInt, district, level4) {
+  const dayData = DATA.newdev[String(dateInt)]?.[district]?.[level4] || {};
+  const dayFttrb = DATA.fttrb[String(dateInt)]?.[district]?.[level4] || {};
+  const dayFttrbZq = DATA.fttrbZq[String(dateInt)]?.[district]?.[level4] || {};
+  const l5Map = {};
+  for (const l5 in dayData) { if(!l5Map[l5]) l5Map[l5]={}; for (const ind of CH_IND) { if(ind==='FTTR-B') continue; l5Map[l5][ind]=dayData[l5][ind]||0; } }
+  for (const l5 in dayFttrb) { if(!l5Map[l5]) l5Map[l5]={}; l5Map[l5]['FTTR-B']=(l5Map[l5]['FTTR-B']||0)+(dayFttrb[l5]||0); }
+  for (const l5 in dayFttrbZq) { if(!l5Map[l5]) l5Map[l5]={}; l5Map[l5]['FTTR-B']=(l5Map[l5]['FTTR-B']||0)+(dayFttrbZq[l5]||0); }
+  return Object.entries(l5Map).map(([name,cells])=>({ name, cells: Object.fromEntries(CH_IND.map(ind=>[ind,{val:cells[ind]||0}])) }));
+}
+// 月累计四级/五级
+function getMonthlyLevel4(dateInt, district) {
+  const month=Math.floor(dateInt/100); const ms=month*100+1;
+  const l4Map={}; const inds=['宽带','融合','融合副卡','FTTR-H','智屏','高清'];
+  for (const dstr in DATA.newdev) { const d=parseInt(dstr); if(d<ms||d>dateInt) continue; const dd=DATA.newdev[dstr]?.[district]||{}; for (const l4 in dd) { if(!l4Map[l4]) { l4Map[l4]={}; inds.forEach(i=>l4Map[l4][i]=0); l4Map[l4]['FTTR-B']=0; } for (const l5 in dd[l4]) for (const ind of inds) l4Map[l4][ind]+=dd[l4][l5][ind]||0; } }
+  for (const dstr in DATA.fttrb) { const d=parseInt(dstr); if(d<ms||d>dateInt) continue; const ff=DATA.fttrb[dstr]?.[district]||{}; for (const l4 in ff) { if(!l4Map[l4]) { l4Map[l4]={}; inds.forEach(i=>l4Map[l4][i]=0); l4Map[l4]['FTTR-B']=0; } for (const l5 in ff[l4]) l4Map[l4]['FTTR-B']+=ff[l4][l5]||0; } }
+  for (const dstr in DATA.fttrbZq) { const d=parseInt(dstr); if(d<ms||d>dateInt) continue; const fz=DATA.fttrbZq[dstr]?.[district]||{}; for (const l4 in fz) { if(!l4Map[l4]) { l4Map[l4]={}; inds.forEach(i=>l4Map[l4][i]=0); l4Map[l4]['FTTR-B']=0; } for (const l5 in fz[l4]) l4Map[l4]['FTTR-B']+=fz[l4][l5]||0; } }
+  return Object.entries(l4Map).map(([name,cells])=>({ name, cells: Object.fromEntries(CH_IND.map(ind=>[ind,{val:cells[ind]||0}])) }));
+}
+function getMonthlyLevel5(dateInt, district, level4) {
+  const month=Math.floor(dateInt/100); const ms=month*100+1;
+  const l5Map={}; const inds=['宽带','融合','融合副卡','FTTR-H','智屏','高清'];
+  for (const dstr in DATA.newdev) { const d=parseInt(dstr); if(d<ms||d>dateInt) continue; const dd=DATA.newdev[dstr]?.[district]?.[level4]||{}; for (const l5 in dd) { if(!l5Map[l5]) { l5Map[l5]={}; inds.forEach(i=>l5Map[l5][i]=0); l5Map[l5]['FTTR-B']=0; } for (const ind of inds) l5Map[l5][ind]+=dd[l5][ind]||0; } }
+  for (const dstr in DATA.fttrb) { const d=parseInt(dstr); if(d<ms||d>dateInt) continue; const ff=DATA.fttrb[dstr]?.[district]?.[level4]||{}; for (const l5 in ff) { if(!l5Map[l5]) { l5Map[l5]={}; inds.forEach(i=>l5Map[l5][i]=0); l5Map[l5]['FTTR-B']=0; } l5Map[l5]['FTTR-B']+=ff[l5]||0; } }
+  for (const dstr in DATA.fttrbZq) { const d=parseInt(dstr); if(d<ms||d>dateInt) continue; const fz=DATA.fttrbZq[dstr]?.[district]?.[level4]||{}; for (const l5 in fz) { if(!l5Map[l5]) { l5Map[l5]={}; inds.forEach(i=>l5Map[l5][i]=0); l5Map[l5]['FTTR-B']=0; } l5Map[l5]['FTTR-B']+=fz[l5]||0; } }
+  return Object.entries(l5Map).map(([name,cells])=>({ name, cells: Object.fromEntries(CH_IND.map(ind=>[ind,{val:cells[ind]||0}])) }));
+}
+
+// 同比四级下钻数据(渠道侧+政企侧共用)
+function getYoYLevel4(dateInt, district, useZqFttrb) {
+  const month = Math.floor(dateInt/100); const ms=month*100+1;
+  let lastMonth = month%100===1 ? month-100+12 : month-1;
+  const ls=lastMonth*100+1, le=lastMonth*100+(dateInt%100);
+  const inds=['宽带','融合','融合副卡','FTTR-H','智屏','高清'];
+  function aggL4(start, end) {
+    const m = {};
+    for (const dstr in DATA.newdev) { const d=parseInt(dstr); if(d<start||d>end) continue; const dd=DATA.newdev[dstr]?.[district]||{}; for (const l4 in dd) { if(!useZqFttrb&&l4.includes('政企')) continue; if(!m[l4]) { m[l4]={}; inds.forEach(i=>m[l4][i]=0); m[l4]['FTTR-B']=0; } for (const l5 in dd[l4]) for (const ind of inds) m[l4][ind]+=dd[l4][l5][ind]||0; } }
+    for (const dstr in DATA.fttrb) { const d=parseInt(dstr); if(d<start||d>end) continue; const ff=DATA.fttrb[dstr]?.[district]||{}; for (const l4 in ff) { if(!useZqFttrb&&l4.includes('政企')) continue; if(!m[l4]) { m[l4]={}; inds.forEach(i=>m[l4][i]=0); m[l4]['FTTR-B']=0; } for (const l5 in ff[l4]) m[l4]['FTTR-B']+=ff[l4][l5]||0; } }
+    if (useZqFttrb) { for (const dstr in DATA.fttrbZq) { const d=parseInt(dstr); if(d<start||d>end) continue; const fz=DATA.fttrbZq[dstr]?.[district]||{}; for (const l4 in fz) { if(!m[l4]) { m[l4]={}; inds.forEach(i=>m[l4][i]=0); m[l4]['FTTR-B']=0; } for (const l5 in fz[l4]) m[l4]['FTTR-B']+=fz[l4][l5]||0; } } }
+    return m;
+  }
+  return { tm: aggL4(ms, dateInt), lm: aggL4(ls, le) };
+}
+
+// 同比五级下钻数据(渠道侧)
+function getYoYLevel5Channel(dateInt, district, level4) {
+  const month = Math.floor(dateInt/100); const ms=month*100+1;
+  let lastMonth = month%100===1 ? month-100+12 : month-1;
+  const ls=lastMonth*100+1, le=lastMonth*100+(dateInt%100);
+  const inds=['宽带','融合','融合副卡','FTTR-H','智屏','高清'];
+  function aggL5(start, end) {
+    const m = {};
+    for (const dstr in DATA.newdev) { const d=parseInt(dstr); if(d<start||d>end) continue; const dd=DATA.newdev[dstr]?.[district]?.[level4]||{}; for (const l5 in dd) { if(!m[l5]) { m[l5]={}; inds.forEach(i=>m[l5][i]=0); m[l5]['FTTR-B']=0; } for (const ind of inds) m[l5][ind]+=dd[l5][ind]||0; } }
+    for (const dstr in DATA.fttrb) { const d=parseInt(dstr); if(d<start||d>end) continue; const ff=DATA.fttrb[dstr]?.[district]?.[level4]||{}; for (const l5 in ff) { if(!m[l5]) { m[l5]={}; inds.forEach(i=>m[l5][i]=0); m[l5]['FTTR-B']=0; } m[l5]['FTTR-B']+=ff[l5]||0; } }
+    return m;
+  }
+  return { tm: aggL5(ms, dateInt), lm: aggL5(ls, le) };
+}
+
+// 同比五级下钻数据(政企侧)
+function getYoYLevel5ZQ(dateInt, district, level4) {
+  const month = Math.floor(dateInt/100); const ms=month*100+1;
+  let lastMonth = month%100===1 ? month-100+12 : month-1;
+  const ls=lastMonth*100+1, le=lastMonth*100+(dateInt%100);
+  function aggL5(start, end) {
+    const m = {};
+    for (const dstr in DATA.fttrbZq) { const d=parseInt(dstr); if(d<start||d>end) continue; const fz=DATA.fttrbZq[dstr]?.[district]?.[level4]||{}; for (const l5 in fz) { if(!m[l5]) { m[l5]={'FTTR-B':0,'移动新增':0,'专线':0,'电路':0}; } m[l5]['FTTR-B']+=fz[l5]||0; } }
+    for (const dstr in DATA.zq) { const d=parseInt(dstr); if(d<start||d>end) continue; const zd=DATA.zq[dstr]?.[district]?.[level4]||{}; for (const l5 in zd) { if(!m[l5]) { m[l5]={'FTTR-B':0,'移动新增':0,'专线':0,'电路':0}; } m[l5]['移动新增']+=zd[l5]['移动新增']||0; m[l5]['专线']+=zd[l5]['专线']||0; m[l5]['电路']+=zd[l5]['电路']||0; } }
+    for (const l5 in m) m[l5]['双线新增']=(m[l5]['专线']||0)+(m[l5]['电路']||0);
+    return m;
+  }
+  return { tm: aggL5(ms, dateInt), lm: aggL5(ls, le) };
+}
+
+/* ================================================================
+ *  模态框下钻
+ * ================================================================ */
+let _drSrc = 'day';
+function openModal() { document.getElementById('ml').classList.add('show'); }
+function cM() { document.getElementById('ml').classList.remove('show'); }
+
+// 生成完成数表格（日报/月报四级/五级共用）
+function buildCompletionDrillTable(title, data, cn, drillLevel) {
+  let html = '<div class="mbox-head"><h3>'+title+'</h3></div>';
+  html += '<div class="mbox-body"><div style="overflow:auto;max-height:60vh"><table class="drt"><thead><tr><th style="text-align:left">名称</th>';
+  CH_IND.forEach(ind => html += '<th>'+ind+'</th>');
+  html += '</tr></thead><tbody>';
+  const sums = {}; CH_IND.forEach(i=>sums[i]=0);
+  data.forEach(d => CH_IND.forEach(i=>sums[i]+=d.cells[i].val));
+  data.forEach(d => {
+    const tdCls = drillLevel === 5 ? 'drt-fn' : 'cl';
+    const drillAttr = drillLevel === 5 ? '' : ' data-dr="2" data-cn="'+cn+'" data-fn="'+d.name+'"';
+    html += '<tr><td class="'+tdCls+'"'+drillAttr+'>'+d.name+'</td>';
+    CH_IND.forEach((ind,i) => html += '<td class="'+DB_CLS[i]+'">'+d.cells[ind].val+'</td>');
+    html += '</tr>';
+  });
+  html += '<tr class="drt-sum"><td>合计</td>';
+  CH_IND.forEach((ind,i) => html += '<td class="'+DB_CLS[i]+'">'+sums[ind]+'</td>');
+  html += '</tr></tbody></table></div></div>';
+  html += '<div class="mbox-foot">';
+  if (drillLevel === 5) {
+    const backFn = _drSrc === 'month' ? 'drill1m' : 'drill1';
+    html += '<span class="bk" onclick="'+backFn+'(\''+cn+'\')">← 返回四级</span> ';
+  }
+  html += '<button class="bcbtn" onclick="cM()">关闭</button></div>';
+  return html;
+}
+
+// 同比下钻表格（双层表头：指标+本月/上月/同比），支持drillInfo={cn,src,level}
+function buildYoYDrillTable(title, tm, lm, indicators, hbCls, hbsCls, dbCls, drillInfo) {
+  const isL4 = drillInfo && drillInfo.level === 4;
+  const isL5 = drillInfo && drillInfo.level === 5;
+  let html = '<div class="mbox-head"><h3>'+title+'</h3></div>';
+  html += '<div class="mbox-body"><div style="overflow:auto;max-height:60vh"><table class="drt"><thead>';
+  html += '<tr class="rh1"><th style="text-align:left;background:var(--bl);color:var(--bd);position:sticky;left:0;z-index:15">名称</th>';
+  indicators.forEach((ind,i) => html += '<th class="'+hbCls[i]+'" colspan="3">'+ind+'</th>');
+  html += '</tr><tr class="rh2"><th style="text-align:left;background:var(--bl);color:var(--bd);position:sticky;left:0;z-index:15">名称</th>';
+  indicators.forEach((ind,i) => html += '<th class="'+hbsCls[i]+'">本月</th><th class="'+hbsCls[i]+'">上月</th><th class="'+hbsCls[i]+'">同比</th>');
+  html += '</tr></thead><tbody>';
+  const sums = {}; indicators.forEach(ind => sums[ind]={tm:0,lm:0});
+  for (const name in tm) {
+    const tdCls = isL5 ? 'drt-fn' : 'cl';
+    const drillAttr = isL5 ? '' : ' data-dr="2" data-cn="'+(drillInfo?drillInfo.cn:'')+'" data-fn="'+name+'"';
+    html += '<tr><td class="'+tdCls+'"'+drillAttr+' style="text-align:left;font-weight:700;color:var(--b)">'+name+'</td>';
+    indicators.forEach((ind,i) => {
+      const tv=tm[name][ind]||0; const lv=(lm[name]&&lm[name][ind])||0;
+      sums[ind].tm+=tv; sums[ind].lm+=lv;
+      const yoy=tv-lv; const cls=yoy>0?'positive':yoy<0?'negative':'neutral'; const sign=yoy>0?'+':'';
+      html += '<td class="'+dbCls[i]+'">'+tv+'</td><td class="'+dbCls[i]+'">'+lv+'</td><td class="'+dbCls[i]+' trend-cell '+cls+'">'+sign+yoy+'</td>';
+    });
+    html += '</tr>';
+  }
+  // 合计行
+  html += '<tr class="drt-sum"><td style="text-align:left;font-weight:700">合计</td>';
+  indicators.forEach((ind,i) => {
+    const tv=sums[ind].tm; const lv=sums[ind].lm; const yoy=tv-lv;
+    const cls=yoy>0?'positive':yoy<0?'negative':'neutral'; const sign=yoy>0?'+':'';
+    html += '<td class="'+dbCls[i]+'">'+tv+'</td><td class="'+dbCls[i]+'">'+lv+'</td><td class="'+dbCls[i]+' trend-cell '+cls+'">'+sign+yoy+'</td>';
+  });
+  html += '</tr></tbody></table></div></div>';
+  html += '<div class="mbox-foot">';
+  if (isL5 && drillInfo) {
+    const backFn = drillInfo.src === 'yoy_zq' ? 'drill1yoyZq' : 'drill1yoy';
+    html += '<span class="bk" onclick="'+backFn+'(\''+drillInfo.cn+'\')">← 返回四级</span> ';
+  }
+  html += '<button class="bcbtn" onclick="cM()">关闭</button></div>';
+  return html;
+}
+
+// 日报下钻
+function drill1(cn) { _drSrc='day'; document.getElementById('mbox').innerHTML = buildCompletionDrillTable(cn+' · 四级承包体（日增）', getDailyLevel4(dailyDate,cn), cn, 2); openModal(); }
+function drill2(cn, fn) { document.getElementById('mbox').innerHTML = buildCompletionDrillTable(cn+' / '+fn+' · 五级明细（日增）', getDailyLevel5(dailyDate,cn,fn), cn, 5); openModal(); }
+// 月报下钻
+function drill1m(cn) { _drSrc='month'; document.getElementById('mbox').innerHTML = buildCompletionDrillTable(cn+' · 四级承包体（月累计）', getMonthlyLevel4(monthlyDate,cn), cn, 2); openModal(); }
+function drill2m(cn, fn) { document.getElementById('mbox').innerHTML = buildCompletionDrillTable(cn+' / '+fn+' · 五级明细（月累计）', getMonthlyLevel5(monthlyDate,cn,fn), cn, 5); openModal(); }
+// 同比渠道侧四级下钻
+function drill1yoy(cn) {
+  const {tm,lm} = getYoYLevel4(monthlyDate, cn, false);
+  document.getElementById('mbox').innerHTML = buildYoYDrillTable(cn+' · 四级承包体（同比变化-渠道侧）', tm, lm, CH_IND, HB_CLS, HBS_CLS, DB_CLS, {cn,src:'yoy',level:4});
+  openModal();
+}
+// 同比渠道侧五级下钻
+function drill2yoy(cn, fn) {
+  const {tm,lm} = getYoYLevel5Channel(monthlyDate, cn, fn);
+  document.getElementById('mbox').innerHTML = buildYoYDrillTable(cn+' / '+fn+' · 五级明细（同比变化-渠道侧）', tm, lm, CH_IND, HB_CLS, HBS_CLS, DB_CLS, {cn,src:'yoy',level:5});
+  openModal();
+}
+// 同比政企侧四级下钻
+function drill1yoyZq(cn) {
+  const month = Math.floor(monthlyDate/100); const ms=month*100+1;
+  let lastMonth = month%100===1 ? month-100+12 : month-1;
+  const ls=lastMonth*100+1, le=lastMonth*100+(monthlyDate%100);
+  function aggZqL4(start, end) {
+    const m = {};
+    for (const dstr in DATA.fttrbZq) { const d=parseInt(dstr); if(d<start||d>end) continue; const fz=DATA.fttrbZq[dstr]?.[cn]||{}; for (const l4 in fz) { if(!m[l4]) { m[l4]={'FTTR-B':0,'移动新增':0,'专线':0,'电路':0}; } for (const l5 in fz[l4]) m[l4]['FTTR-B']+=fz[l4][l5]||0; } }
+    for (const dstr in DATA.zq) { const d=parseInt(dstr); if(d<start||d>end) continue; const zd=DATA.zq[dstr]?.[cn]||{}; for (const l4 in zd) { if(!m[l4]) { m[l4]={'FTTR-B':0,'移动新增':0,'专线':0,'电路':0}; } for (const l5 in zd[l4]) { m[l4]['移动新增']+=zd[l4][l5]['移动新增']||0; m[l4]['专线']+=zd[l4][l5]['专线']||0; m[l4]['电路']+=zd[l4][l5]['电路']||0; } } }
+    for (const l4 in m) m[l4]['双线新增'] = (m[l4]['专线']||0)+(m[l4]['电路']||0);
+    return m;
+  }
+  const tm = aggZqL4(ms, monthlyDate); const lm = aggZqL4(ls, le);
+  const zqHB=['hb5','hb2','hb3'], zqHBS=['hb5s','hb2s','hb3s'], zqDB=['db5','db2','db3'];
+  document.getElementById('mbox').innerHTML = buildYoYDrillTable(cn+' · 四级承包体（同比变化-政企侧）', tm, lm, ZQ_IND, zqHB, zqHBS, zqDB, {cn,src:'yoy_zq',level:4});
+  openModal();
+}
+// 同比政企侧五级下钻
+function drill2yoyZq(cn, fn) {
+  const {tm,lm} = getYoYLevel5ZQ(monthlyDate, cn, fn);
+  const zqHB=['hb5','hb2','hb3'], zqHBS=['hb5s','hb2s','hb3s'], zqDB=['db5','db2','db3'];
+  document.getElementById('mbox').innerHTML = buildYoYDrillTable(cn+' / '+fn+' · 五级明细（同比变化-政企侧）', tm, lm, ZQ_IND, zqHB, zqHBS, zqDB, {cn,src:'yoy_zq',level:5});
+  openModal();
+}
+
+// 点击事件委托
+document.addEventListener('click', function(e) {
+  var firstDr = e.target.closest('.cl[data-dr="1"][data-src]');
+  if (firstDr) _drSrc = firstDr.getAttribute('data-src') || 'day';
+  var t = e.target.closest('[data-dr]');
+  if (!t) return;
+  var dr = t.getAttribute('data-dr'), cn = t.getAttribute('data-cn'), fn = t.getAttribute('data-fn');
+  if (dr==='1' && _drSrc==='day') drill1(cn);
+  else if (dr==='2' && _drSrc==='day') drill2(cn, fn);
+  else if (dr==='1' && _drSrc==='month') drill1m(cn);
+  else if (dr==='2' && _drSrc==='month') drill2m(cn, fn);
+  else if (dr==='1' && _drSrc==='yoy') drill1yoy(cn);
+  else if (dr==='2' && _drSrc==='yoy') drill2yoy(cn, fn);
+  else if (dr==='1' && _drSrc==='yoy_zq') drill1yoyZq(cn);
+  else if (dr==='2' && _drSrc==='yoy_zq') drill2yoyZq(cn, fn);
+});
+document.getElementById('ml').addEventListener('click', function(e) { if (e.target === this) cM(); });
+
+/* ================================================================
+ *  表格渲染 — 双层表头+指标带色+per-indicator排名
+ * ================================================================ */
+function renderMainTable(tableWrap, data, mode, drillSrc) {
+  let html = '<table class="tw" style="width:100%;border-collapse:separate;border-spacing:0;font-size:12px;border-radius:6px;overflow:hidden">';
+
+  /* per-indicator排名：0%参与排名，"——"不参与 */
+  function calcIndRank(dataArr, indicators, valKey, excludeRows) {
+    const rank = {};
+    indicators.forEach(ind => {
+      const valid = dataArr.filter(r => {
+        if (excludeRows && excludeRows.includes(r.district)) return false;
+        const c = r.cells[ind];
+        if (!c) return false;
+        if (valKey === 'rate' && c.target === 0) return false; // "——"不参与
+        return true;
+      });
+      const sorted = [...valid].sort((a,b) => b.cells[ind][valKey] - a.cells[ind][valKey]);
+      const top3 = new Set(), bottom3 = new Set();
+      if (sorted.length >= 6) {
+        const topCut = sorted[2].cells[ind][valKey];
+        sorted.forEach(r => { if (r.cells[ind][valKey] >= topCut) top3.add(r.district); });
+        const botCut = sorted[sorted.length - 3].cells[ind][valKey];
+        sorted.forEach(r => { if (r.cells[ind][valKey] <= botCut) bottom3.add(r.district); });
+      } else if (sorted.length >= 3) {
+        const topCut = sorted[0].cells[ind][valKey];
+        sorted.forEach(r => { if (r.cells[ind][valKey] >= topCut) top3.add(r.district); });
+        const botCut = sorted[sorted.length - 1].cells[ind][valKey];
+        if (botCut < topCut) sorted.forEach(r => { if (r.cells[ind][valKey] <= botCut) bottom3.add(r.district); });
+      }
+      rank[ind] = { top3, bottom3 };
+    });
+    return rank;
+  }
+
+  const excludeForRanking = mode === 'rate' ? ['全市'] : [];
+  const excludeForDrill = ['政企','全市','电渠'];
+
+  if (mode === 'rate') {
+    html += '<thead><tr class="rh1"><th style="text-align:left;background:var(--bl);color:var(--bd);position:sticky;left:0;z-index:15">经营单位</th>';
+    CH_IND.forEach((ind,i) => html += '<th class="'+HB_CLS[i]+'" colspan="2">'+ind+'</th>');
+    html += '</tr><tr class="rh2"><th style="text-align:left;background:var(--bl);color:var(--bd);position:sticky;left:0;z-index:15">经营单位</th>';
+    CH_IND.forEach((ind,i) => html += '<th class="'+HBS_CLS[i]+'">完成数</th><th class="'+HBS_CLS[i]+'">完成率</th>');
+    html += '</tr></thead><tbody>';
+
+    const perIndRank = calcIndRank(data, CH_IND, 'rate', excludeForRanking);
+
+    data.forEach(row => {
+      const isExcluded = excludeForDrill.includes(row.district);
+      const tdCls = isExcluded ? 'no-drill' : 'cl';
+      const drillAttr = isExcluded ? '' : ' data-dr="1" data-cn="'+row.district+'" data-src="'+drillSrc+'"';
+      html += '<tr><td class="'+tdCls+'"'+drillAttr+'>'+row.district+'</td>';
+      CH_IND.forEach((ind,i) => {
+        const c = row.cells[ind];
+        let rateHtml;
+        if (c.target === 0) {
+          rateHtml = '<span class="rate-cell dash">——</span>';
+        } else if (c.val === 0) {
+          rateHtml = '<span class="rate-cell zero">0%</span>';
+        } else {
+          const isTop = perIndRank[ind].top3.has(row.district);
+          const isBot = perIndRank[ind].bottom3.has(row.district);
+          const rCls = isTop ? 'high' : isBot ? 'low' : '';
+          rateHtml = '<span class="rate-cell '+rCls+'">'+c.rate+'%</span>';
+        }
+        html += '<td class="'+DB_CLS[i]+'">'+c.val+'</td><td class="'+DB_CLS[i]+'">'+rateHtml+'</td>';
+      });
+      html += '</tr>';
+    });
+  } else if (mode === 'yoy') {
+    html += '<thead><tr class="rh1"><th style="text-align:left;background:var(--bl);color:var(--bd);position:sticky;left:0;z-index:15">经营单位</th>';
+    CH_IND.forEach((ind,i) => html += '<th class="'+HB_CLS[i]+'" colspan="3">'+ind+'</th>');
+    html += '</tr><tr class="rh2"><th style="text-align:left;background:var(--bl);color:var(--bd);position:sticky;left:0;z-index:15">经营单位</th>';
+    CH_IND.forEach((ind,i) => html += '<th class="'+HBS_CLS[i]+'">本月</th><th class="'+HBS_CLS[i]+'">上月</th><th class="'+HBS_CLS[i]+'">同比</th>');
+    html += '</tr></thead><tbody>';
+
+    const perIndRank = calcIndRank(data, CH_IND, 'yoy', ['政企','全市']);
+    data.forEach(row => {
+      const isExcluded = excludeForDrill.includes(row.district);
+      const isZq = row.district === '政企';
+      const tdCls = isExcluded ? 'no-drill' : 'cl';
+      const src = isZq ? 'yoy_zq' : 'yoy';
+      const drillAttr = isExcluded ? '' : ' data-dr="1" data-cn="'+row.district+'" data-src="'+src+'"';
+      html += '<tr><td class="'+tdCls+'"'+drillAttr+'>'+row.district+'</td>';
+      CH_IND.forEach((ind,i) => {
+        const c = row.cells[ind];
+        const yoyCls = c.yoy > 0 ? 'positive' : c.yoy < 0 ? 'negative' : 'neutral';
+        const sign = c.yoy > 0 ? '+' : '';
+        const isTop = perIndRank[ind].top3.has(row.district);
+        const isBot = perIndRank[ind].bottom3.has(row.district);
+        const rCls = isTop ? 'high' : isBot ? 'low' : '';
+        html += '<td class="'+DB_CLS[i]+'">'+c.thisMonth+'</td><td class="'+DB_CLS[i]+'">'+c.lastMonth+'</td><td class="'+DB_CLS[i]+' trend-cell '+yoyCls+' '+rCls+'">'+sign+c.yoy+'</td>';
+      });
+      html += '</tr>';
+    });
+  } else if (mode === 'yoy_zq') {
+    const zqHB=['hb5','hb2','hb3'], zqHBS=['hb5s','hb2s','hb3s'], zqDB=['db5','db2','db3'];
+    html += '<thead><tr class="rh1"><th style="text-align:left;background:var(--bl);color:var(--bd);position:sticky;left:0;z-index:15">经营单位</th>';
+    ZQ_IND.forEach((ind,i) => html += '<th class="'+zqHB[i]+'" colspan="3">'+ind+'</th>');
+    html += '</tr><tr class="rh2"><th style="text-align:left;background:var(--bl);color:var(--bd);position:sticky;left:0;z-index:15">经营单位</th>';
+    ZQ_IND.forEach((ind,i) => html += '<th class="'+zqHBS[i]+'">本月</th><th class="'+zqHBS[i]+'">上月</th><th class="'+zqHBS[i]+'">同比</th>');
+    html += '</tr></thead><tbody>';
+
+    const perIndRank = calcIndRank(data, ZQ_IND, 'yoy', ['全市']);
+    data.forEach(row => {
+      const isExcluded = row.district === '全市';
+      const tdCls = isExcluded ? 'no-drill' : 'cl';
+      const drillAttr = isExcluded ? '' : ' data-dr="1" data-cn="'+row.district+'" data-src="yoy_zq"';
+      html += '<tr><td class="'+tdCls+'"'+drillAttr+'>'+row.district+'</td>';
+      ZQ_IND.forEach((ind,i) => {
+        const c = row.cells[ind];
+        const yoyCls = c.yoy > 0 ? 'positive' : c.yoy < 0 ? 'negative' : 'neutral';
+        const sign = c.yoy > 0 ? '+' : '';
+        const isTop = perIndRank[ind].top3.has(row.district);
+        const isBot = perIndRank[ind].bottom3.has(row.district);
+        const rCls = isTop ? 'high' : isBot ? 'low' : '';
+        html += '<td class="'+zqDB[i]+'">'+c.thisMonth+'</td><td class="'+zqDB[i]+'">'+c.lastMonth+'</td><td class="'+zqDB[i]+' trend-cell '+yoyCls+' '+rCls+'">'+sign+c.yoy+'</td>';
+      });
+      html += '</tr>';
+    });
+  }
+  html += '</tbody></table>';
+  tableWrap.innerHTML = html;
+}
+
+/* ================================================================
+ *  导航与渲染
+ * ================================================================ */
+const DATA_DATES = DATA.dates;
+const DEFAULT_DATE = DATA.dateRange.end;
+
+const moduleRegistry = { _m:[], register(m){this._m.push(m)}, getAll(){return this._m} };
+moduleRegistry.register({id:'overview',navLabel:'概览',order:0});
+moduleRegistry.register({id:'daily',navLabel:'日报',order:1});
+moduleRegistry.register({id:'monthly',navLabel:'月报',order:2});
+moduleRegistry.register({id:'more',navLabel:'更多',order:99});
+
+let currentPage = 'overview';
+
+function renderNav(){
+  const c = document.getElementById('navTabs');
+  c.innerHTML = moduleRegistry.getAll().sort((a,b)=>a.order-b.order).map(m=>
+    `<button class="nav-tab${m.id===currentPage?' active':''}" data-page="${m.id}">${m.navLabel}</button>`
+  ).join('');
+  c.querySelectorAll('.nav-tab').forEach(b=>b.addEventListener('click',()=>switchPage(b.dataset.page)));
+}
+function switchPage(id){
+  currentPage = id;
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id)?.classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.toggle('active',t.dataset.page===id));
+}
+
+// 概览KPI（7日折线图）
+function renderKPI(){
+  const dateInt = DEFAULT_DATE;
+  const daily = getDailyData(dateInt);
+  const monthly = getMonthlyData(dateInt);
+  const sumD={}; const sumM={}; CH_IND.forEach(i=>{sumD[i]=0;sumM[i]=0;});
+  daily.forEach(r=>CH_IND.forEach(i=>sumD[i]+=r.cells[i].val));
+  monthly.forEach(r=>CH_IND.forEach(i=>sumM[i]+=r.cells[i].val));
+
+  // 7日趋势数据
+  const last7 = DATA_DATES.slice(-7);
+  const trend = {}; CH_IND.forEach(i=>trend[i]=[]);
+  last7.forEach(d => {
+    const dd = getDailyData(d);
+    CH_IND.forEach(ind => { let s=0; dd.forEach(r=>s+=r.cells[ind].val); trend[ind].push(s); });
+  });
+
+  let dt=0; for(const dist in DATA.target) dt+=(DATA.target[dist]['宽带']||0);
+  const days = dateInt - Math.floor(dateInt/100)*100;
+  const mt = dt*days;
+  const dRate = dt>0 ? +(sumD['宽带']/dt*100).toFixed(1) : 0;
+
+  const grid = document.getElementById('kpiGrid');
+  grid.innerHTML = CH_IND.map((ind,i) => {
+    const color = IND_COLORS[i];
+    const dv = sumD[ind]; const mv = sumM[ind];
+    let dit=0; for(const dist in DATA.target) dit+=(DATA.target[dist][ind]||0);
+    const mit = dit*days;
+    const dR = dit>0 ? +(dv/dit*100).toFixed(1) : 0;
+    const mR = mit>0 ? +(mv/mit*100).toFixed(1) : 0;
+    const bp = mit>0 ? Math.min(mv/mit*100, 100) : 0;
+    return `<div class="kc"><div class="kc-l">
+      <div class="kc-title">${ind}</div>
+      <div class="kc-num" style="color:${color}">${dv}<span class="u"> 戶</span></div>
+      <div class="kc-rate">日完成率 <b style="color:${color}">${dR}%</b></div>
+      <div class="kc-target">月新增 ${mv} 戶 <span style="color:var(--text-tertiary)">|</span> 月完成率 <b style="color:${color}">${mR}%</b></div>
+      <div class="kc-bar"><div class="kc-bar-inner" style="width:${bp}%;background:${color}"></div></div>
+    </div></div>`;
+  }).join('');
+}
+
+function renderTrendSection(){
+  const last7 = DATA_DATES.slice(-7);
+  const dateLabels = last7.map(d => { const s=String(d); return parseInt(s.slice(6,8))+'日'; });
+  const trend = {}; CH_IND.forEach(i=>trend[i]=[]);
+  last7.forEach(d => {
+    const dd = getDailyData(d);
+    CH_IND.forEach(ind => { let s=0; dd.forEach(r=>s+=r.cells[ind].val); trend[ind].push(s); });
+  });
+  const rangeStr = formatMD(last7[0])+' - '+formatMD(last7[last7.length-1]);
+  const el = document.getElementById('trendSection');
+  el.innerHTML = '<div class="trend-section-title">近7日发展趋势</div><div class="trend-grid">' +
+    CH_IND.map((ind,i) => {
+      const color = IND_COLORS[i];
+      const vals = trend[ind];
+      const diff = vals[vals.length-1] - vals[0];
+      const diffStr = diff>0?'+'+diff:''+diff;
+      const diffColor = diff>0?'var(--accent-red)':diff<0?'var(--accent-green)':'var(--text-tertiary)';
+      return `<div class="trend-card">
+        <div class="trend-card-header">
+          <span class="trend-card-name" style="color:${color}">${ind}</span>
+          <span class="trend-card-range">${rangeStr}</span>
+        </div>
+        <div class="trend-card-chart">${sparklineSvg(vals, color, 280, 90, dateLabels)}</div>
+        <div style="font-size:11px;margin-top:2px;text-align:right;color:${diffColor};font-weight:600">变化 ${diffStr}</div>
+      </div>`;
+    }).join('') + '</div>';
+}
+
+function renderQuick(){
+  document.getElementById('quickGrid').innerHTML = [
+    {name:'7.20 日报',sub:'今日营销通报',icon:'&#x1F4C5;',cls:'blue',page:'daily'},
+    {name:'7月月报',sub:'本月网格片区',icon:'&#x1F4C3;',cls:'cyan',page:'monthly'},
+    {name:'更多模块',sub:'扩展功能入口',icon:'&#x2795;',cls:'gold',page:'more'}
+  ].map(q=>`<div class="quick-card" onclick="switchPage('${q.page}')">
+    <div class="icon-wrap ${q.cls}">${q.icon}</div>
+    <div><div class="label">${q.name}</div><div class="sub">${q.sub}</div></div>
+  </div>`).join('');
+}
+
+/* ---- 日报 ---- */
+let dailyDate = DEFAULT_DATE;
+function renderDailyDatePicker(){
+  const wrap = document.getElementById('dailyDatePicker');
+  wrap.innerHTML = `
+    <label>选择日期</label>
+    <input type="date" class="date-input" id="dailyDateInput" value="${intToDateStr(dailyDate)}" min="${intToDateStr(DATA.dateRange.start)}" max="${intToDateStr(DATA.dateRange.end)}">
+    <div class="date-quick-btns">
+      <button class="date-quick-btn" data-offset="-1">前一天</button>
+      <button class="date-quick-btn" data-offset="1">后一天</button>
+    </div>`;
+  document.getElementById('dailyDateInput').addEventListener('change', e => { dailyDate = dateStrToInt(e.target.value); renderDailyReport(); });
+  wrap.querySelectorAll('.date-quick-btn').forEach(btn => { btn.addEventListener('click', () => { const off = parseInt(btn.dataset.offset); const idx = DATA_DATES.indexOf(dailyDate); const ni = idx+off; if(ni>=0&&ni<DATA_DATES.length) { dailyDate=DATA_DATES[ni]; renderDailyReport(); } }); });
+}
+
+function renderDailyReport(){
+  const m = Math.floor(dailyDate/100)%100, d = dailyDate%100;
+  document.getElementById('dailyTitle').textContent = '【'+m+'月'+d+'日营销通报】';
+  const input = document.getElementById('dailyDateInput');
+  if (input) input.value = intToDateStr(dailyDate);
+  const data = getDailyData(dailyDate);
+  renderMainTable(document.getElementById('dailyTableWrap'), data, 'rate', 'day');
+  renderBulletin(data, dailyDate, '日增');
+}
+
+// 通报摘要（日报/月报共用）
+function renderBulletin(data, dateInt, label, elId) {
+  const targetEl = document.getElementById(elId || 'dailyBulletin');
+  const cityRow = data.find(r => r.district === '全市');
+  const sum = {}; CH_IND.forEach(ind => sum[ind] = cityRow ? cityRow.cells[ind].val : 0);
+  const ranked = [...data].filter(r => r.district!=='政企' && r.district!=='全市').sort((a,b) => b.cells['宽带'].rate - a.cells['宽带'].rate);
+  const top3 = ranked.slice(0,3).map(r=>r.district);
+  const bottom3 = ranked.slice(-3).map(r=>r.district);
+  const m = Math.floor(dateInt/100)%100, d = dateInt%100;
+  let indStr = CH_IND.map(ind => {
+    const v = sum[ind];
+    if (ind==='宽带'||ind==='融合'||ind==='FTTR-H') return ind+label+'<span class="highlight">'+v+'</span>';
+    return ind+label+v;
+  }).join('、');
+  targetEl.innerHTML = `
+    <div class="bulletin-title">通报摘要</div>
+    <div class="bulletin-body">
+      <p>1、公司整体：${indStr}。</p>
+      <p>2、区县单位：</p>
+      <p>${top3.join('、')} 宽带及融合完成率前三</p>
+      <p>${bottom3.join('、')} 宽带及融合完成率后三</p>
+    </div>`;
+}
+
+/* ---- 月报 ---- */
+let monthlyDate = DEFAULT_DATE;
+let monthlySubTab = 'completion';
+function renderMonthlyDatePicker(){
+  const wrap = document.getElementById('monthlyDatePicker');
+  wrap.innerHTML = `
+    <label>截止日期</label>
+    <input type="date" class="date-input" id="monthlyDateInput" value="${intToDateStr(monthlyDate)}" min="${intToDateStr(DATA.dateRange.start)}" max="${intToDateStr(DATA.dateRange.end)}">
+    <span class="date-range-hint">（显示当月1日至所选日期累计）</span>`;
+  document.getElementById('monthlyDateInput').addEventListener('change', e => { monthlyDate = dateStrToInt(e.target.value); renderMonthlyReport(); });
+}
+
+function initMonthlySubTabs(){
+  document.querySelectorAll('#monthlySubTabs .sub-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#monthlySubTabs .sub-tab').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      monthlySubTab = btn.dataset.subtab;
+      renderMonthlyReport();
+    });
+  });
+}
+
+function renderMonthlyReport(){
+  const m = Math.floor(monthlyDate/100)%100, d = monthlyDate%100;
+  const bulletinEl = document.getElementById('monthlyBulletin');
+  if (monthlySubTab === 'completion') {
+    document.getElementById('monthlyTitle').textContent = '大庆分公司营销完成月报（'+m+'.1-'+m+'.'+d+'）';
+    const data = getMonthlyData(monthlyDate);
+    renderMainTable(document.getElementById('monthlyTableWrap'), data, 'rate', 'month');
+    renderBulletin(data, monthlyDate, '月增', 'monthlyBulletin');
+    bulletinEl.style.display = '';
+  } else if (monthlySubTab === 'yoy_channel') {
+    document.getElementById('monthlyTitle').textContent = '大庆分公司同比变化月报-渠道侧（'+m+'.1-'+m+'.'+d+'）';
+    const data = getYoYChannelData(monthlyDate);
+    renderMainTable(document.getElementById('monthlyTableWrap'), data, 'yoy', 'yoy');
+    bulletinEl.style.display = 'none';
+  } else {
+    document.getElementById('monthlyTitle').textContent = '大庆分公司同比变化月报-政企侧（'+m+'.1-'+m+'.'+d+'）';
+    const data = getYoYZQData(monthlyDate);
+    renderMainTable(document.getElementById('monthlyTableWrap'), data, 'yoy_zq', '');
+    bulletinEl.style.display = 'none';
+  }
+}
+
+function renderMore(){
+  document.getElementById('moreGrid').innerHTML = [
+    {name:'融合宽带活跃率',sub:'3-5月活跃率通报',icon:'&#x1F310;',cls:'cyan'},
+    {name:'移宽活跃用户',sub:'出账与计费分析',icon:'&#x1F4F1;',cls:'blue'},
+    {name:'趋势图表提炼',sub:'多期指标对比',icon:'&#x1F4C8;',cls:'gold'},
+  ].map(q=>`<div class="quick-card" style="cursor:default">
+    <div class="icon-wrap ${q.cls}">${q.icon}</div>
+    <div><div class="label">${q.name}</div><div class="sub">${q.sub}</div></div>
+  </div>`).join('');
+}
+
+function initTheme(){
+  const saved = localStorage.getItem('cockpit-theme');
+  if (saved) document.documentElement.setAttribute('data-theme', saved);
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    const cur = document.documentElement.getAttribute('data-theme');
+    const next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('cockpit-theme', next);
+  });
+}
+
+function init(){
+  initTheme();
+  document.getElementById('navDate').textContent = formatMD(DEFAULT_DATE);
+  renderNav();
+  renderQuick();
+  renderKPI();
+  renderTrendSection();
+  renderDailyDatePicker();
+  renderDailyReport();
+  renderMonthlyDatePicker();
+  initMonthlySubTabs();
+  renderMonthlyReport();
+  renderMore();
+  switchPage('overview');
+}
+
+init();
+</script>
+</body>
+</html>
