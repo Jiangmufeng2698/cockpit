@@ -72,7 +72,7 @@ body {
   background: var(--bg-hover); border-radius: var(--radius-sm);
 }
 .nav-tab {
-  padding:5px 18px; border:none; background:transparent; color:var(--text-secondary);
+  padding:5px 12px; border:none; background:transparent; color:var(--text-secondary);
   font-size:13px; font-weight:500; cursor:pointer; border-radius:var(--radius-sm);
   transition: all 0.2s; white-space:nowrap;
 }
@@ -165,9 +165,13 @@ body {
 .quick-card .icon-wrap.blue { background:var(--accent-blue-light); color:var(--b); }
 .quick-card .icon-wrap.cyan { background:rgba(19,194,194,0.08); color:var(--accent-cyan); }
 .quick-card .icon-wrap.gold { background:var(--accent-gold-light); color:var(--accent-gold); }
+.quick-card .icon-wrap.green { background:rgba(5,150,105,0.08); color:var(--accent-green); }
+.quick-card .icon-wrap.purple { background:rgba(124,58,237,0.08); color:var(--accent-purple); }
 [data-theme="dark"] .quick-card .icon-wrap.blue { background:rgba(0,212,255,0.12); }
 [data-theme="dark"] .quick-card .icon-wrap.cyan { background:rgba(34,211,238,0.12); }
 [data-theme="dark"] .quick-card .icon-wrap.gold { background:rgba(255,215,0,0.12); }
+[data-theme="dark"] .quick-card .icon-wrap.green { background:rgba(46,213,115,0.12); }
+[data-theme="dark"] .quick-card .icon-wrap.purple { background:rgba(168,85,247,0.12); }
 .quick-card .label { font-size:13px; font-weight:600; }
 .quick-card .sub { font-size:11px; color:var(--text-tertiary); }
 
@@ -396,20 +400,35 @@ body {
     <div class="bulletin" id="dailyBulletin"></div>
   </div>
 
-  <!-- 月报页 -->
+  <!-- 营销月报页 -->
   <div class="page" id="page-monthly">
     <div class="report-header">
       <div class="report-title" id="monthlyTitle"></div>
       <div class="report-meta"><span class="dot"></span> 数据已更新</div>
     </div>
     <div class="date-picker-row" id="monthlyDatePicker"></div>
-    <div class="sub-tabs" id="monthlySubTabs">
-      <button class="sub-tab active" data-subtab="completion">完成月报</button>
-      <button class="sub-tab" data-subtab="yoy_channel">同比变化（渠道侧）</button>
-      <button class="sub-tab" data-subtab="yoy_zq">同比变化（政企侧）</button>
-    </div>
     <div class="tw" id="monthlyTableWrap"></div>
     <div class="bulletin" id="monthlyBulletin"></div>
+  </div>
+
+  <!-- 渠道条线营销月报页 -->
+  <div class="page" id="page-yoy_channel">
+    <div class="report-header">
+      <div class="report-title" id="yoyChannelTitle"></div>
+      <div class="report-meta"><span class="dot"></span> 数据已更新</div>
+    </div>
+    <div class="date-picker-row" id="yoyChannelDatePicker"></div>
+    <div class="tw" id="yoyChannelTableWrap"></div>
+  </div>
+
+  <!-- 政企条线营销月报页 -->
+  <div class="page" id="page-yoy_zq">
+    <div class="report-header">
+      <div class="report-title" id="yoyZqTitle"></div>
+      <div class="report-meta"><span class="dot"></span> 数据已更新</div>
+    </div>
+    <div class="date-picker-row" id="yoyZqDatePicker"></div>
+    <div class="tw" id="yoyZqTableWrap"></div>
   </div>
 
   <!-- 更多模块 -->
@@ -895,21 +914,21 @@ function drill1m(cn) { _drSrc='month'; document.getElementById('mbox').innerHTML
 function drill2m(cn, fn) { document.getElementById('mbox').innerHTML = buildCompletionDrillTable(cn+' / '+fn+' · 五级明细（月累计）', getMonthlyLevel5(monthlyDate,cn,fn), cn, 5); openModal(); }
 // 同比渠道侧四级下钻
 function drill1yoy(cn) {
-  const {tm,lm} = getYoYLevel4(monthlyDate, cn, false);
-  document.getElementById('mbox').innerHTML = buildYoYDrillTable(cn+' · 四级承包体（同比变化-渠道侧）', tm, lm, CH_IND, HB_CLS, HBS_CLS, DB_CLS, {cn,src:'yoy',level:4});
+  const {tm,lm} = getYoYLevel4(yoyChannelDate, cn, false);
+  document.getElementById('mbox').innerHTML = buildYoYDrillTable(cn+' · 四级承包体（渠道条线-同比）', tm, lm, CH_IND, HB_CLS, HBS_CLS, DB_CLS, {cn,src:'yoy',level:4});
   openModal();
 }
 // 同比渠道侧五级下钻
 function drill2yoy(cn, fn) {
-  const {tm,lm} = getYoYLevel5Channel(monthlyDate, cn, fn);
-  document.getElementById('mbox').innerHTML = buildYoYDrillTable(cn+' / '+fn+' · 五级明细（同比变化-渠道侧）', tm, lm, CH_IND, HB_CLS, HBS_CLS, DB_CLS, {cn,src:'yoy',level:5});
+  const {tm,lm} = getYoYLevel5Channel(yoyChannelDate, cn, fn);
+  document.getElementById('mbox').innerHTML = buildYoYDrillTable(cn+' / '+fn+' · 五级明细（渠道条线-同比）', tm, lm, CH_IND, HB_CLS, HBS_CLS, DB_CLS, {cn,src:'yoy',level:5});
   openModal();
 }
 // 同比政企侧四级下钻
 function drill1yoyZq(cn) {
-  const month = Math.floor(monthlyDate/100); const ms=month*100+1;
+  const month = Math.floor(yoyZqDate/100); const ms=month*100+1;
   let lastMonth = month%100===1 ? month-100+12 : month-1;
-  const ls=lastMonth*100+1, le=lastMonth*100+(monthlyDate%100);
+  const ls=lastMonth*100+1, le=lastMonth*100+(yoyZqDate%100);
   function aggZqL4(start, end) {
     const m = {};
     for (const dstr in DATA.fttrbZq) { const d=parseInt(dstr); if(d<start||d>end) continue; const fz=DATA.fttrbZq[dstr]?.[cn]||{}; for (const l4 in fz) { if(!m[l4]) { m[l4]={'FTTR-B':0,'移动新增':0,'专线':0,'电路':0}; } for (const l5 in fz[l4]) m[l4]['FTTR-B']+=fz[l4][l5]||0; } }
@@ -917,16 +936,16 @@ function drill1yoyZq(cn) {
     for (const l4 in m) m[l4]['双线新增'] = (m[l4]['专线']||0)+(m[l4]['电路']||0);
     return m;
   }
-  const tm = aggZqL4(ms, monthlyDate); const lm = aggZqL4(ls, le);
+  const tm = aggZqL4(ms, yoyZqDate); const lm = aggZqL4(ls, le);
   const zqHB=['hb5','hb2','hb3'], zqHBS=['hb5s','hb2s','hb3s'], zqDB=['db5','db2','db3'];
-  document.getElementById('mbox').innerHTML = buildYoYDrillTable(cn+' · 四级承包体（同比变化-政企侧）', tm, lm, ZQ_IND, zqHB, zqHBS, zqDB, {cn,src:'yoy_zq',level:4});
+  document.getElementById('mbox').innerHTML = buildYoYDrillTable(cn+' · 四级承包体（政企条线-同比）', tm, lm, ZQ_IND, zqHB, zqHBS, zqDB, {cn,src:'yoy_zq',level:4});
   openModal();
 }
 // 同比政企侧五级下钻
 function drill2yoyZq(cn, fn) {
-  const {tm,lm} = getYoYLevel5ZQ(monthlyDate, cn, fn);
+  const {tm,lm} = getYoYLevel5ZQ(yoyZqDate, cn, fn);
   const zqHB=['hb5','hb2','hb3'], zqHBS=['hb5s','hb2s','hb3s'], zqDB=['db5','db2','db3'];
-  document.getElementById('mbox').innerHTML = buildYoYDrillTable(cn+' / '+fn+' · 五级明细（同比变化-政企侧）', tm, lm, ZQ_IND, zqHB, zqHBS, zqDB, {cn,src:'yoy_zq',level:5});
+  document.getElementById('mbox').innerHTML = buildYoYDrillTable(cn+' / '+fn+' · 五级明细（政企条线-同比）', tm, lm, ZQ_IND, zqHB, zqHBS, zqDB, {cn,src:'yoy_zq',level:5});
   openModal();
 }
 
@@ -1081,8 +1100,10 @@ const DEFAULT_DATE = DATA.dateRange.end;
 
 const moduleRegistry = { _m:[], register(m){this._m.push(m)}, getAll(){return this._m} };
 moduleRegistry.register({id:'overview',navLabel:'概览',order:0});
-moduleRegistry.register({id:'daily',navLabel:'日报',order:1});
-moduleRegistry.register({id:'monthly',navLabel:'月报',order:2});
+moduleRegistry.register({id:'daily',navLabel:'营销日报',order:1});
+moduleRegistry.register({id:'monthly',navLabel:'营销月报',order:2});
+moduleRegistry.register({id:'yoy_channel',navLabel:'渠道条线营销月报',order:3});
+moduleRegistry.register({id:'yoy_zq',navLabel:'政企条线营销月报',order:4});
 moduleRegistry.register({id:'more',navLabel:'更多',order:99});
 
 let currentPage = 'overview';
@@ -1176,7 +1197,9 @@ function renderTrendSection(){
 function renderQuick(){
   document.getElementById('quickGrid').innerHTML = [
     {name:(Math.floor(DATA.dateRange.end/100)%100)+'.'+(DATA.dateRange.end%100)+' 日报',sub:'今日营销通报',icon:'&#x1F4C5;',cls:'blue',page:'daily'},
-    {name:(Math.floor(DATA.dateRange.end/100)%100)+'月月报',sub:'本月网格片区',icon:'&#x1F4C3;',cls:'cyan',page:'monthly'},
+    {name:(Math.floor(DATA.dateRange.end/100)%100)+'月月报',sub:'本月完成情况',icon:'&#x1F4C3;',cls:'cyan',page:'monthly'},
+    {name:'渠道条线',sub:'渠道同比月报',icon:'&#x1F4CA;',cls:'green',page:'yoy_channel'},
+    {name:'政企条线',sub:'政企同比月报',icon:'&#x1F3E2;',cls:'purple',page:'yoy_zq'},
     {name:'更多模块',sub:'扩展功能入口',icon:'&#x2795;',cls:'gold',page:'more'}
   ].map(q=>`<div class="quick-card" onclick="switchPage('${q.page}')">
     <div class="icon-wrap ${q.cls}">${q.icon}</div>
@@ -1233,9 +1256,8 @@ function renderBulletin(data, dateInt, label, elId) {
     </div>`;
 }
 
-/* ---- 月报 ---- */
+/* ---- 营销月报 ---- */
 let monthlyDate = DEFAULT_DATE;
-let monthlySubTab = 'completion';
 function renderMonthlyDatePicker(){
   const wrap = document.getElementById('monthlyDatePicker');
   wrap.innerHTML = `
@@ -1245,37 +1267,48 @@ function renderMonthlyDatePicker(){
   document.getElementById('monthlyDateInput').addEventListener('change', e => { monthlyDate = dateStrToInt(e.target.value); renderMonthlyReport(); });
 }
 
-function initMonthlySubTabs(){
-  document.querySelectorAll('#monthlySubTabs .sub-tab').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('#monthlySubTabs .sub-tab').forEach(b=>b.classList.remove('active'));
-      btn.classList.add('active');
-      monthlySubTab = btn.dataset.subtab;
-      renderMonthlyReport();
-    });
-  });
-}
-
 function renderMonthlyReport(){
   const m = Math.floor(monthlyDate/100)%100, d = monthlyDate%100;
-  const bulletinEl = document.getElementById('monthlyBulletin');
-  if (monthlySubTab === 'completion') {
-    document.getElementById('monthlyTitle').textContent = '大庆分公司营销完成月报（'+m+'.1-'+m+'.'+d+'）';
-    const data = getMonthlyData(monthlyDate);
-    renderMainTable(document.getElementById('monthlyTableWrap'), data, 'rate', 'month');
-    renderBulletin(data, monthlyDate, '月增', 'monthlyBulletin');
-    bulletinEl.style.display = '';
-  } else if (monthlySubTab === 'yoy_channel') {
-    document.getElementById('monthlyTitle').textContent = '大庆分公司同比变化月报-渠道侧（'+m+'.1-'+m+'.'+d+'）';
-    const data = getYoYChannelData(monthlyDate);
-    renderMainTable(document.getElementById('monthlyTableWrap'), data, 'yoy', 'yoy');
-    bulletinEl.style.display = 'none';
-  } else {
-    document.getElementById('monthlyTitle').textContent = '大庆分公司同比变化月报-政企侧（'+m+'.1-'+m+'.'+d+'）';
-    const data = getYoYZQData(monthlyDate);
-    renderMainTable(document.getElementById('monthlyTableWrap'), data, 'yoy_zq', '');
-    bulletinEl.style.display = 'none';
-  }
+  document.getElementById('monthlyTitle').textContent = '大庆分公司营销月报（'+m+'.1-'+m+'.'+d+'）';
+  const data = getMonthlyData(monthlyDate);
+  renderMainTable(document.getElementById('monthlyTableWrap'), data, 'rate', 'month');
+  renderBulletin(data, monthlyDate, '月增', 'monthlyBulletin');
+}
+
+/* ---- 渠道条线营销月报 ---- */
+let yoyChannelDate = DEFAULT_DATE;
+function renderYoYChannelDatePicker(){
+  const wrap = document.getElementById('yoyChannelDatePicker');
+  wrap.innerHTML = `
+    <label>截止日期</label>
+    <input type="date" class="date-input" id="yoyChannelDateInput" value="${intToDateStr(yoyChannelDate)}" min="${intToDateStr(DATA.dateRange.start)}" max="${intToDateStr(DATA.dateRange.end)}">
+    <span class="date-range-hint">（显示当月1日至所选日期 vs 上月同号段）</span>`;
+  document.getElementById('yoyChannelDateInput').addEventListener('change', e => { yoyChannelDate = dateStrToInt(e.target.value); renderYoYChannelReport(); });
+}
+
+function renderYoYChannelReport(){
+  const m = Math.floor(yoyChannelDate/100)%100, d = yoyChannelDate%100;
+  document.getElementById('yoyChannelTitle').textContent = '大庆分公司渠道条线营销月报（'+m+'.1-'+m+'.'+d+' 同比）';
+  const data = getYoYChannelData(yoyChannelDate);
+  renderMainTable(document.getElementById('yoyChannelTableWrap'), data, 'yoy', 'yoy');
+}
+
+/* ---- 政企条线营销月报 ---- */
+let yoyZqDate = DEFAULT_DATE;
+function renderYoYZQDatePicker(){
+  const wrap = document.getElementById('yoyZqDatePicker');
+  wrap.innerHTML = `
+    <label>截止日期</label>
+    <input type="date" class="date-input" id="yoyZqDateInput" value="${intToDateStr(yoyZqDate)}" min="${intToDateStr(DATA.dateRange.start)}" max="${intToDateStr(DATA.dateRange.end)}">
+    <span class="date-range-hint">（显示当月1日至所选日期 vs 上月同号段）</span>`;
+  document.getElementById('yoyZqDateInput').addEventListener('change', e => { yoyZqDate = dateStrToInt(e.target.value); renderYoYZQReport(); });
+}
+
+function renderYoYZQReport(){
+  const m = Math.floor(yoyZqDate/100)%100, d = yoyZqDate%100;
+  document.getElementById('yoyZqTitle').textContent = '大庆分公司政企条线营销月报（'+m+'.1-'+m+'.'+d+' 同比）';
+  const data = getYoYZQData(yoyZqDate);
+  renderMainTable(document.getElementById('yoyZqTableWrap'), data, 'yoy_zq', '');
 }
 
 function renderMore(){
@@ -1310,8 +1343,11 @@ function init(){
   renderDailyDatePicker();
   renderDailyReport();
   renderMonthlyDatePicker();
-  initMonthlySubTabs();
   renderMonthlyReport();
+  renderYoYChannelDatePicker();
+  renderYoYChannelReport();
+  renderYoYZQDatePicker();
+  renderYoYZQReport();
   renderMore();
   switchPage('overview');
 }
