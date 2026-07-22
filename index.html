@@ -1104,16 +1104,18 @@ function renderKPI(){
   const dateInt = DEFAULT_DATE;
   const daily = getDailyData(dateInt);
   const monthly = getMonthlyData(dateInt);
-  const sumD={}; const sumM={}; CH_IND.forEach(i=>{sumD[i]=0;sumM[i]=0;});
-  daily.forEach(r=>CH_IND.forEach(i=>sumD[i]+=r.cells[i].val));
-  monthly.forEach(r=>CH_IND.forEach(i=>sumM[i]+=r.cells[i].val));
+  // 直接取全市行，避免双算
+  const dailyCity = daily.find(r=>r.district==='全市');
+  const monthlyCity = monthly.find(r=>r.district==='全市');
+  const sumD={}; const sumM={}; CH_IND.forEach(i=>{sumD[i]=dailyCity?dailyCity.cells[i].val:0;sumM[i]=monthlyCity?monthlyCity.cells[i].val:0;});
 
   // 7日趋势数据
   const last7 = DATA_DATES.slice(-7);
   const trend = {}; CH_IND.forEach(i=>trend[i]=[]);
   last7.forEach(d => {
     const dd = getDailyData(d);
-    CH_IND.forEach(ind => { let s=0; dd.forEach(r=>s+=r.cells[ind].val); trend[ind].push(s); });
+    const city = dd.find(r=>r.district==='全市');
+    CH_IND.forEach(ind => { trend[ind].push(city?city.cells[ind].val:0); });
   });
 
   let dt=0; for(const dist in DATA.target) dt+=(DATA.target[dist]['宽带']||0);
@@ -1146,7 +1148,8 @@ function renderTrendSection(){
   const trend = {}; CH_IND.forEach(i=>trend[i]=[]);
   last7.forEach(d => {
     const dd = getDailyData(d);
-    CH_IND.forEach(ind => { let s=0; dd.forEach(r=>s+=r.cells[ind].val); trend[ind].push(s); });
+    const city = dd.find(r=>r.district==='全市');
+    CH_IND.forEach(ind => { trend[ind].push(city?city.cells[ind].val:0); });
   });
   const rangeStr = formatMD(last7[0])+' - '+formatMD(last7[last7.length-1]);
   const el = document.getElementById('trendSection');
