@@ -237,15 +237,15 @@ body {
 
 /* ========== 表格 — 营销日报技能风格 ========== */
 .tw { padding:2px; overflow:auto; max-height:68vh; position:relative; }
-.tw table { width:100%; border-collapse:separate; border-spacing:0; font-size:12px; border-radius:6px; box-shadow:0 1px 6px rgba(30,58,95,0.06); overflow:hidden; }
+.tw table { width:100%; border-collapse:separate; border-spacing:0; font-size:12px; border-radius:6px; box-shadow:0 1px 6px rgba(30,58,95,0.06); }
 
 /* 表头：双层 rh1=指标名 rh2=子列 */
 .tw thead th {
   padding:6px 6px; text-align:center; font-weight:600; font-size:12px;
   border-bottom:1px solid var(--bd2); white-space:nowrap; position:sticky; top:0; z-index:10;
 }
-.tw thead tr.rh1 th { color:#fff; }
-.tw thead tr.rh2 th { color:var(--text-secondary); font-size:11px; }
+.tw thead tr.rh1 th { color:#fff; position:sticky; top:0; z-index:13; }
+.tw thead tr.rh2 th { color:var(--text-secondary); font-size:11px; position:sticky; top:28px; z-index:12; }
 .tw thead th:first-child {
   text-align:left; padding-left:10px; min-width:70px;
   position:sticky; left:0; z-index:15;
@@ -323,9 +323,11 @@ body {
 .bk:hover { color:var(--r); }
 
 /* 下钻表格(模态框内) */
-.drt { width:100%; border-collapse:separate; border-spacing:0; font-size:12px; border-radius:6px; box-shadow:0 1px 6px rgba(30,58,95,0.06); overflow:hidden; }
+.drt { width:100%; border-collapse:separate; border-spacing:0; font-size:12px; border-radius:6px; box-shadow:0 1px 6px rgba(30,58,95,0.06); }
 .drt thead th { background:var(--bl); color:var(--bd); padding:6px 6px; text-align:center; font-weight:600; font-size:12px; border-bottom:1px solid var(--bd2); white-space:nowrap; position:sticky; top:0; z-index:10; }
 [data-theme="dark"] .drt thead th { background:var(--bl); color:var(--text-primary); }
+.drt thead tr.rh1 th { position:sticky; top:0; z-index:13; }
+.drt thead tr.rh2 th { position:sticky; top:28px; z-index:12; }
 .drt thead th:first-child { text-align:left; padding-left:10px; width:120px; position:sticky; left:0; z-index:15; }
 .drt tbody td { padding:5px 5px; text-align:center; border-bottom:1px solid rgba(0,0,0,0.04); white-space:nowrap; font-variant-numeric:tabular-nums; }
 .drt tbody td:first-child {
@@ -380,6 +382,21 @@ body {
   .nav-brand span { display:none; }
   .kpi-grid { grid-template-columns:1fr 1fr; }
   .quick-grid { grid-template-columns:1fr; }
+}
+/* 手机端下钻表格适配 */
+@media (max-width:600px) {
+  .mbox { max-width:98vw; max-height:90vh; }
+  .mbox-body { padding:4px; }
+  .drt { font-size:11px; }
+  .drt thead th { padding:5px 4px; font-size:11px; }
+  .drt thead tr.rh2 th { font-size:10px; top:25px; }
+  .drt thead th:first-child { width:140px; min-width:140px; }
+  .drt tbody td { padding:4px 3px; }
+  .drt tbody td:first-child { max-width:140px; min-width:140px; font-size:11px; line-height:1.4; }
+  .tw table { font-size:11px; }
+  .tw thead tr.rh2 th { font-size:10px; top:25px; }
+  .tw thead th:first-child { min-width:100px; }
+  .tw tbody td:first-child { min-width:100px; max-width:110px; }
 }
 </style>
 </head>
@@ -1089,7 +1106,7 @@ function getYoYZQLevel4(dateInt, district) {
  *  表格渲染 — 双层表头+指标带色+per-indicator排名
  * ================================================================ */
 function renderMainTable(tableWrap, data, mode, drillSrc) {
-  let html = '<table class="tw" style="width:100%;border-collapse:separate;border-spacing:0;font-size:12px;border-radius:6px;overflow:hidden">';
+  let html = '<table class="tw" style="width:100%;border-collapse:separate;border-spacing:0;font-size:12px;border-radius:6px">';
 
   /* per-indicator排名：0%参与排名，"——"不参与 */
   function calcIndRank(dataArr, indicators, valKey, excludeRows) {
