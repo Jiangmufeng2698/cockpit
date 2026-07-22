@@ -1175,7 +1175,7 @@ function renderTrendSection(){
 
 function renderQuick(){
   document.getElementById('quickGrid').innerHTML = [
-    {name:(DATA.dateRange.end/10000%100|0)+'.'+(DATA.dateRange.end%100)+' 日报',sub:'今日营销通报',icon:'&#x1F4C5;',cls:'blue',page:'daily'},
+    {name:(Math.floor(DATA.dateRange.end/100)%100)+'.'+(DATA.dateRange.end%100)+' 日报',sub:'今日营销通报',icon:'&#x1F4C5;',cls:'blue',page:'daily'},
     {name:(Math.floor(DATA.dateRange.end/100)%100)+'月月报',sub:'本月网格片区',icon:'&#x1F4C3;',cls:'cyan',page:'monthly'},
     {name:'更多模块',sub:'扩展功能入口',icon:'&#x2795;',cls:'gold',page:'more'}
   ].map(q=>`<div class="quick-card" onclick="switchPage('${q.page}')">
