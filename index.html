@@ -777,11 +777,14 @@ function getYoYZQData(dateInt) {
 function getDailyLevel4(dateInt, district) {
   const dayData = DATA.newdev[String(dateInt)]?.[district] || {};
   const dayFttrb = DATA.fttrb[String(dateInt)]?.[district] || {};
+  const dayFttrbZq = DATA.fttrbZq[String(dateInt)]?.[district] || {};
+  const rosterL4 = (DATA.roster?.[district]) || {};
   const l4Map = {};
+  // 先用花名册初始化所有四级
+  for (const l4 in rosterL4) l4Map[l4] = {};
+  // 填充数据
   for (const l4 in dayData) { if(!l4Map[l4]) l4Map[l4]={}; for (const ind of CH_IND) { if(ind==='FTTR-B') continue; let cnt=0; for (const l5 in dayData[l4]) cnt+=dayData[l4][l5][ind]||0; l4Map[l4][ind]=cnt; } }
   for (const l4 in dayFttrb) { if(!l4Map[l4]) l4Map[l4]={}; let cnt=0; for (const l5 in dayFttrb[l4]) cnt+=dayFttrb[l4][l5]||0; l4Map[l4]['FTTR-B']=cnt; }
-  // 政企FTTR-B
-  const dayFttrbZq = DATA.fttrbZq[String(dateInt)]?.[district] || {};
   for (const l4 in dayFttrbZq) { if(!l4Map[l4]) l4Map[l4]={}; let cnt=0; for (const l5 in dayFttrbZq[l4]) cnt+=dayFttrbZq[l4][l5]||0; l4Map[l4]['FTTR-B']=(l4Map[l4]['FTTR-B']||0)+cnt; }
   return Object.entries(l4Map).map(([name,cells])=>({ name, cells: Object.fromEntries(CH_IND.map(ind=>[ind,{val:cells[ind]||0}])) }));
 }
@@ -789,7 +792,11 @@ function getDailyLevel5(dateInt, district, level4) {
   const dayData = DATA.newdev[String(dateInt)]?.[district]?.[level4] || {};
   const dayFttrb = DATA.fttrb[String(dateInt)]?.[district]?.[level4] || {};
   const dayFttrbZq = DATA.fttrbZq[String(dateInt)]?.[district]?.[level4] || {};
+  const rosterL5 = (DATA.roster?.[district]?.[level4]) || [];
   const l5Map = {};
+  // 先用花名册初始化所有五级
+  rosterL5.forEach(l5 => { l5Map[l5] = {}; });
+  // 填充数据
   for (const l5 in dayData) { if(!l5Map[l5]) l5Map[l5]={}; for (const ind of CH_IND) { if(ind==='FTTR-B') continue; l5Map[l5][ind]=dayData[l5][ind]||0; } }
   for (const l5 in dayFttrb) { if(!l5Map[l5]) l5Map[l5]={}; l5Map[l5]['FTTR-B']=(l5Map[l5]['FTTR-B']||0)+(dayFttrb[l5]||0); }
   for (const l5 in dayFttrbZq) { if(!l5Map[l5]) l5Map[l5]={}; l5Map[l5]['FTTR-B']=(l5Map[l5]['FTTR-B']||0)+(dayFttrbZq[l5]||0); }
@@ -799,6 +806,9 @@ function getDailyLevel5(dateInt, district, level4) {
 function getMonthlyLevel4(dateInt, district) {
   const month=Math.floor(dateInt/100); const ms=month*100+1;
   const l4Map={}; const inds=['宽带','融合','融合副卡','FTTR-H','智屏','高清'];
+  const rosterL4 = (DATA.roster?.[district]) || {};
+  // 先用花名册初始化
+  for (const l4 in rosterL4) { l4Map[l4]={}; inds.forEach(i=>l4Map[l4][i]=0); l4Map[l4]['FTTR-B']=0; }
   for (const dstr in DATA.newdev) { const d=parseInt(dstr); if(d<ms||d>dateInt) continue; const dd=DATA.newdev[dstr]?.[district]||{}; for (const l4 in dd) { if(!l4Map[l4]) { l4Map[l4]={}; inds.forEach(i=>l4Map[l4][i]=0); l4Map[l4]['FTTR-B']=0; } for (const l5 in dd[l4]) for (const ind of inds) l4Map[l4][ind]+=dd[l4][l5][ind]||0; } }
   for (const dstr in DATA.fttrb) { const d=parseInt(dstr); if(d<ms||d>dateInt) continue; const ff=DATA.fttrb[dstr]?.[district]||{}; for (const l4 in ff) { if(!l4Map[l4]) { l4Map[l4]={}; inds.forEach(i=>l4Map[l4][i]=0); l4Map[l4]['FTTR-B']=0; } for (const l5 in ff[l4]) l4Map[l4]['FTTR-B']+=ff[l4][l5]||0; } }
   for (const dstr in DATA.fttrbZq) { const d=parseInt(dstr); if(d<ms||d>dateInt) continue; const fz=DATA.fttrbZq[dstr]?.[district]||{}; for (const l4 in fz) { if(!l4Map[l4]) { l4Map[l4]={}; inds.forEach(i=>l4Map[l4][i]=0); l4Map[l4]['FTTR-B']=0; } for (const l5 in fz[l4]) l4Map[l4]['FTTR-B']+=fz[l4][l5]||0; } }
@@ -807,6 +817,9 @@ function getMonthlyLevel4(dateInt, district) {
 function getMonthlyLevel5(dateInt, district, level4) {
   const month=Math.floor(dateInt/100); const ms=month*100+1;
   const l5Map={}; const inds=['宽带','融合','融合副卡','FTTR-H','智屏','高清'];
+  const rosterL5 = (DATA.roster?.[district]?.[level4]) || [];
+  // 先用花名册初始化
+  rosterL5.forEach(l5 => { l5Map[l5]={}; inds.forEach(i=>l5Map[l5][i]=0); l5Map[l5]['FTTR-B']=0; });
   for (const dstr in DATA.newdev) { const d=parseInt(dstr); if(d<ms||d>dateInt) continue; const dd=DATA.newdev[dstr]?.[district]?.[level4]||{}; for (const l5 in dd) { if(!l5Map[l5]) { l5Map[l5]={}; inds.forEach(i=>l5Map[l5][i]=0); l5Map[l5]['FTTR-B']=0; } for (const ind of inds) l5Map[l5][ind]+=dd[l5][ind]||0; } }
   for (const dstr in DATA.fttrb) { const d=parseInt(dstr); if(d<ms||d>dateInt) continue; const ff=DATA.fttrb[dstr]?.[district]?.[level4]||{}; for (const l5 in ff) { if(!l5Map[l5]) { l5Map[l5]={}; inds.forEach(i=>l5Map[l5][i]=0); l5Map[l5]['FTTR-B']=0; } l5Map[l5]['FTTR-B']+=ff[l5]||0; } }
   for (const dstr in DATA.fttrbZq) { const d=parseInt(dstr); if(d<ms||d>dateInt) continue; const fz=DATA.fttrbZq[dstr]?.[district]?.[level4]||{}; for (const l5 in fz) { if(!l5Map[l5]) { l5Map[l5]={}; inds.forEach(i=>l5Map[l5][i]=0); l5Map[l5]['FTTR-B']=0; } l5Map[l5]['FTTR-B']+=fz[l5]||0; } }
@@ -821,6 +834,9 @@ function getYoYLevel4(dateInt, district, useZqFttrb) {
   const inds=['宽带','融合','融合副卡','FTTR-H','智屏','高清'];
   function aggL4(start, end) {
     const m = {};
+    const rosterL4 = (DATA.roster?.[district]) || {};
+    // 先用花名册初始化（排除政企四级如果useZqFttrb=false）
+    for (const l4 in rosterL4) { if(!useZqFttrb&&l4.includes('政企')) continue; m[l4]={}; inds.forEach(i=>m[l4][i]=0); m[l4]['FTTR-B']=0; }
     for (const dstr in DATA.newdev) { const d=parseInt(dstr); if(d<start||d>end) continue; const dd=DATA.newdev[dstr]?.[district]||{}; for (const l4 in dd) { if(!useZqFttrb&&l4.includes('政企')) continue; if(!m[l4]) { m[l4]={}; inds.forEach(i=>m[l4][i]=0); m[l4]['FTTR-B']=0; } for (const l5 in dd[l4]) for (const ind of inds) m[l4][ind]+=dd[l4][l5][ind]||0; } }
     for (const dstr in DATA.fttrb) { const d=parseInt(dstr); if(d<start||d>end) continue; const ff=DATA.fttrb[dstr]?.[district]||{}; for (const l4 in ff) { if(!useZqFttrb&&l4.includes('政企')) continue; if(!m[l4]) { m[l4]={}; inds.forEach(i=>m[l4][i]=0); m[l4]['FTTR-B']=0; } for (const l5 in ff[l4]) m[l4]['FTTR-B']+=ff[l4][l5]||0; } }
     if (useZqFttrb) { for (const dstr in DATA.fttrbZq) { const d=parseInt(dstr); if(d<start||d>end) continue; const fz=DATA.fttrbZq[dstr]?.[district]||{}; for (const l4 in fz) { if(!m[l4]) { m[l4]={}; inds.forEach(i=>m[l4][i]=0); m[l4]['FTTR-B']=0; } for (const l5 in fz[l4]) m[l4]['FTTR-B']+=fz[l4][l5]||0; } } }
@@ -837,6 +853,8 @@ function getYoYLevel5Channel(dateInt, district, level4) {
   const inds=['宽带','融合','融合副卡','FTTR-H','智屏','高清'];
   function aggL5(start, end) {
     const m = {};
+    const rosterL5 = (DATA.roster?.[district]?.[level4]) || [];
+    rosterL5.forEach(l5 => { m[l5]={}; inds.forEach(i=>m[l5][i]=0); m[l5]['FTTR-B']=0; });
     for (const dstr in DATA.newdev) { const d=parseInt(dstr); if(d<start||d>end) continue; const dd=DATA.newdev[dstr]?.[district]?.[level4]||{}; for (const l5 in dd) { if(!m[l5]) { m[l5]={}; inds.forEach(i=>m[l5][i]=0); m[l5]['FTTR-B']=0; } for (const ind of inds) m[l5][ind]+=dd[l5][ind]||0; } }
     for (const dstr in DATA.fttrb) { const d=parseInt(dstr); if(d<start||d>end) continue; const ff=DATA.fttrb[dstr]?.[district]?.[level4]||{}; for (const l5 in ff) { if(!m[l5]) { m[l5]={}; inds.forEach(i=>m[l5][i]=0); m[l5]['FTTR-B']=0; } m[l5]['FTTR-B']+=ff[l5]||0; } }
     return m;
@@ -851,6 +869,8 @@ function getYoYLevel5ZQ(dateInt, district, level4) {
   const ls=lastMonth*100+1, le=lastMonth*100+(dateInt%100);
   function aggL5(start, end) {
     const m = {};
+    const rosterL5 = (DATA.roster?.[district]?.[level4]) || [];
+    rosterL5.forEach(l5 => { m[l5]={'FTTR-B':0,'移动新增':0,'专线':0,'电路':0}; });
     for (const dstr in DATA.fttrbZq) { const d=parseInt(dstr); if(d<start||d>end) continue; const fz=DATA.fttrbZq[dstr]?.[district]?.[level4]||{}; for (const l5 in fz) { if(!m[l5]) { m[l5]={'FTTR-B':0,'移动新增':0,'专线':0,'电路':0}; } m[l5]['FTTR-B']+=fz[l5]||0; } }
     for (const dstr in DATA.zq) { const d=parseInt(dstr); if(d<start||d>end) continue; const zd=DATA.zq[dstr]?.[district]?.[level4]||{}; for (const l5 in zd) { if(!m[l5]) { m[l5]={'FTTR-B':0,'移动新增':0,'专线':0,'电路':0}; } m[l5]['移动新增']+=zd[l5]['移动新增']||0; m[l5]['专线']+=zd[l5]['专线']||0; m[l5]['电路']+=zd[l5]['电路']||0; } }
     for (const l5 in m) m[l5]['双线新增']=(m[l5]['专线']||0)+(m[l5]['电路']||0);
@@ -1044,6 +1064,9 @@ function getYoYZQLevel4(dateInt, district) {
   const ls=lastMonth*100+1, le=lastMonth*100+(dateInt%100);
   function agg(start, end) {
     const m = {};
+    const rosterL4 = (DATA.roster?.[district]) || {};
+    // 先用花名册初始化所有四级（政企条线保留政企四级）
+    for (const l4 in rosterL4) { m[l4]={'FTTR-B':0,'移动新增':0,'专线':0,'电路':0}; }
     for (const dstr in DATA.fttrbZq) { const d=parseInt(dstr); if(d<start||d>end) continue; const fz=DATA.fttrbZq[dstr]?.[district]||{}; for (const l4 in fz) { if(!m[l4]) { m[l4]={'FTTR-B':0,'移动新增':0,'专线':0,'电路':0}; } for (const l5 in fz[l4]) m[l4]['FTTR-B']+=fz[l4][l5]||0; } }
     for (const dstr in DATA.zq) { const d=parseInt(dstr); if(d<start||d>end) continue; const zd=DATA.zq[dstr]?.[district]||{}; for (const l4 in zd) { if(!m[l4]) { m[l4]={'FTTR-B':0,'移动新增':0,'专线':0,'电路':0}; } for (const l5 in zd[l4]) { m[l4]['移动新增']+=zd[l4][l5]['移动新增']||0; m[l4]['专线']+=zd[l4][l5]['专线']||0; m[l4]['电路']+=zd[l4][l5]['电路']||0; } } }
     for (const l4 in m) m[l4]['双线新增'] = (m[l4]['专线']||0)+(m[l4]['电路']||0);
