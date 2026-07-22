@@ -1075,10 +1075,10 @@ function getYoYZQLevel4(dateInt, district) {
   function agg(start, end) {
     const m = {};
     const rosterL4 = (DATA.roster?.[district]) || {};
-    // 先用花名册初始化所有四级（政企条线保留政企四级）
-    for (const l4 in rosterL4) { m[l4]={'FTTR-B':0,'移动新增':0,'专线':0,'电路':0}; }
-    for (const dstr in DATA.fttrbZq) { const d=parseInt(dstr); if(d<start||d>end) continue; const fz=DATA.fttrbZq[dstr]?.[district]||{}; for (const l4 in fz) { if(!m[l4]) { m[l4]={'FTTR-B':0,'移动新增':0,'专线':0,'电路':0}; } for (const l5 in fz[l4]) m[l4]['FTTR-B']+=fz[l4][l5]||0; } }
-    for (const dstr in DATA.zq) { const d=parseInt(dstr); if(d<start||d>end) continue; const zd=DATA.zq[dstr]?.[district]||{}; for (const l4 in zd) { if(!m[l4]) { m[l4]={'FTTR-B':0,'移动新增':0,'专线':0,'电路':0}; } for (const l5 in zd[l4]) { m[l4]['移动新增']+=zd[l4][l5]['移动新增']||0; m[l4]['专线']+=zd[l4][l5]['专线']||0; m[l4]['电路']+=zd[l4][l5]['电路']||0; } } }
+    // 先用花名册初始化政企四级（只保留含"政企"的四级）
+    for (const l4 in rosterL4) { if(!l4.includes('政企')) continue; m[l4]={'FTTR-B':0,'移动新增':0,'专线':0,'电路':0}; }
+    for (const dstr in DATA.fttrbZq) { const d=parseInt(dstr); if(d<start||d>end) continue; const fz=DATA.fttrbZq[dstr]?.[district]||{}; for (const l4 in fz) { if(!l4.includes('政企')) continue; if(!m[l4]) { m[l4]={'FTTR-B':0,'移动新增':0,'专线':0,'电路':0}; } for (const l5 in fz[l4]) m[l4]['FTTR-B']+=fz[l4][l5]||0; } }
+    for (const dstr in DATA.zq) { const d=parseInt(dstr); if(d<start||d>end) continue; const zd=DATA.zq[dstr]?.[district]||{}; for (const l4 in zd) { if(!l4.includes('政企')) continue; if(!m[l4]) { m[l4]={'FTTR-B':0,'移动新增':0,'专线':0,'电路':0}; } for (const l5 in zd[l4]) { m[l4]['移动新增']+=zd[l4][l5]['移动新增']||0; m[l4]['专线']+=zd[l4][l5]['专线']||0; m[l4]['电路']+=zd[l4][l5]['电路']||0; } } }
     for (const l4 in m) m[l4]['双线新增'] = (m[l4]['专线']||0)+(m[l4]['电路']||0);
     return m;
   }
