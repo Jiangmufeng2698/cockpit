@@ -429,6 +429,18 @@ body {
 
 <script src="report_data.js"></script>
 <script>
+/* 数据解密 */
+(function(){
+  var _k="DQCockpit2026!@#";
+  var _e=window.__ED||"";
+  if(!_e){console.error("数据加载失败");return;}
+  var _b=atob(_e);
+  var _d=new Uint8Array(_b.length);
+  for(var i=0;i<_b.length;i++){_d[i]=_b.charCodeAt(i)^_k.charCodeAt(i%_k.length);}
+  window.REPORT_DATA=JSON.parse(new TextDecoder("utf-8").decode(_d));
+})();
+</script>
+<script>
 /* ================================================================
  *  全局数据与口径
  * ================================================================ */
