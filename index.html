@@ -67,6 +67,27 @@ body {
   color: var(--b); letter-spacing:1px; white-space:nowrap; min-width:180px;
 }
 .nav-brand svg { width:24px; height:24px; }
+/* 范围选择器 */
+.scope-selector { position:relative; margin-left:8px; }
+.scope-btn {
+  display:flex; align-items:center; gap:4px; padding:5px 12px; border:1px solid var(--border-color);
+  background:var(--bg-card); color:var(--text-primary); font-size:13px; font-weight:600;
+  cursor:pointer; border-radius:var(--radius-sm); transition:all 0.2s; white-space:nowrap;
+}
+.scope-btn:hover { border-color:var(--b); color:var(--b); }
+.scope-btn .scope-arrow { font-size:10px; opacity:0.6; }
+.scope-dropdown {
+  position:absolute; top:calc(100% + 4px); left:0; min-width:120px; z-index:200;
+  background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-sm);
+  box-shadow:var(--shadow-md); padding:4px 0; display:none; max-height:400px; overflow-y:auto;
+}
+.scope-dropdown.show { display:block; }
+.scope-item {
+  padding:7px 14px; font-size:13px; cursor:pointer; color:var(--text-secondary);
+  transition:all 0.15s; white-space:nowrap;
+}
+.scope-item:hover { background:var(--bg-hover); color:var(--b); }
+.scope-item.active { color:var(--b); font-weight:700; background:var(--accent-blue-light); }
 .nav-tabs {
   display:flex; align-items:center; gap:2px; margin:0 auto; padding:3px;
   background: var(--bg-hover); border-radius: var(--radius-sm);
@@ -372,6 +393,13 @@ body {
       <path d="M16 18V10l6 4-6 4z" fill="currentColor" opacity="0.5"/>
     </svg>
     <span>营销驾驶舱</span>
+  </div>
+  <div class="scope-selector">
+    <button class="scope-btn" id="scopeBtn" type="button">
+      <span id="scopeBtnLabel">全市</span>
+      <span class="scope-arrow">&#x25BC;</span>
+    </button>
+    <div class="scope-dropdown" id="scopeDropdown"></div>
   </div>
   <div class="nav-tabs" id="navTabs"></div>
   <div class="nav-right">
@@ -907,13 +935,14 @@ function buildYoYDrillTable(title, tm, lm, indicators, hbCls, hbsCls, dbCls, dri
 }
 
 // 日报下钻
-function drill1(cn) { _drSrc='day'; document.getElementById('mbox').innerHTML = buildCompletionDrillTable(cn+' · 四级承包体（日增）', getDailyLevel4(dailyDate,cn), cn, 2); openModal(); }
+function drill1(cn) { if(currentScope!=='全市'){cM();return;} _drSrc='day'; document.getElementById('mbox').innerHTML = buildCompletionDrillTable(cn+' · 四级承包体（日增）', getDailyLevel4(dailyDate,cn), cn, 2); openModal(); }
 function drill2(cn, fn) { document.getElementById('mbox').innerHTML = buildCompletionDrillTable(cn+' / '+fn+' · 五级明细（日增）', getDailyLevel5(dailyDate,cn,fn), cn, 5); openModal(); }
 // 月报下钻
-function drill1m(cn) { _drSrc='month'; document.getElementById('mbox').innerHTML = buildCompletionDrillTable(cn+' · 四级承包体（月累计）', getMonthlyLevel4(monthlyDate,cn), cn, 2); openModal(); }
+function drill1m(cn) { if(currentScope!=='全市'){cM();return;} _drSrc='month'; document.getElementById('mbox').innerHTML = buildCompletionDrillTable(cn+' · 四级承包体（月累计）', getMonthlyLevel4(monthlyDate,cn), cn, 2); openModal(); }
 function drill2m(cn, fn) { document.getElementById('mbox').innerHTML = buildCompletionDrillTable(cn+' / '+fn+' · 五级明细（月累计）', getMonthlyLevel5(monthlyDate,cn,fn), cn, 5); openModal(); }
 // 同比渠道侧四级下钻
 function drill1yoy(cn) {
+  if(currentScope!=='全市'){cM();return;}
   const {tm,lm} = getYoYLevel4(yoyChannelDate, cn, false);
   document.getElementById('mbox').innerHTML = buildYoYDrillTable(cn+' · 四级承包体（渠道条线-同比）', tm, lm, CH_IND, HB_CLS, HBS_CLS, DB_CLS, {cn,src:'yoy',level:4});
   openModal();
@@ -926,17 +955,8 @@ function drill2yoy(cn, fn) {
 }
 // 同比政企侧四级下钻
 function drill1yoyZq(cn) {
-  const month = Math.floor(yoyZqDate/100); const ms=month*100+1;
-  let lastMonth = month%100===1 ? month-100+12 : month-1;
-  const ls=lastMonth*100+1, le=lastMonth*100+(yoyZqDate%100);
-  function aggZqL4(start, end) {
-    const m = {};
-    for (const dstr in DATA.fttrbZq) { const d=parseInt(dstr); if(d<start||d>end) continue; const fz=DATA.fttrbZq[dstr]?.[cn]||{}; for (const l4 in fz) { if(!m[l4]) { m[l4]={'FTTR-B':0,'移动新增':0,'专线':0,'电路':0}; } for (const l5 in fz[l4]) m[l4]['FTTR-B']+=fz[l4][l5]||0; } }
-    for (const dstr in DATA.zq) { const d=parseInt(dstr); if(d<start||d>end) continue; const zd=DATA.zq[dstr]?.[cn]||{}; for (const l4 in zd) { if(!m[l4]) { m[l4]={'FTTR-B':0,'移动新增':0,'专线':0,'电路':0}; } for (const l5 in zd[l4]) { m[l4]['移动新增']+=zd[l4][l5]['移动新增']||0; m[l4]['专线']+=zd[l4][l5]['专线']||0; m[l4]['电路']+=zd[l4][l5]['电路']||0; } } }
-    for (const l4 in m) m[l4]['双线新增'] = (m[l4]['专线']||0)+(m[l4]['电路']||0);
-    return m;
-  }
-  const tm = aggZqL4(ms, yoyZqDate); const lm = aggZqL4(ls, le);
+  if(currentScope!=='全市'){cM();return;}
+  const {tm,lm} = getYoYZQLevel4(yoyZqDate, cn);
   const zqHB=['hb5','hb2','hb3'], zqHBS=['hb5s','hb2s','hb3s'], zqDB=['db5','db2','db3'];
   document.getElementById('mbox').innerHTML = buildYoYDrillTable(cn+' · 四级承包体（政企条线-同比）', tm, lm, ZQ_IND, zqHB, zqHBS, zqDB, {cn,src:'yoy_zq',level:4});
   openModal();
@@ -951,8 +971,8 @@ function drill2yoyZq(cn, fn) {
 
 // 点击事件委托
 document.addEventListener('click', function(e) {
-  var firstDr = e.target.closest('.cl[data-dr="1"][data-src]');
-  if (firstDr) _drSrc = firstDr.getAttribute('data-src') || 'day';
+  var srcEl = e.target.closest('[data-src]');
+  if (srcEl) _drSrc = srcEl.getAttribute('data-src') || 'day';
   var t = e.target.closest('[data-dr]');
   if (!t) return;
   var dr = t.getAttribute('data-dr'), cn = t.getAttribute('data-cn'), fn = t.getAttribute('data-fn');
@@ -966,6 +986,71 @@ document.addEventListener('click', function(e) {
   else if (dr==='2' && _drSrc==='yoy_zq') drill2yoyZq(cn, fn);
 });
 document.getElementById('ml').addEventListener('click', function(e) { if (e.target === this) cM(); });
+
+/* ================================================================
+ *  范围模式：内联四级表渲染
+ * ================================================================ */
+// 完成数模式（日报/月报）— 四级内联，点击钻取五级
+function renderLevel4Completion(wrap, data, drillSrc, cn) {
+  let html = '<table class="tw-table"><thead><tr class="rh1"><th style="text-align:left;background:var(--bl);color:var(--bd);position:sticky;left:0;z-index:15">四级承包体</th>';
+  CH_IND.forEach((ind,i) => html += '<th class="'+HB_CLS[i]+'">'+ind+'</th>');
+  html += '</tr></thead><tbody>';
+  const sums = {}; CH_IND.forEach(i=>sums[i]=0);
+  data.forEach(d => CH_IND.forEach(i=>sums[i]+=d.cells[i].val));
+  data.forEach(d => {
+    html += '<tr><td class="cl" data-dr="2" data-cn="'+cn+'" data-fn="'+d.name+'" data-src="'+drillSrc+'" style="text-align:left;font-weight:700;color:var(--b)">'+d.name+'</td>';
+    CH_IND.forEach((ind,i) => html += '<td class="'+DB_CLS[i]+'">'+d.cells[ind].val+'</td>');
+    html += '</tr>';
+  });
+  html += '<tr class="drt-sum"><td style="text-align:left;font-weight:700">合计</td>';
+  CH_IND.forEach((ind,i) => html += '<td class="'+DB_CLS[i]+'">'+sums[ind]+'</td>');
+  html += '</tr></tbody></table>';
+  wrap.innerHTML = html;
+}
+
+// 同比模式（渠道/政企条线）— 四级内联，点击钻取五级
+function renderLevel4YoY(wrap, tm, lm, indicators, hbCls, hbsCls, dbCls, drillSrc, cn) {
+  let html = '<table class="tw-table"><thead>';
+  html += '<tr class="rh1"><th style="text-align:left;background:var(--bl);color:var(--bd);position:sticky;left:0;z-index:15">四级承包体</th>';
+  indicators.forEach((ind,i) => html += '<th class="'+hbCls[i]+'" colspan="3">'+ind+'</th>');
+  html += '</tr><tr class="rh2"><th style="text-align:left;background:var(--bl);color:var(--bd);position:sticky;left:0;z-index:15">四级承包体</th>';
+  indicators.forEach((ind,i) => html += '<th class="'+hbsCls[i]+'">本月</th><th class="'+hbsCls[i]+'">上月</th><th class="'+hbsCls[i]+'">同比</th>');
+  html += '</tr></thead><tbody>';
+  const sums = {}; indicators.forEach(ind => sums[ind]={tm:0,lm:0});
+  for (const name in tm) {
+    html += '<tr><td class="cl" data-dr="2" data-cn="'+cn+'" data-fn="'+name+'" data-src="'+drillSrc+'" style="text-align:left;font-weight:700;color:var(--b)">'+name+'</td>';
+    indicators.forEach((ind,i) => {
+      const tv=tm[name][ind]||0; const lv=(lm[name]&&lm[name][ind])||0;
+      sums[ind].tm+=tv; sums[ind].lm+=lv;
+      const yoy=tv-lv; const cls=yoy>0?'positive':yoy<0?'negative':'neutral'; const sign=yoy>0?'+':'';
+      html += '<td class="'+dbCls[i]+'">'+tv+'</td><td class="'+dbCls[i]+'">'+lv+'</td><td class="'+dbCls[i]+' trend-cell '+cls+'">'+sign+yoy+'</td>';
+    });
+    html += '</tr>';
+  }
+  html += '<tr class="drt-sum"><td style="text-align:left;font-weight:700">合计</td>';
+  indicators.forEach((ind,i) => {
+    const tv=sums[ind].tm; const lv=sums[ind].lm; const yoy=tv-lv;
+    const cls=yoy>0?'positive':yoy<0?'negative':'neutral'; const sign=yoy>0?'+':'';
+    html += '<td class="'+dbCls[i]+'">'+tv+'</td><td class="'+dbCls[i]+'">'+lv+'</td><td class="'+dbCls[i]+' trend-cell '+cls+'">'+sign+yoy+'</td>';
+  });
+  html += '</tr></tbody></table>';
+  wrap.innerHTML = html;
+}
+
+// 政企条线四级数据提取（复用）
+function getYoYZQLevel4(dateInt, district) {
+  const month = Math.floor(dateInt/100); const ms=month*100+1;
+  let lastMonth = month%100===1 ? month-100+12 : month-1;
+  const ls=lastMonth*100+1, le=lastMonth*100+(dateInt%100);
+  function agg(start, end) {
+    const m = {};
+    for (const dstr in DATA.fttrbZq) { const d=parseInt(dstr); if(d<start||d>end) continue; const fz=DATA.fttrbZq[dstr]?.[district]||{}; for (const l4 in fz) { if(!m[l4]) { m[l4]={'FTTR-B':0,'移动新增':0,'专线':0,'电路':0}; } for (const l5 in fz[l4]) m[l4]['FTTR-B']+=fz[l4][l5]||0; } }
+    for (const dstr in DATA.zq) { const d=parseInt(dstr); if(d<start||d>end) continue; const zd=DATA.zq[dstr]?.[district]||{}; for (const l4 in zd) { if(!m[l4]) { m[l4]={'FTTR-B':0,'移动新增':0,'专线':0,'电路':0}; } for (const l5 in zd[l4]) { m[l4]['移动新增']+=zd[l4][l5]['移动新增']||0; m[l4]['专线']+=zd[l4][l5]['专线']||0; m[l4]['电路']+=zd[l4][l5]['电路']||0; } } }
+    for (const l4 in m) m[l4]['双线新增'] = (m[l4]['专线']||0)+(m[l4]['电路']||0);
+    return m;
+  }
+  return { tm: agg(ms, dateInt), lm: agg(ls, le) };
+}
 
 /* ================================================================
  *  表格渲染 — 双层表头+指标带色+per-indicator排名
@@ -1107,6 +1192,38 @@ moduleRegistry.register({id:'yoy_zq',navLabel:'政企条线营销月报',order:4
 moduleRegistry.register({id:'more',navLabel:'更多',order:99});
 
 let currentPage = 'overview';
+let currentScope = '全市';
+const SCOPE_LIST = ['全市','大同','杜蒙','红岗','林甸','龙凤','让胡路','萨尔图','肇源','肇州','政企'];
+
+function renderScopeSelector(){
+  const dd = document.getElementById('scopeDropdown');
+  dd.innerHTML = SCOPE_LIST.map(d =>
+    `<div class="scope-item${d===currentScope?' active':''}" data-scope="${d}">${d}</div>`
+  ).join('');
+  dd.querySelectorAll('.scope-item').forEach(item => {
+    item.addEventListener('click', () => { setScope(item.dataset.scope); });
+  });
+}
+
+function setScope(district){
+  currentScope = district;
+  document.getElementById('scopeBtnLabel').textContent = district;
+  document.querySelectorAll('.scope-item').forEach(item =>
+    item.classList.toggle('active', item.dataset.scope === district)
+  );
+  document.getElementById('scopeDropdown').classList.remove('show');
+  rerenderAll();
+}
+
+function rerenderAll(){
+  renderQuick();
+  renderKPI();
+  renderTrendSection();
+  renderDailyReport();
+  renderMonthlyReport();
+  renderYoYChannelReport();
+  renderYoYZQReport();
+}
 
 function renderNav(){
   const c = document.getElementById('navTabs');
@@ -1127,21 +1244,23 @@ function renderKPI(){
   const dateInt = DEFAULT_DATE;
   const daily = getDailyData(dateInt);
   const monthly = getMonthlyData(dateInt);
-  // 直接取全市行，避免双算
-  const dailyCity = daily.find(r=>r.district==='全市');
-  const monthlyCity = monthly.find(r=>r.district==='全市');
-  const sumD={}; const sumM={}; CH_IND.forEach(i=>{sumD[i]=dailyCity?dailyCity.cells[i].val:0;sumM[i]=monthlyCity?monthlyCity.cells[i].val:0;});
+  const scopeRow = daily.find(r=>r.district===currentScope) || daily.find(r=>r.district==='全市');
+  const monthlyRow = monthly.find(r=>r.district===currentScope) || monthly.find(r=>r.district==='全市');
+  const sumD={}; const sumM={}; CH_IND.forEach(i=>{sumD[i]=scopeRow?scopeRow.cells[i].val:0;sumM[i]=monthlyRow?monthlyRow.cells[i].val:0;});
 
   // 7日趋势数据
   const last7 = DATA_DATES.slice(-7);
   const trend = {}; CH_IND.forEach(i=>trend[i]=[]);
   last7.forEach(d => {
     const dd = getDailyData(d);
-    const city = dd.find(r=>r.district==='全市');
-    CH_IND.forEach(ind => { trend[ind].push(city?city.cells[ind].val:0); });
+    const row = dd.find(r=>r.district===currentScope) || dd.find(r=>r.district==='全市');
+    CH_IND.forEach(ind => { trend[ind].push(row?row.cells[ind].val:0); });
   });
 
-  let dt=0; for(const dist in DATA.target) dt+=(DATA.target[dist]['宽带']||0);
+  // 目标：全市=全部区县目标之和，区县=该区县目标
+  let dt=0;
+  if (currentScope === '全市') { for(const dist in DATA.target) dt+=(DATA.target[dist]['宽带']||0); }
+  else { dt = (DATA.target[currentScope]?.['宽带'])||0; }
   const days = dateInt - Math.floor(dateInt/100)*100;
   const mt = dt*days;
   const dRate = dt>0 ? +(sumD['宽带']/dt*100).toFixed(1) : 0;
@@ -1150,7 +1269,9 @@ function renderKPI(){
   grid.innerHTML = CH_IND.map((ind,i) => {
     const color = IND_COLORS[i];
     const dv = sumD[ind]; const mv = sumM[ind];
-    let dit=0; for(const dist in DATA.target) dit+=(DATA.target[dist][ind]||0);
+    let dit=0;
+    if (currentScope === '全市') { for(const dist in DATA.target) dit+=(DATA.target[dist][ind]||0); }
+    else { dit = (DATA.target[currentScope]?.[ind])||0; }
     const mit = dit*days;
     const dR = dit>0 ? +(dv/dit*100).toFixed(1) : 0;
     const mR = mit>0 ? +(mv/mit*100).toFixed(1) : 0;
@@ -1171,8 +1292,8 @@ function renderTrendSection(){
   const trend = {}; CH_IND.forEach(i=>trend[i]=[]);
   last7.forEach(d => {
     const dd = getDailyData(d);
-    const city = dd.find(r=>r.district==='全市');
-    CH_IND.forEach(ind => { trend[ind].push(city?city.cells[ind].val:0); });
+    const row = dd.find(r=>r.district===currentScope) || dd.find(r=>r.district==='全市');
+    CH_IND.forEach(ind => { trend[ind].push(row?row.cells[ind].val:0); });
   });
   const rangeStr = formatMD(last7[0])+' - '+formatMD(last7[last7.length-1]);
   const el = document.getElementById('trendSection');
@@ -1224,12 +1345,20 @@ function renderDailyDatePicker(){
 
 function renderDailyReport(){
   const m = Math.floor(dailyDate/100)%100, d = dailyDate%100;
-  document.getElementById('dailyTitle').textContent = '【'+m+'月'+d+'日营销通报】';
   const input = document.getElementById('dailyDateInput');
   if (input) input.value = intToDateStr(dailyDate);
-  const data = getDailyData(dailyDate);
-  renderMainTable(document.getElementById('dailyTableWrap'), data, 'rate', 'day');
-  renderBulletin(data, dailyDate, '日增');
+  if (currentScope === '全市') {
+    document.getElementById('dailyTitle').textContent = '【'+m+'月'+d+'日营销通报】';
+    const data = getDailyData(dailyDate);
+    renderMainTable(document.getElementById('dailyTableWrap'), data, 'rate', 'day');
+    renderBulletin(data, dailyDate, '日增');
+  } else {
+    document.getElementById('dailyTitle').textContent = '【'+currentScope+' '+m+'月'+d+'日营销通报】';
+    const data = getDailyLevel4(dailyDate, currentScope);
+    renderLevel4Completion(document.getElementById('dailyTableWrap'), data, 'day', currentScope);
+    const bulletinEl = document.getElementById('dailyBulletin');
+    if (bulletinEl) bulletinEl.innerHTML = '';
+  }
 }
 
 // 通报摘要（日报/月报共用）
@@ -1269,10 +1398,18 @@ function renderMonthlyDatePicker(){
 
 function renderMonthlyReport(){
   const m = Math.floor(monthlyDate/100)%100, d = monthlyDate%100;
-  document.getElementById('monthlyTitle').textContent = '大庆分公司营销月报（'+m+'.1-'+m+'.'+d+'）';
-  const data = getMonthlyData(monthlyDate);
-  renderMainTable(document.getElementById('monthlyTableWrap'), data, 'rate', 'month');
-  renderBulletin(data, monthlyDate, '月增', 'monthlyBulletin');
+  if (currentScope === '全市') {
+    document.getElementById('monthlyTitle').textContent = '大庆分公司营销月报（'+m+'.1-'+m+'.'+d+'）';
+    const data = getMonthlyData(monthlyDate);
+    renderMainTable(document.getElementById('monthlyTableWrap'), data, 'rate', 'month');
+    renderBulletin(data, monthlyDate, '月增', 'monthlyBulletin');
+  } else {
+    document.getElementById('monthlyTitle').textContent = currentScope+'营销月报（'+m+'.1-'+m+'.'+d+'）';
+    const data = getMonthlyLevel4(monthlyDate, currentScope);
+    renderLevel4Completion(document.getElementById('monthlyTableWrap'), data, 'month', currentScope);
+    const bulletinEl = document.getElementById('monthlyBulletin');
+    if (bulletinEl) bulletinEl.innerHTML = '';
+  }
 }
 
 /* ---- 渠道条线营销月报 ---- */
@@ -1288,9 +1425,15 @@ function renderYoYChannelDatePicker(){
 
 function renderYoYChannelReport(){
   const m = Math.floor(yoyChannelDate/100)%100, d = yoyChannelDate%100;
-  document.getElementById('yoyChannelTitle').textContent = '大庆分公司渠道条线营销月报（'+m+'.1-'+m+'.'+d+' 同比）';
-  const data = getYoYChannelData(yoyChannelDate);
-  renderMainTable(document.getElementById('yoyChannelTableWrap'), data, 'yoy', 'yoy');
+  if (currentScope === '全市') {
+    document.getElementById('yoyChannelTitle').textContent = '大庆分公司渠道条线营销月报（'+m+'.1-'+m+'.'+d+' 同比）';
+    const data = getYoYChannelData(yoyChannelDate);
+    renderMainTable(document.getElementById('yoyChannelTableWrap'), data, 'yoy', 'yoy');
+  } else {
+    document.getElementById('yoyChannelTitle').textContent = currentScope+'渠道条线营销月报（'+m+'.1-'+m+'.'+d+' 同比）';
+    const {tm,lm} = getYoYLevel4(yoyChannelDate, currentScope, false);
+    renderLevel4YoY(document.getElementById('yoyChannelTableWrap'), tm, lm, CH_IND, HB_CLS, HBS_CLS, DB_CLS, 'yoy', currentScope);
+  }
 }
 
 /* ---- 政企条线营销月报 ---- */
@@ -1306,9 +1449,16 @@ function renderYoYZQDatePicker(){
 
 function renderYoYZQReport(){
   const m = Math.floor(yoyZqDate/100)%100, d = yoyZqDate%100;
-  document.getElementById('yoyZqTitle').textContent = '大庆分公司政企条线营销月报（'+m+'.1-'+m+'.'+d+' 同比）';
-  const data = getYoYZQData(yoyZqDate);
-  renderMainTable(document.getElementById('yoyZqTableWrap'), data, 'yoy_zq', '');
+  const zqHB=['hb5','hb2','hb3'], zqHBS=['hb5s','hb2s','hb3s'], zqDB=['db5','db2','db3'];
+  if (currentScope === '全市') {
+    document.getElementById('yoyZqTitle').textContent = '大庆分公司政企条线营销月报（'+m+'.1-'+m+'.'+d+' 同比）';
+    const data = getYoYZQData(yoyZqDate);
+    renderMainTable(document.getElementById('yoyZqTableWrap'), data, 'yoy_zq', '');
+  } else {
+    document.getElementById('yoyZqTitle').textContent = currentScope+'政企条线营销月报（'+m+'.1-'+m+'.'+d+' 同比）';
+    const {tm,lm} = getYoYZQLevel4(yoyZqDate, currentScope);
+    renderLevel4YoY(document.getElementById('yoyZqTableWrap'), tm, lm, ZQ_IND, zqHB, zqHBS, zqDB, 'yoy_zq', currentScope);
+  }
 }
 
 function renderMore(){
@@ -1336,6 +1486,15 @@ function initTheme(){
 function init(){
   initTheme();
   document.getElementById('navDate').textContent = formatMD(DEFAULT_DATE);
+  renderScopeSelector();
+  document.getElementById('scopeBtn').addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.getElementById('scopeDropdown').classList.toggle('show');
+  });
+  document.addEventListener('click', () => {
+    document.getElementById('scopeDropdown').classList.remove('show');
+  });
+  document.getElementById('scopeDropdown').addEventListener('click', (e) => { e.stopPropagation(); });
   renderNav();
   renderQuick();
   renderKPI();
