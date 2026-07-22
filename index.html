@@ -786,7 +786,7 @@ function getDailyLevel4(dateInt, district) {
   for (const l4 in dayData) { if(!l4Map[l4]) l4Map[l4]={}; for (const ind of CH_IND) { if(ind==='FTTR-B') continue; let cnt=0; for (const l5 in dayData[l4]) cnt+=dayData[l4][l5][ind]||0; l4Map[l4][ind]=cnt; } }
   for (const l4 in dayFttrb) { if(!l4Map[l4]) l4Map[l4]={}; let cnt=0; for (const l5 in dayFttrb[l4]) cnt+=dayFttrb[l4][l5]||0; l4Map[l4]['FTTR-B']=cnt; }
   for (const l4 in dayFttrbZq) { if(!l4Map[l4]) l4Map[l4]={}; let cnt=0; for (const l5 in dayFttrbZq[l4]) cnt+=dayFttrbZq[l4][l5]||0; l4Map[l4]['FTTR-B']=(l4Map[l4]['FTTR-B']||0)+cnt; }
-  return Object.entries(l4Map).map(([name,cells])=>({ name, cells: Object.fromEntries(CH_IND.map(ind=>[ind,{val:cells[ind]||0}])) }));
+  return Object.entries(l4Map).map(([name,cells])=>({ name, cells: Object.fromEntries(CH_IND.map(ind=>[ind,{val:cells[ind]||0}])) })).sort((a,b)=>(b.cells['宽带']?.val||0)-(a.cells['宽带']?.val||0));
 }
 function getDailyLevel5(dateInt, district, level4) {
   const dayData = DATA.newdev[String(dateInt)]?.[district]?.[level4] || {};
@@ -800,7 +800,7 @@ function getDailyLevel5(dateInt, district, level4) {
   for (const l5 in dayData) { if(!l5Map[l5]) l5Map[l5]={}; for (const ind of CH_IND) { if(ind==='FTTR-B') continue; l5Map[l5][ind]=dayData[l5][ind]||0; } }
   for (const l5 in dayFttrb) { if(!l5Map[l5]) l5Map[l5]={}; l5Map[l5]['FTTR-B']=(l5Map[l5]['FTTR-B']||0)+(dayFttrb[l5]||0); }
   for (const l5 in dayFttrbZq) { if(!l5Map[l5]) l5Map[l5]={}; l5Map[l5]['FTTR-B']=(l5Map[l5]['FTTR-B']||0)+(dayFttrbZq[l5]||0); }
-  return Object.entries(l5Map).map(([name,cells])=>({ name, cells: Object.fromEntries(CH_IND.map(ind=>[ind,{val:cells[ind]||0}])) }));
+  return Object.entries(l5Map).map(([name,cells])=>({ name, cells: Object.fromEntries(CH_IND.map(ind=>[ind,{val:cells[ind]||0}])) })).sort((a,b)=>(b.cells['宽带']?.val||0)-(a.cells['宽带']?.val||0));
 }
 // 月累计四级/五级
 function getMonthlyLevel4(dateInt, district) {
@@ -812,7 +812,7 @@ function getMonthlyLevel4(dateInt, district) {
   for (const dstr in DATA.newdev) { const d=parseInt(dstr); if(d<ms||d>dateInt) continue; const dd=DATA.newdev[dstr]?.[district]||{}; for (const l4 in dd) { if(!l4Map[l4]) { l4Map[l4]={}; inds.forEach(i=>l4Map[l4][i]=0); l4Map[l4]['FTTR-B']=0; } for (const l5 in dd[l4]) for (const ind of inds) l4Map[l4][ind]+=dd[l4][l5][ind]||0; } }
   for (const dstr in DATA.fttrb) { const d=parseInt(dstr); if(d<ms||d>dateInt) continue; const ff=DATA.fttrb[dstr]?.[district]||{}; for (const l4 in ff) { if(!l4Map[l4]) { l4Map[l4]={}; inds.forEach(i=>l4Map[l4][i]=0); l4Map[l4]['FTTR-B']=0; } for (const l5 in ff[l4]) l4Map[l4]['FTTR-B']+=ff[l4][l5]||0; } }
   for (const dstr in DATA.fttrbZq) { const d=parseInt(dstr); if(d<ms||d>dateInt) continue; const fz=DATA.fttrbZq[dstr]?.[district]||{}; for (const l4 in fz) { if(!l4Map[l4]) { l4Map[l4]={}; inds.forEach(i=>l4Map[l4][i]=0); l4Map[l4]['FTTR-B']=0; } for (const l5 in fz[l4]) l4Map[l4]['FTTR-B']+=fz[l4][l5]||0; } }
-  return Object.entries(l4Map).map(([name,cells])=>({ name, cells: Object.fromEntries(CH_IND.map(ind=>[ind,{val:cells[ind]||0}])) }));
+  return Object.entries(l4Map).map(([name,cells])=>({ name, cells: Object.fromEntries(CH_IND.map(ind=>[ind,{val:cells[ind]||0}])) })).sort((a,b)=>(b.cells['宽带']?.val||0)-(a.cells['宽带']?.val||0));
 }
 function getMonthlyLevel5(dateInt, district, level4) {
   const month=Math.floor(dateInt/100); const ms=month*100+1;
@@ -823,7 +823,7 @@ function getMonthlyLevel5(dateInt, district, level4) {
   for (const dstr in DATA.newdev) { const d=parseInt(dstr); if(d<ms||d>dateInt) continue; const dd=DATA.newdev[dstr]?.[district]?.[level4]||{}; for (const l5 in dd) { if(!l5Map[l5]) { l5Map[l5]={}; inds.forEach(i=>l5Map[l5][i]=0); l5Map[l5]['FTTR-B']=0; } for (const ind of inds) l5Map[l5][ind]+=dd[l5][ind]||0; } }
   for (const dstr in DATA.fttrb) { const d=parseInt(dstr); if(d<ms||d>dateInt) continue; const ff=DATA.fttrb[dstr]?.[district]?.[level4]||{}; for (const l5 in ff) { if(!l5Map[l5]) { l5Map[l5]={}; inds.forEach(i=>l5Map[l5][i]=0); l5Map[l5]['FTTR-B']=0; } l5Map[l5]['FTTR-B']+=ff[l5]||0; } }
   for (const dstr in DATA.fttrbZq) { const d=parseInt(dstr); if(d<ms||d>dateInt) continue; const fz=DATA.fttrbZq[dstr]?.[district]?.[level4]||{}; for (const l5 in fz) { if(!l5Map[l5]) { l5Map[l5]={}; inds.forEach(i=>l5Map[l5][i]=0); l5Map[l5]['FTTR-B']=0; } l5Map[l5]['FTTR-B']+=fz[l5]||0; } }
-  return Object.entries(l5Map).map(([name,cells])=>({ name, cells: Object.fromEntries(CH_IND.map(ind=>[ind,{val:cells[ind]||0}])) }));
+  return Object.entries(l5Map).map(([name,cells])=>({ name, cells: Object.fromEntries(CH_IND.map(ind=>[ind,{val:cells[ind]||0}])) })).sort((a,b)=>(b.cells['宽带']?.val||0)-(a.cells['宽带']?.val||0));
 }
 
 // 同比四级下钻数据(渠道侧+政企侧共用)
@@ -925,7 +925,12 @@ function buildYoYDrillTable(title, tm, lm, indicators, hbCls, hbsCls, dbCls, dri
   indicators.forEach((ind,i) => html += '<th class="'+hbsCls[i]+'">本月</th><th class="'+hbsCls[i]+'">上月</th><th class="'+hbsCls[i]+'">同比</th>');
   html += '</tr></thead><tbody>';
   const sums = {}; indicators.forEach(ind => sums[ind]={tm:0,lm:0});
-  for (const name in tm) {
+  const sortedNames = Object.keys(tm).sort((a,b)=>{
+    const ya=(tm[a][indicators[0]]||0)-((lm[a]&&lm[a][indicators[0]])||0);
+    const yb=(tm[b][indicators[0]]||0)-((lm[b]&&lm[b][indicators[0]])||0);
+    return yb-ya;
+  });
+  sortedNames.forEach(name => {
     const tdCls = isL5 ? 'drt-fn' : 'cl';
     const drillAttr = isL5 ? '' : ' data-dr="2" data-cn="'+(drillInfo?drillInfo.cn:'')+'" data-fn="'+name+'"';
     html += '<tr><td class="'+tdCls+'"'+drillAttr+' style="text-align:left;font-weight:700;color:var(--b)">'+name+'</td>';
@@ -936,7 +941,7 @@ function buildYoYDrillTable(title, tm, lm, indicators, hbCls, hbsCls, dbCls, dri
       html += '<td class="'+dbCls[i]+'">'+tv+'</td><td class="'+dbCls[i]+'">'+lv+'</td><td class="'+dbCls[i]+' trend-cell '+cls+'">'+sign+yoy+'</td>';
     });
     html += '</tr>';
-  }
+  });
   // 合计行
   html += '<tr class="drt-sum"><td style="text-align:left;font-weight:700">合计</td>';
   indicators.forEach((ind,i) => {
@@ -1037,7 +1042,12 @@ function renderLevel4YoY(wrap, tm, lm, indicators, hbCls, hbsCls, dbCls, drillSr
   indicators.forEach((ind,i) => html += '<th class="'+hbsCls[i]+'">本月</th><th class="'+hbsCls[i]+'">上月</th><th class="'+hbsCls[i]+'">同比</th>');
   html += '</tr></thead><tbody>';
   const sums = {}; indicators.forEach(ind => sums[ind]={tm:0,lm:0});
-  for (const name in tm) {
+  const sortedNames = Object.keys(tm).sort((a,b)=>{
+    const ya=(tm[a][indicators[0]]||0)-((lm[a]&&lm[a][indicators[0]])||0);
+    const yb=(tm[b][indicators[0]]||0)-((lm[b]&&lm[b][indicators[0]])||0);
+    return yb-ya;
+  });
+  sortedNames.forEach(name => {
     html += '<tr><td class="cl" data-dr="2" data-cn="'+cn+'" data-fn="'+name+'" data-src="'+drillSrc+'" style="text-align:left;font-weight:700;color:var(--b)">'+name+'</td>';
     indicators.forEach((ind,i) => {
       const tv=tm[name][ind]||0; const lv=(lm[name]&&lm[name][ind])||0;
@@ -1046,7 +1056,7 @@ function renderLevel4YoY(wrap, tm, lm, indicators, hbCls, hbsCls, dbCls, drillSr
       html += '<td class="'+dbCls[i]+'">'+tv+'</td><td class="'+dbCls[i]+'">'+lv+'</td><td class="'+dbCls[i]+' trend-cell '+cls+'">'+sign+yoy+'</td>';
     });
     html += '</tr>';
-  }
+  });
   html += '<tr class="drt-sum"><td style="text-align:left;font-weight:700">合计</td>';
   indicators.forEach((ind,i) => {
     const tv=sums[ind].tm; const lv=sums[ind].lm; const yoy=tv-lv;
