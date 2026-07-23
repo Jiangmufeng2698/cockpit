@@ -377,9 +377,22 @@ body {
   border-radius:var(--radius-lg); padding:14px 18px; margin-top:14px; box-shadow:var(--shadow-card);
 }
 [data-theme="dark"] .bulletin { backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.08); }
-.bulletin-title { font-size:14px; font-weight:700; margin-bottom:8px; color:var(--b); }
-.bulletin-body { font-size:13px; line-height:1.9; color:var(--text-primary); }
+.bulletin-title { font-size:14px; font-weight:700; margin-bottom:10px; color:var(--b); }
+.bulletin-body { font-size:13px; line-height:1.8; color:var(--text-primary); }
 .bulletin-body .highlight { color:var(--r); font-weight:600; }
+.bulletin-sec { margin-bottom:8px; }
+.bulletin-sec-label { font-weight:700; color:var(--b); margin-right:4px; }
+.bulletin-sec-items { display:flex; flex-wrap:wrap; gap:4px 8px; }
+.bulletin-tag {
+  display:inline-block; padding:1px 8px; border-radius:4px;
+  background:var(--bg-hover); font-size:12px; white-space:nowrap;
+}
+.bulletin-tag .bt-val { font-weight:600; color:var(--text-primary); }
+.bulletin-tag .bt-yoy-pos { color:var(--r); font-weight:600; }
+.bulletin-tag .bt-yoy-neg { color:var(--g); font-weight:600; }
+.bulletin-tag-zero { background:rgba(239,68,68,0.08); color:var(--r); }
+.bulletin-tag-neg { background:rgba(239,68,68,0.08); color:var(--r); }
+.bulletin-tag-ok { background:rgba(34,197,94,0.08); color:var(--g); }
 
 /* 模块占位 */
 .module-placeholder {
@@ -1521,32 +1534,29 @@ function renderCompletionBulletin(rows, nameField, label, elId, scopeLabel, show
   if (!el) return;
   const overall = rows.find(r => r[nameField] === '全市');
 
-  // 1. 整体情况
-  let overallStr;
+  // 1. 整体情况 — 每个指标一个tag
+  let overallTags;
   if (overall) {
-    overallStr = CH_IND.map(ind => {
+    overallTags = CH_IND.map(ind => {
       const c = overall.cells[ind];
-      if (ind === '宽带' || ind === '融合') return ind + label + c.val + '（' + c.rate + '%）';
-      return ind + label + c.val;
-    }).join('、');
+      const rateStr = (ind === '宽带' || ind === '融合') ? ' <span class="bt-val">' + c.rate + '%</span>' : '';
+      return '<span class="bulletin-tag">' + ind + label + '<span class="bt-val">' + c.val + '</span>' + rateStr + '</span>';
+    }).join('');
   } else {
-    // 区县scope：汇总所有四级
     const sum = {}; CH_IND.forEach(i => sum[i] = 0);
     rows.forEach(r => CH_IND.forEach(i => sum[i] += r.cells[i].val || 0));
-    overallStr = CH_IND.map(ind => ind + label + sum[ind]).join('、');
+    overallTags = CH_IND.map(ind => '<span class="bulletin-tag">' + ind + label + '<span class="bt-val">' + sum[ind] + '</span></span>').join('');
   }
 
-  // 2. 经营单位/四级承包体：零销 + 后三
+  // 2. 经营单位：零销 + 后三
   const unitRows = rows.filter(r => r[nameField] !== '全市' && r[nameField] !== '政企');
-  let unitParts = [];
+  let unitTags = [];
 
-  // 各指标零销
   CH_IND.forEach(ind => {
     const zeros = unitRows.filter(r => (r.cells[ind].val || 0) === 0).map(r => r[nameField]);
-    if (zeros.length > 0) unitParts.push(ind + '零销' + zeros.length + '个（' + zeros.join('、') + '）');
+    if (zeros.length > 0) unitTags.push('<span class="bulletin-tag bulletin-tag-zero">' + ind + '零销' + zeros.length + '个（' + zeros.join('、') + '）</span>');
   });
 
-  // 宽带完成率后三（有rate时按rate，否则按val）
   if (unitRows.length > 0) {
     const hasRate = unitRows[0].cells['宽带'].rate !== undefined;
     const ranked = [...unitRows].sort((a,b) =>
@@ -1554,17 +1564,20 @@ function renderCompletionBulletin(rows, nameField, label, elId, scopeLabel, show
     );
     const bottom3 = ranked.slice(-3).filter(r => hasRate ? r.cells['宽带'].rate < 100 : true);
     if (bottom3.length > 0) {
-      unitParts.push('宽带' + (hasRate ? '完成率后三：' : '量后三：') +
-        bottom3.map(r => r[nameField] + (hasRate ? '(' + r.cells['宽带'].rate + '%)' : '')).join('、'));
+      unitTags.push('<span class="bulletin-tag bulletin-tag-neg">宽带' + (hasRate ? '完成率后三：' : '量后三：') +
+        bottom3.map(r => r[nameField] + (hasRate ? '(' + r.cells['宽带'].rate + '%)' : '')).join('、') + '</span>');
     }
   }
 
   const unitLabel = overall ? '经营单位' : '四级承包体';
-  const unitHtml = showUnit === false ? '' : `<p>2、${unitLabel}：${unitParts.length > 0 ? unitParts.join('；') : '各指标均正常'}。</p>`;
+  const unitHtml = showUnit === false ? '' :
+    '<div class="bulletin-sec"><span class="bulletin-sec-label">2、' + unitLabel + '：</span>' +
+    '<span class="bulletin-sec-items">' + (unitTags.length > 0 ? unitTags.join('') : '<span class="bulletin-tag bulletin-tag-ok">各指标均正常</span>') + '</span></div>';
+
   el.innerHTML = `
     <div class="bulletin-title">通报摘要</div>
     <div class="bulletin-body">
-      <p>1、${scopeLabel}：${overallStr}。</p>
+      <div class="bulletin-sec"><span class="bulletin-sec-label">1、${scopeLabel}：</span><span class="bulletin-sec-items">${overallTags}</span></div>
       ${unitHtml}
     </div>`;
 }
@@ -1575,47 +1588,49 @@ function renderYoYBulletin(rows, nameField, indicators, elId, scopeLabel, showUn
   if (!el) return;
   const overall = rows.find(r => r[nameField] === '全市');
 
-  // 1. 整体情况
-  let overallStr;
+  // 1. 整体情况 — 每个指标一个tag
+  let overallTags;
   if (overall) {
-    overallStr = indicators.map(ind => {
+    overallTags = indicators.map(ind => {
       const c = overall.cells[ind];
+      const yoyCls = c.yoy >= 0 ? 'bt-yoy-pos' : 'bt-yoy-neg';
       const yoyStr = c.yoy >= 0 ? '+' + c.yoy : '' + c.yoy;
-      return ind + '本月' + c.thisMonth + '（同比' + yoyStr + '）';
-    }).join('、');
+      return '<span class="bulletin-tag">' + ind + '本月<span class="bt-val">' + c.thisMonth + '</span>（同比<span class="' + yoyCls + '">' + yoyStr + '</span>）</span>';
+    }).join('');
   } else {
-    // 区县scope：汇总
     const sum = {}; indicators.forEach(i => { sum[i] = {thisMonth: 0, lastMonth: 0}; });
     rows.forEach(r => indicators.forEach(i => {
       sum[i].thisMonth += r.cells[i].thisMonth || 0;
       sum[i].lastMonth += r.cells[i].lastMonth || 0;
     }));
-    overallStr = indicators.map(ind => {
+    overallTags = indicators.map(ind => {
       const yoy = sum[ind].thisMonth - sum[ind].lastMonth;
+      const yoyCls = yoy >= 0 ? 'bt-yoy-pos' : 'bt-yoy-neg';
       const yoyStr = yoy >= 0 ? '+' + yoy : '' + yoy;
-      return ind + '本月' + sum[ind].thisMonth + '（同比' + yoyStr + '）';
-    }).join('、');
+      return '<span class="bulletin-tag">' + ind + '本月<span class="bt-val">' + sum[ind].thisMonth + '</span>（同比<span class="' + yoyCls + '">' + yoyStr + '</span>）</span>';
+    }).join('');
   }
 
   // 2. 经营单位/四级承包体
   const unitRows = rows.filter(r => r[nameField] !== '全市');
-  let unitParts = [];
+  let unitTags = [];
 
   indicators.forEach(ind => {
-    // 零销（本月为0）
     const zeros = unitRows.filter(r => (r.cells[ind].thisMonth || 0) === 0).map(r => r[nameField]);
-    if (zeros.length > 0) unitParts.push(ind + '零销' + zeros.length + '个（' + zeros.join('、') + '）');
-    // 同比负增长
+    if (zeros.length > 0) unitTags.push('<span class="bulletin-tag bulletin-tag-zero">' + ind + '零销' + zeros.length + '个（' + zeros.join('、') + '）</span>');
     const neg = unitRows.filter(r => (r.cells[ind].yoy || 0) < 0).map(r => r[nameField]);
-    if (neg.length > 0) unitParts.push(ind + '同比负增长' + neg.length + '个（' + neg.join('、') + '）');
+    if (neg.length > 0) unitTags.push('<span class="bulletin-tag bulletin-tag-neg">' + ind + '同比负增长' + neg.length + '个（' + neg.join('、') + '）</span>');
   });
 
   const unitLabel = overall ? '经营单位' : '四级承包体';
-  const unitHtml = showUnit === false ? '' : `<p>2、${unitLabel}：${unitParts.length > 0 ? unitParts.join('；') : '各指标同比均正增长'}。</p>`;
+  const unitHtml = showUnit === false ? '' :
+    '<div class="bulletin-sec"><span class="bulletin-sec-label">2、' + unitLabel + '：</span>' +
+    '<span class="bulletin-sec-items">' + (unitTags.length > 0 ? unitTags.join('') : '<span class="bulletin-tag bulletin-tag-ok">各指标同比均正增长</span>') + '</span></div>';
+
   el.innerHTML = `
     <div class="bulletin-title">通报摘要</div>
     <div class="bulletin-body">
-      <p>1、${scopeLabel}：${overallStr}。</p>
+      <div class="bulletin-sec"><span class="bulletin-sec-label">1、${scopeLabel}：</span><span class="bulletin-sec-items">${overallTags}</span></div>
       ${unitHtml}
     </div>`;
 }
