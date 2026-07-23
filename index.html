@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN" data-theme="light">
 <head>
 <meta charset="UTF-8">
@@ -449,6 +449,708 @@ body {
   .tw thead th:first-child { min-width:100px; }
   .tw tbody td:first-child { min-width:100px; max-width:110px; }
 }
+
+
+/* ========== 视联网专区 - 适配驾驶舱蓝色主题 ========== */
+#page-video {
+  --vw-primary: var(--b);
+  --vw-primary-dark: var(--bd);
+  --vw-primary-light: var(--accent-cyan);
+  --vw-primary-bg: var(--accent-blue-light);
+  --vw-shadow: 0 2px 12px rgba(37,99,235,0.06);
+}
+
+/* 深色模式视联网变量覆盖 */
+[data-theme="dark"] #page-video {
+  --vw-primary-dark: #e8ecf1;
+  --vw-primary-bg: rgba(0,212,255,0.1);
+  --vw-shadow: 0 2px 12px rgba(0,212,255,0.08);
+}
+
+
+/* === 原始视联网CSS (scoped & color-adapted) === */
+
+
+
+/* 顶部Banner */
+#page-video .header{
+  background:linear-gradient(135deg,var(--vw-primary) 0%,var(--vw-primary-dark) 50%,#1d4ed8 100%);
+  color:#fff;
+  padding:36px 24px 28px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+#page-video .header::before{
+  content:"";
+  position:absolute;
+  top:-50%;right:-20%;
+  width:600px;height:600px;
+  background:radial-gradient(circle,rgba(255,255,255,0.05) 0%,transparent 70%);
+  border-radius:50%;
+}
+#page-video .header h1 {font-size:30px;font-weight:700;letter-spacing:4px;position:relative;z-index:1;}
+#page-video .header .subtitle {font-size:14px;opacity:.85;margin-top:8px;position:relative;z-index:1;letter-spacing:1px;}
+#page-video .header .badge{
+  display:inline-block;
+  background:rgba(255,255,255,0.15);
+  border:1px solid rgba(255,255,255,0.3);
+  border-radius:20px;
+  padding:3px 14px;
+  font-size:12px;
+  margin-top:10px;
+  position:relative;z-index:1;
+}
+
+/* 搜索区域 */
+#page-video .search-section{
+  max-width:1100px;
+  margin:-20px auto 0;
+  padding:0 24px;
+  position:relative;
+  z-index:10;
+}
+#page-video .search-box{
+  background:var(--bg-card);
+  border-radius:16px;
+  box-shadow:0 8px 32px rgba(37,99,235,0.1);
+  padding:24px;
+}
+#page-video .search-input-wrap {position:relative;}
+#page-video .search-input-wrap input{
+  width:100%;
+  height:56px;
+  border:2px solid var(--border-color);
+  border-radius:12px;
+  font-size:16px;
+  padding:0 100px 0 20px;
+  outline:none;
+  transition:border-color .3s;
+  font-family:inherit;
+}
+#page-video .search-input-wrap input:focus {border-color:var(--vw-primary);}
+#page-video .search-btn{
+  position:absolute;
+  right:6px;top:6px;
+  height:44px;
+  padding:0 28px;
+  background:linear-gradient(135deg,var(--vw-primary),var(--vw-primary-dark));
+  color:#fff;border:none;
+  border-radius:10px;
+  font-size:15px;font-weight:600;
+  cursor:pointer;
+  transition:all .3s;
+}
+#page-video .search-btn:hover {box-shadow:0 4px 16px rgba(37,99,235,0.3);transform:translateY(-1px);}
+#page-video .search-stats{
+  margin-top:14px;
+  font-size:13px;
+  color:var(--text-secondary);
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex-wrap:wrap;
+}
+#page-video .search-stats .count {color:var(--vw-primary);font-weight:700;font-size:18px;}
+#page-video .stat-badge{
+  background:var(--vw-primary-bg);
+  border:1px solid rgba(37,99,235,0.2);
+  border-radius:6px;
+  padding:2px 8px;
+  font-size:12px;
+  color:var(--vw-primary);
+}
+
+/* 快捷标签 */
+#page-video .quick-tags{
+  margin-top:16px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+#page-video .quick-tag{
+  background:var(--vw-primary-bg);
+  border:1px solid rgba(37,99,235,0.25);
+  border-radius:16px;
+  padding:5px 14px;
+  font-size:13px;
+  color:var(--vw-primary);
+  cursor:pointer;
+  transition:all .2s;
+}
+#page-video .quick-tag:hover {background:var(--vw-primary);color:#fff;}
+
+/* 主体内容 */
+#page-video .vw-main-content{
+  max-width:1100px;
+  margin:28px auto 48px;
+  padding:0 24px;
+}
+
+/* 流程导航条 */
+#page-video .flow-nav{
+  display:flex;
+  gap:0;
+  margin-bottom:24px;
+  border-radius:12px;
+  overflow:hidden;
+  box-shadow:var(--vw-shadow);
+}
+#page-video .flow-nav-item{
+  flex:1;
+  padding:14px 8px;
+  text-align:center;
+  font-size:13px;
+  font-weight:600;
+  cursor:pointer;
+  position:relative;
+  transition:all .3s;
+  color:#fff;
+  background:linear-gradient(135deg,var(--vw-primary),var(--vw-primary-dark));
+}
+#page-video .flow-nav-item:hover {filter:brightness(1.15);transform:translateY(-2px);}
+#page-video .flow-nav-item.active {box-shadow:inset 0 -3px 0 var(--accent-gold);}
+#page-video .flow-nav-item .num{
+  display:inline-block;
+  width:22px;height:22px;
+  background:rgba(255,255,255,0.25);
+  border-radius:50%;
+  font-size:12px;
+  line-height:22px;
+  margin-right:6px;
+}
+#page-video .flow-nav-arrow{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:var(--vw-primary);
+  color:#fff;
+  font-size:16px;
+  padding:0 2px;
+  flex:0 0 auto;
+}
+
+/* 模块卡片 */
+#page-video .module{
+  background:var(--bg-card);
+  border-radius:16px;
+  box-shadow:var(--vw-shadow);
+  margin-bottom:20px;
+  overflow:hidden;
+  border:1px solid var(--border-color);
+  transition:box-shadow .3s;
+}
+#page-video .module:hover {box-shadow:0 4px 24px rgba(37,99,235,0.1);}
+#page-video .module-header{
+  padding:18px 24px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  transition:background .3s;
+  user-select:none;
+}
+#page-video .module-header:hover {background:var(--vw-primary-bg);}
+#page-video .module-num{
+  width:42px;height:42px;
+  border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;font-weight:700;
+  color:#fff;
+  flex-shrink:0;
+}
+#page-video .module-1 .module-num {background:linear-gradient(135deg,var(--vw-primary),var(--vw-primary-dark));}
+#page-video .module-2 .module-num {background:linear-gradient(135deg,#3b82f6,var(--vw-primary));}
+#page-video .module-3 .module-num {background:linear-gradient(135deg,#60a5fa,#3b82f6);}
+#page-video .module-4 .module-num {background:linear-gradient(135deg,#93c5fd,#60a5fa);}
+#page-video .module-5 .module-num {background:linear-gradient(135deg,var(--vw-primary),var(--vw-primary-dark));}
+#page-video .module-title {font-size:18px;font-weight:700;color:var(--text-primary);flex:1;}
+#page-video .module-desc {font-size:12px;color:var(--text-secondary);margin-top:2px;}
+#page-video .module-arrow{
+  width:28px;height:28px;
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .3s;
+  color:var(--vw-primary);
+  font-size:18px;
+}
+#page-video .module.collapsed .module-arrow {transform:rotate(-90deg);}
+#page-video .module-body{
+  padding:0 24px 20px;
+  display:block;
+}
+#page-video .module.collapsed .module-body {display:none;}
+
+/* 层级树 */
+#page-video .level-1{
+  margin-bottom:16px;
+  border-left:3px solid var(--vw-primary);
+  padding-left:16px;
+  position:relative;
+}
+#page-video .level-1::before{
+  content:"";
+  position:absolute;
+  left:-6px;top:0;
+  width:9px;height:9px;
+  background:var(--vw-primary);
+  border-radius:50%;
+  border:2px solid #fff;
+  box-shadow:0 0 0 1px var(--vw-primary);
+}
+#page-video .level-1-title{
+  font-size:16px;
+  font-weight:600;
+  color:var(--vw-primary-dark);
+  margin-bottom:10px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+#page-video .level-1-title .l1-tag{
+  font-size:11px;
+  font-weight:400;
+  background:var(--vw-primary-bg);
+  border:1px solid rgba(37,99,235,0.25);
+  border-radius:4px;
+  padding:1px 6px;
+  color:var(--vw-primary);
+}
+
+#page-video .level-2{
+  margin-left:4px;
+  margin-bottom:10px;
+  padding:12px 16px;
+  background:var(--bg-body);
+  border-radius:10px;
+  border:1px solid var(--border-light);
+  transition:background .2s;
+}
+#page-video .level-2:hover {background:var(--vw-primary-bg);}
+#page-video .level-2-title{
+  font-size:14px;
+  font-weight:600;
+  color:var(--text-primary);
+  margin-bottom:8px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex-wrap:wrap;
+  cursor:pointer;
+}
+#page-video .level-2-title .expand-icon{
+  font-size:12px;
+  color:var(--text-secondary);
+  transition:transform .2s;
+}
+#page-video .level-2.collapsed .expand-icon {transform:rotate(-90deg);}
+#page-video .level-2.collapsed .level-3 {display:none;}
+
+#page-video .level-3{
+  margin-top:8px;
+  padding-left:12px;
+}
+#page-video .level-3-item{
+  font-size:13px;
+  color:var(--text-secondary);
+  padding:6px 0;
+  display:flex;
+  align-items:baseline;
+  gap:6px;
+  line-height:1.9;
+}
+#page-video .level-3-item::before{
+  content:"▸";
+  color:var(--vw-primary);
+  font-size:11px;
+  flex-shrink:0;
+}
+#page-video .level-3-content {flex:1;}
+
+/* 标签样式 */
+#page-video .tag{
+  display:inline-block;
+  font-size:11px;
+  padding:1px 6px;
+  border-radius:4px;
+  margin-left:4px;
+  font-weight:400;
+  vertical-align:middle;
+}
+#page-video .tag-file {background:#E8F0FE;color:#1967D2;}
+#page-video .tag-code {background:rgba(245,158,11,0.08);color:#B06000;}
+#page-video .tag-red {background:rgba(220,38,38,0.08);color:#C62828;font-weight:600;}
+#page-video .tag-blue {background:#E3F2FD;color:#1565C0;}
+#page-video .tag-green {background:#E8F5E9;color:#2E7D32;}
+#page-video .tag-warning {background:#FFF3E0;color:#E65100;}
+
+/* 高亮搜索 */
+#page-video .highlight{
+  background:rgba(255,235,59,0.7);
+  color:#000;
+  padding:1px 3px;
+  border-radius:3px;
+  font-weight:600;
+}
+#page-video .search-match {box-shadow:0 0 0 2px var(--vw-primary-light) !important;}
+#page-video .hidden-by-search {display:none !important;}
+
+/* 关联标注 */
+#page-video .relation{
+  margin-top:6px;
+  font-size:12px;
+  color:var(--accent-blue);
+  display:flex;
+  align-items:center;
+  gap:4px;
+}
+#page-video .relation::before {content:"🔗";font-size:13px;}
+
+/* 页脚 */
+#page-video .footer{
+  text-align:center;
+  padding:20px;
+  color:var(--text-secondary);
+  font-size:12px;
+  border-top:1px solid var(--border-color);
+  background:var(--bg-card);
+}
+#page-video .footer strong {color:var(--vw-primary);}
+
+/* 回到顶部 */
+#page-video #backToTop{
+  position:fixed;
+  right:28px;bottom:28px;
+  width:48px;height:48px;
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--vw-primary),var(--vw-primary-dark));
+  color:#fff;
+  border:none;
+  font-size:22px;
+  cursor:pointer;
+  box-shadow:0 4px 20px rgba(37,99,235,0.25);
+  display:none;
+  z-index:100;
+  transition:all .3s;
+}
+#page-video #backToTop:hover {transform:scale(1.1);box-shadow:0 6px 28px rgba(37,99,235,0.4);}
+
+/* 无结果提示 */
+#page-video .no-result{
+  text-align:center;
+  padding:60px 20px;
+  color:var(--text-secondary);
+  display:none;
+}
+#page-video .no-result .icon {font-size:56px;margin-bottom:16px;}
+#page-video .no-result p {font-size:16px;}
+
+/* 响应式 */
+@media(max-width:768px){
+#page-video .header h1 {font-size:22px;letter-spacing:2px;}
+#page-video .flow-nav {flex-direction:column;}
+#page-video .flow-nav-arrow {display:none;}
+#page-video .flow-nav-item {padding:12px;}
+#page-video .module-header {padding:14px 16px;}
+#page-video .module-body {padding:0 16px 16px;}
+#page-video .search-btn {padding:0 16px;font-size:14px;}
+}
+
+/* ============ 编辑模式 ============ */
+#page-video .edit-toolbar{
+  max-width:1100px;margin:0 auto;padding:0 24px;
+  display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+}
+#page-video .etl-btn{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:7px 15px;border-radius:8px;border:1px solid var(--border-color);
+  background:var(--bg-card);color:var(--text-primary);font-size:13px;font-weight:500;
+  cursor:pointer;transition:all .2s;font-family:inherit;
+}
+#page-video .etl-btn:hover {border-color:var(--vw-primary);color:var(--vw-primary);}
+#page-video .etl-btn.primary {background:linear-gradient(135deg,var(--vw-primary),var(--vw-primary-dark));color:#fff;border-color:transparent;}
+#page-video .etl-btn.primary:hover {box-shadow:0 4px 14px rgba(37,99,235,0.25);}
+#page-video .etl-btn.active-edit {background:#FFF3E0 !important;border-color:#FF9800 !important;color:#E65100 !important;}
+#page-video .etl-btn.danger {color:#f44336;border-color:#ffcdd2;}
+#page-video .etl-btn.danger:hover {background:#f44336;color:#fff;border-color:#f44336;}
+#page-video .etl-sep {width:1px;height:22px;background:var(--border-color);margin:0 2px;}
+#page-video .etl-status {font-size:12px;color:var(--text-secondary);margin-left:auto;display:flex;align-items:center;gap:6px;}
+#page-video .etl-status .dot {width:8px;height:8px;border-radius:50%;background:#ccc;flex-shrink:0;}
+#page-video .etl-status .dot.saved {background:var(--accent-green);}
+#page-video .etl-status .dot.unsaved {background:#FF9800;}
+
+#page-video .edit-banner{
+  display:none;
+  max-width:1100px;margin:0 auto 12px;padding:0 24px;
+}
+#page-video .edit-banner-inner{
+  background:linear-gradient(135deg,#FFF8E1,#FFE082);
+  border:1px solid #FFB74D;
+  border-radius:10px;
+  padding:8px 20px;text-align:center;
+  font-size:13px;color:#E65100;font-weight:600;
+}
+#page-video.sllw-edit-mode .edit-banner {display:block;}
+
+#page-video.sllw-edit-mode .module {border:2px dashed transparent;transition:border-color .3s;}
+#page-video.sllw-edit-mode .module:hover {border-color:var(--vw-primary-light);}
+#page-video.sllw-edit-mode .level-1 {border-left-style:dashed;}
+#page-video.sllw-edit-mode .level-2 {border:1px dashed var(--border-color);}
+#page-video.sllw-edit-mode .level-2:hover {border-color:var(--vw-primary-light);}
+
+#page-video.sllw-edit-mode [contenteditable="true"]{
+  outline:2px dashed transparent;outline-offset:2px;
+  transition:outline-color .2s;border-radius:4px;cursor:text;
+}
+#page-video.sllw-edit-mode [contenteditable="true"]:hover {outline-color:var(--vw-primary-light);}
+#page-video.sllw-edit-mode [contenteditable="true"]:focus {outline-color:var(--vw-primary);background:var(--bg-card);}
+
+#page-video .edit-node-controls {display:none;gap:6px;margin-top:6px;flex-wrap:wrap;}
+#page-video.sllw-edit-mode .edit-node-controls {display:flex;}
+#page-video .edit-act{
+  display:inline-flex;align-items:center;gap:3px;
+  padding:3px 10px;border-radius:6px;border:1px solid var(--border-color);
+  background:var(--bg-card);font-size:12px;cursor:pointer;
+  transition:all .2s;font-family:inherit;
+}
+#page-video .edit-act:hover {border-color:var(--vw-primary);color:var(--vw-primary);background:var(--vw-primary-bg);}
+#page-video .edit-act.del:hover {border-color:#f44336;color:#f44336;background:#FFEBEE;}
+#page-video .edit-act.add {border-color:var(--vw-primary);color:var(--vw-primary);background:var(--vw-primary-bg);}
+
+#page-video .module-del-btn{
+  display:none;position:absolute;right:48px;top:50%;
+  transform:translateY(-50%);padding:4px 10px;font-size:12px;
+  border:1px solid #ffcdd2;border-radius:6px;background:var(--bg-card);
+  color:#f44336;cursor:pointer;font-family:inherit;z-index:5;
+}
+#page-video.sllw-edit-mode .module-del-btn {display:inline-block;}
+#page-video .module-del-btn:hover {background:#f44336;color:#fff;border-color:#f44336;}
+
+#page-video .l3-del{
+  display:none;cursor:pointer;color:#f44336;
+  font-size:14px;margin-left:6px;flex-shrink:0;
+  width:20px;height:20px;border-radius:50%;text-align:center;line-height:20px;
+}
+#page-video.sllw-edit-mode .l3-del {display:inline-block;}
+#page-video .l3-del:hover {background:#f44336;color:#fff;}
+
+#page-video .add-module-btn{
+  display:none;width:100%;padding:18px;
+  border:2px dashed var(--vw-primary);border-radius:16px;
+  background:var(--vw-primary-bg);color:var(--vw-primary);
+  font-size:15px;font-weight:600;cursor:pointer;
+  transition:all .2s;margin-bottom:20px;font-family:inherit;
+}
+#page-video.sllw-edit-mode .add-module-btn {display:block;}
+#page-video .add-module-btn:hover {background:var(--vw-primary);color:#fff;}
+
+#page-video #importFile {display:none;}
+#page-video #attachFile {display:none;}
+
+/* 附件列表 */
+#page-video .attach-list {margin-top:8px;display:flex;flex-direction:column;gap:6px;}
+#page-video .attach-item{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 12px;border:1px solid #E0E0E0;border-radius:8px;
+  background:var(--bg-card);font-size:13px;transition:all .2s;
+}
+#page-video .attach-item:hover {border-color:var(--vw-primary);box-shadow:0 2px 8px rgba(37,99,235,0.06);}
+#page-video .attach-icon {font-size:18px;flex-shrink:0;line-height:1;}
+#page-video .attach-info {flex:1;min-width:0;}
+#page-video .attach-name {font-weight:500;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#page-video .attach-meta {font-size:11px;color:var(--text-secondary);margin-top:2px;}
+#page-video .attach-actions {display:flex;gap:4px;flex-shrink:0;}
+#page-video .attach-act{
+  padding:3px 8px;border:1px solid var(--border-color);border-radius:5px;
+  background:var(--bg-card);font-size:12px;cursor:pointer;transition:all .2s;font-family:inherit;
+}
+#page-video .attach-act:hover {border-color:var(--vw-primary);color:var(--vw-primary);}
+#page-video .attach-act.del:hover {border-color:#f44336;color:#f44336;background:#FFEBEE;}
+#page-video .attach-upload-btn{
+  display:none;inline-flex;align-items:center;gap:4px;
+  padding:4px 12px;border:1px dashed var(--vw-primary);border-radius:8px;
+  background:var(--vw-primary-bg);color:var(--vw-primary);
+  font-size:12px;cursor:pointer;transition:all .2s;font-family:inherit;
+  margin-top:6px;
+}
+#page-video.sllw-edit-mode .attach-upload-btn {display:inline-flex;}
+#page-video .attach-upload-btn:hover {background:var(--vw-primary);color:#fff;}
+#page-video .add-attach-btn{
+  display:none;
+  padding:4px 12px;border:1px dashed var(--vw-primary);border-radius:8px;
+  background:var(--vw-primary-bg);color:var(--vw-primary);
+  font-size:12px;cursor:pointer;transition:all .2s;font-family:inherit;
+}
+#page-video.sllw-edit-mode .add-attach-btn {display:inline-flex;}
+#page-video .add-attach-btn:hover {background:var(--vw-primary);color:#fff;}
+
+#page-video #toast{
+  position:fixed;top:80px;left:50%;transform:translateX(-50%);
+  background:rgba(33,33,33,0.95);color:#fff;
+  padding:12px 28px;border-radius:10px;font-size:14px;
+  z-index:9999;opacity:0;transition:opacity .3s;
+  pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,0.3);
+}
+#page-video #toast.show {opacity:1;}
+
+@media(max-width:768px){
+#page-video .etl-btn {padding:5px 10px;font-size:12px;}
+#page-video .etl-status {display:none;}
+#page-video .edit-toolbar {gap:5px;}
+#page-video .module-del-btn {right:12px;}
+}
+
+/* 深色模式视联网专区适配 */
+[data-theme="dark"] #page-video .header {
+  background: linear-gradient(135deg, var(--accent-blue) 0%, #0077b6 50%, #003d5c 100%) !important;
+}
+[data-theme="dark"] #page-video .search-box {
+  background: rgba(16,24,56,0.75) !important;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+[data-theme="dark"] #page-video .search-input-wrap input {
+  background: rgba(0,0,0,0.3);
+  border-color: rgba(255,255,255,0.08);
+  color: var(--text-primary);
+}
+[data-theme="dark"] #page-video .search-stats { color: var(--text-secondary); }
+[data-theme="dark"] #page-video .module {
+  background: rgba(16,24,56,0.75) !important;
+  border-color: rgba(255,255,255,0.08) !important;
+}
+[data-theme="dark"] #page-video .module:hover {
+  box-shadow: 0 4px 24px rgba(0,212,255,0.12) !important;
+}
+[data-theme="dark"] #page-video .module-header:hover {
+  background: rgba(0,212,255,0.08) !important;
+}
+[data-theme="dark"] #page-video .module-title { color: var(--text-primary) !important; }
+[data-theme="dark"] #page-video .module-desc { color: var(--text-secondary) !important; }
+[data-theme="dark"] #page-video .module-arrow { color: var(--accent-blue) !important; }
+[data-theme="dark"] #page-video .level-2 {
+  background: rgba(255,255,255,0.04) !important;
+  border-color: rgba(255,255,255,0.06) !important;
+}
+[data-theme="dark"] #page-video .level-2:hover {
+  background: rgba(0,212,255,0.06) !important;
+}
+[data-theme="dark"] #page-video .level-2-title { color: var(--text-primary) !important; }
+[data-theme="dark"] #page-video .level-3-item { color: var(--text-secondary) !important; }
+[data-theme="dark"] #page-video .level-3-item::before { color: var(--accent-blue) !important; }
+[data-theme="dark"] #page-video .search-btn {
+  background: linear-gradient(135deg, var(--accent-blue), #0077b6) !important;
+}
+[data-theme="dark"] #page-video .flow-nav-item {
+  background: linear-gradient(135deg, var(--accent-blue), #0077b6) !important;
+}
+[data-theme="dark"] #page-video .footer {
+  background: rgba(16,24,56,0.75) !important;
+  border-color: rgba(255,255,255,0.08) !important;
+  color: var(--text-secondary) !important;
+}
+[data-theme="dark"] #page-video .search-btn:hover {
+  box-shadow: 0 4px 16px rgba(0,212,255,0.35) !important;
+}
+[data-theme="dark"] #page-video .module-num {
+  box-shadow: 0 0 20px rgba(0,212,255,0.2);
+}
+[data-theme="dark"] #page-video .edit-toolbar { color: var(--text-secondary); }
+[data-theme="dark"] #page-video .etl-btn {
+  background: rgba(16,24,56,0.75);
+  border-color: rgba(255,255,255,0.08);
+  color: var(--text-primary);
+}
+[data-theme="dark"] #page-video .etl-btn:hover { border-color: var(--accent-blue); color: var(--accent-blue); }
+[data-theme="dark"] #page-video .etl-btn.primary {
+  background: linear-gradient(135deg, var(--accent-blue), #0077b6);
+  color: #fff;
+}
+[data-theme="dark"] #page-video .quick-tag {
+  background: rgba(0,212,255,0.08);
+  border-color: rgba(0,212,255,0.2);
+  color: var(--accent-blue);
+}
+[data-theme="dark"] #page-video .quick-tag:hover {
+  background: var(--accent-blue);
+  color: #fff;
+}
+[data-theme="dark"] #page-video .stat-badge {
+  background: rgba(0,212,255,0.08);
+  border-color: rgba(0,212,255,0.2);
+  color: var(--accent-blue);
+}
+[data-theme="dark"] #page-video #backToTop {
+  background: linear-gradient(135deg, var(--accent-blue), #0077b6) !important;
+}
+[data-theme="dark"] #page-video .no-result { color: var(--text-secondary); }
+[data-theme="dark"] #page-video .attach-item {
+  background: rgba(16,24,56,0.75);
+  border-color: rgba(255,255,255,0.08);
+}
+[data-theme="dark"] #page-video .attach-act {
+  background: rgba(16,24,56,0.75);
+  border-color: rgba(255,255,255,0.08);
+  color: var(--text-primary);
+}
+[data-theme="dark"] #page-video .edit-act {
+  background: rgba(16,24,56,0.75);
+  border-color: rgba(255,255,255,0.08);
+  color: var(--text-primary);
+}
+[data-theme="dark"] #page-video .add-module-btn {
+  background: rgba(0,212,255,0.08);
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+}
+
+/* Fix: header gradient for light mode (red→blue) */
+#page-video .header {
+  background: linear-gradient(135deg, #2563EB 0%, #1d4ed8 50%, #1E3A5F 100%) !important;
+}
+#page-video .search-btn {
+  background: linear-gradient(135deg, #2563EB, #1d4ed8) !important;
+}
+#page-video .search-btn:hover {
+  box-shadow: 0 4px 16px rgba(37,99,235,0.35) !important;
+}
+#page-video .flow-nav-item {
+  background: linear-gradient(135deg, #2563EB, #1d4ed8) !important;
+}
+#page-video .module-1 .module-num { background: linear-gradient(135deg, #2563EB, #1d4ed8) !important; }
+#page-video .module-2 .module-num { background: linear-gradient(135deg, #3b82f6, #2563EB) !important; }
+#page-video .module-3 .module-num { background: linear-gradient(135deg, #60a5fa, #3b82f6) !important; }
+#page-video .module-4 .module-num { background: linear-gradient(135deg, #93c5fd, #60a5fa) !important; }
+#page-video .module-5 .module-num { background: linear-gradient(135deg, #2563EB, #1d4ed8) !important; }
+#page-video #backToTop {
+  background: linear-gradient(135deg, #2563EB, #1d4ed8) !important;
+  box-shadow: 0 4px 20px rgba(37,99,235,0.3) !important;
+}
+#page-video #backToTop:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 28px rgba(37,99,235,0.4) !important;
+}
+#page-video .flow-nav-arrow {
+  background: #2563EB !important;
+}
+#page-video .edit-banner-inner {
+  background: linear-gradient(135deg, #FFF8E1, #FFE082);
+  border: 1px solid #FFB74D;
+}
+/* module border colors via --vw-primary */
+#page-video .level-1 { border-left-color: var(--vw-primary) !important; }
+#page-video .level-1::before { background: var(--vw-primary) !important; box-shadow: 0 0 0 1px var(--vw-primary) !important; }
+#page-video .level-1-title { color: var(--vw-primary-dark) !important; }
+#page-video .level-3-item::before { color: var(--vw-primary) !important; }
+#page-video .module-arrow { color: var(--vw-primary) !important; }
+#page-video .search-stats .count { color: var(--vw-primary) !important; }
+#page-video .footer strong { color: var(--vw-primary) !important; }
+#page-video .relation::before { color: var(--accent-blue); }
+#page-video .l3-del:hover { background: var(--accent-red); color: #fff; }
+
+/* 移除overflow:hidden防sticky失效 - 继承cockpit规则 */
+#page-video .module { overflow: visible; }
+
+
 </style>
 </head>
 <body>
@@ -543,11 +1245,487 @@ body {
 
   <!-- 视联网专区 -->
   <div class="page" id="page-video">
-    <div class="empty-zone">
-      <div class="ez-icon">&#x1F4F1;</div>
-      <div class="ez-title">视联网专区</div>
-      <div class="ez-hint">模块建设中，敬请期待</div>
+<!-- 顶部 -->
+<div class="header">
+  <h1>视联网业务知识查询平台</h1>
+  <div class="subtitle">中国电信 · 2026年视联网/天翼云眼业务全流程操作指引</div>
+  <div class="badge">顶层规则 → 售前筹备 → 售中交付 → 售后运营 → 互联网+AI监管</div>
+</div>
+
+<!-- 搜索区域 -->
+<div class="search-section">
+  <div class="search-box">
+    <div class="search-input-wrap">
+      <input type="text" id="vwSearchInput" placeholder="输入关键词搜索，如：明厨亮灶、挂行业树、劳动竞赛、受理指引..." />
+      <button class="search-btn" onclick="vw_doSearch()">搜索</button>
     </div>
+    <div class="search-stats" id="vwSearchStats"></div>
+    <div class="quick-tags">
+      <span class="quick-tag" onclick="vw_quickSearch('明厨亮灶')">明厨亮灶</span>
+      <span class="quick-tag" onclick="vw_quickSearch('挂行业树')">挂行业树</span>
+      <span class="quick-tag" onclick="vw_quickSearch('受理指引')">受理指引</span>
+      <span class="quick-tag" onclick="vw_quickSearch('劳动竞赛')">劳动竞赛</span>
+      <span class="quick-tag" onclick="vw_quickSearch('终端供给')">终端供给</span>
+      <span class="quick-tag" onclick="vw_quickSearch('AI平台交付')">AI平台交付</span>
+      <span class="quick-tag" onclick="vw_quickSearch('质态监控')">质态监控</span>
+      <span class="quick-tag" onclick="vw_quickSearch('对账')">对账流程</span>
+      <span class="quick-tag" onclick="vw_quickSearch('工具包')">工具包</span>
+      <span class="quick-tag" onclick="vw_quickSearch('一键系列')">一键系列</span>
+    </div>
+  </div>
+</div>
+
+<!-- 流程导航 -->
+<div class="vw-main-content">
+  <div class="flow-nav" id="vwFlowNav"></div>
+
+  <div id="vwNoResult" class="no-result">
+    <div class="icon">🔍</div>
+    <p>未找到相关内容，请尝试其他关键词</p>
+  </div>
+
+  <div id="vwModulesContainer">
+
+  <!-- 模块1: 售前筹备 -->
+  <div class="module module-1" id="m1">
+    <div class="module-header" onclick="vw_toggleModule(this)">
+      <div class="module-num">1</div>
+      <div>
+        <div class="module-title">售前筹备</div>
+        <div class="module-desc">终端供给 · 工具包 · 发展目标 · 劳动竞赛</div>
+      </div>
+      <div class="module-arrow">▼</div>
+    </div>
+    <div class="module-body">
+      <div class="level-1">
+        <div class="level-1-title">终端供给</div>
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>2026年7月重要变化 <span class="tag tag-red">⚠关键变更</span></div>
+          <div class="level-3">
+            <div class="level-3-item"><div class="level-3-content"><strong>（1）收入口径变更：</strong>自提视联网设备收入计入主营业务收入-产数业务收入。<br>依据：《关于明确相关业务收入口径及预算等考核事项的通知》（中电信〔2026〕168号）、《关于ICT业务收入口径相关工作的通知》</div></div>
+            <div class="level-3-item"><div class="level-3-content"><strong>（2）发票税率变更：</strong>自提视联网设备开具税率为3%的增值税发票。<br>依据：《中电美控控价〔2026〕2728号》</div></div>
+          </div>
+        </div>
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>自提终端库存动态 <span class="tag tag-file">📎附件</span> <span class="tag tag-code">📱二维码</span></div>
+          <div class="level-3">
+            <div class="level-3-item"><div class="level-3-content">下单前查询终端库存，√判断为库存即可下单。</div></div>
+            <div class="relation">关联：售中→设备交付及云回看、AI绑定</div>
+          </div>
+        </div>
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>自备设备上市可文件 <span class="tag tag-code">访问码：mi6q</span> <span class="tag tag-code">📱二维码</span></div>
+          <div class="level-3">
+            <div class="level-3-item"><div class="level-3-content">自备设备合规上市文件，明确哪些非电信集采设备可接入视联网平台。</div></div>
+          </div>
+        </div>
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>终端分类管控清单 <span class="tag tag-file">📎附件</span></div>
+          <div class="level-3">
+            <div class="level-3-item"><div class="level-3-content"><strong>单一分类长库龄终端不影响其他分类终端供货</strong></div></div>
+            <div class="level-3-item"><div class="level-3-content">分类标准：①室内云主机 ②室外球机 ③带屏云机顶盒 ④枪机 ⑤无线摄像头 ⑥灾情预警终端 ⑦一整套告警终端</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="level-1">
+        <div class="level-1-title">工具包</div>
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>小天翼工具包 <span class="tag tag-code">访问码：zof8</span> <span class="tag tag-code">📱二维码</span></div>
+          <div class="level-3"><div class="level-3-item"><div class="level-3-content">小型天翼云眼标准化工具包，适用于小型监控场景。</div></div></div>
+        </div>
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>明厨亮灶工具包 <span class="tag tag-code">访问码：q0oj</span> <span class="tag tag-code">📱二维码</span></div>
+            <div class="level-3"><div class="level-3-item"><div class="level-3-content">明厨亮灶场景专用工具包，含食品安全监管硬件+软件方案。</div></div>
+              <div class="relation">关联：模块4 互联网+AI监管→明厨亮灶全流程</div>
+          </div>
+        </div>
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>看店宝工具包（需匹配对应终端） <span class="tag tag-code">访问码：f11c</span> <span class="tag tag-code">📱二维码</span></div>
+          <div class="level-3"><div class="level-3-item"><div class="level-3-content">门店看护专用工具包，须匹配对应终端使用。</div></div></div>
+        </div>
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>消防工具包 <span class="tag tag-code">访问码：8z4k</span> <span class="tag tag-code">📱二维码</span></div>
+          <div class="level-3"><div class="level-3-item"><div class="level-3-content">消防安全预警工具包。</div></div></div>
+        </div>
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>AI标品介绍手册 <span class="tag tag-code">📱二维码</span></div>
+          <div class="level-3"><div class="level-3-item"><div class="level-3-content">AI标准品能力介绍与规格手册。</div></div></div>
+        </div>
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>AI产品视图（含天阙视联全AI） <span class="tag tag-file">📎附件</span></div>
+          <div class="level-3"><div class="level-3-item"><div class="level-3-content">天阙视联全系列AI产品全景视图。</div></div></div>
+        </div>
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>项目制产品供给 <span class="tag tag-file">📎附件</span></div>
+          <div class="level-3"><div class="level-3-item"><div class="level-3-content">项目制方式的产品供给说明，适用于非标定制场景。</div></div></div>
+        </div>
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>智能超压一体机 <span class="tag tag-file">📎附件</span></div>
+          <div class="level-3"><div class="level-3-item"><div class="level-3-content">智能超压一体机产品说明。</div></div></div>
+        </div>
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>天阙视联资费清单 <span class="tag tag-file">📎附件</span></div>
+          <div class="level-3"><div class="level-3-item"><div class="level-3-content">天阙视联公司全部AI产品资费一览。</div></div></div>
+        </div>
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>营业厅视联网操作指引 <span class="tag tag-file">📎附件</span></div>
+          <div class="level-3"><div class="level-3-item"><div class="level-3-content">营业厅一线人员视联网业务操作指引。</div></div></div>
+        </div>
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>一键系列会展宣传【视频、讲解词、演示DEMO、宣传员】 <span class="tag tag-code">访问码：gi4h</span> <span class="tag tag-file">📎附件</span></div>
+          <div class="level-3"><div class="level-3-item"><div class="level-3-content">一键系列全套宣传素材：含视频、讲解词、演示DEMO、宣传员信息。</div></div></div>
+        </div>
+      </div>
+
+      <div class="level-1">
+        <div class="level-1-title">发展目标</div>
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>最终目标</div>
+          <div class="level-3">
+            <div class="level-3-item"><div class="level-3-content">最终目标以市场部发文为准。</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="level-1">
+        <div class="level-1-title">劳动竞赛 <span class="l1-tag">🔴重点专项</span></div>
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>发文及附件 <span class="tag tag-file">📎附件</span></div>
+          <div class="level-3">
+            <div class="level-3-item"><div class="level-3-content"><strong>中国电信产品〔2026〕2号</strong> 关于举办2026年视联网业务发展劳动竞赛的通知</div></div>
+            <div class="level-3-item"><div class="level-3-content"><strong>附件1：</strong>2026年视联网业务发展劳动竞赛报名表 <span class="tag tag-code">访问码：b9va</span> <span class="tag tag-file">📎附件</span></div></div>
+            <div class="level-3-item"><div class="level-3-content"><strong>附件2：</strong>视联网场景应用案例模板 <span class="tag tag-code">访问码：odjq</span> <span class="tag tag-file">📎附件</span></div></div>
+          </div>
+        </div>
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>发展情况</div>
+          <div class="level-3">
+            <div class="level-3-item"><div class="level-3-content">各单位参赛及业务发展进度跟踪。</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 模块2: 售中 -->
+  <div class="module module-2" id="m2">
+    <div class="module-header" onclick="vw_toggleModule(this)">
+      <div class="module-num">2</div>
+      <div>
+        <div class="module-title">售中交付</div>
+        <div class="module-desc">AI联销到端流程 · 2026.7.9 · 产品运营中心 赵洪彬</div>
+      </div>
+      <div class="module-arrow">▼</div>
+    </div>
+    <div class="module-body">
+      <div class="level-1">
+        <div class="level-1-title">G端拜访、商机签约</div>
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>商机录入</div>
+          <div class="level-3">
+            <div class="level-3-item"><div class="level-3-content">商机产品选"天翼云眼"，进入视联网业务受理流程。</div></div>
+          </div>
+        </div>
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>签署合同 → 受理服务收入列至视联网科目</div>
+          <div class="level-3">
+            <div class="level-3-item"><div class="level-3-content">按实际关联联通业务签署合同，受理服务收入列至视联网科目：<strong>1927</strong></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="level-1">
+        <div class="level-1-title">设备交付及云回看、AI绑定 <span class="l1-tag">SOC新质成员</span></div>
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>交付规范 <span class="tag tag-file">📎附件</span></div>
+          <div class="level-3">
+            <div class="level-3-item"><div class="level-3-content"><strong>中国电信云运业〔2026〕3号</strong>《关于印发<天翼视联职业现场及安装交付规范（2025年修订版）>的通知》</div></div>
+            <div class="level-3-item"><div class="level-3-content">AI交付规范 <span class="tag tag-code">访问码：zu9d</span> <span class="tag tag-file">📎附件</span> <span class="tag tag-code">📱二维码</span></div></div>
+          </div>
+        </div>
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>设备交付工费兑付必要条件</div>
+          <div class="level-3">
+            <div class="level-3-item"><div class="level-3-content">明确设备交付后工费兑付必须满足的前提条件清单。</div></div>
+            <div class="relation">关联：售前→自提终端库存动态（库存确认→下单→交付→工费兑付）</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="level-1">
+        <div class="level-1-title">新增云票及汇聚设备挂行业树</div>
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>统一规则 <span class="tag tag-red">⚠必须执行</span></div>
+          <div class="level-3">
+            <div class="level-3-item"><div class="level-3-content">政企、大客户部视联各行业树需求，纵向要求业务人员受理时准确录入行业信息【需开发，涉及CRM（受理面下推到活动）、账开、服务等系统】。</div></div>
+          </div>
+        </div>
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>行业梳理</div>
+          <div class="level-3">
+            <div class="level-3-item"><div class="level-3-content">已梳理<strong>14个行业</strong>的产品树，受理时必须选择对应行业树商户信息。</div></div>
+          </div>
+        </div>
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>交付挂钩</div>
+          <div class="level-3">
+            <div class="level-3-item"><div class="level-3-content">设备交付人员负责设备开通在行业树对应的商户节点下，<strong style="color:#C62828;">严禁直接将设备挂靠至区域层级节点。</strong></div></div>
+          </div>
+        </div>
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>特殊整改 <span class="tag tag-code">📱二维码</span></div>
+          <div class="level-3">
+            <div class="level-3-item"><div class="level-3-content">2026年新增云票及云票收缩设备均应规范挂行业树，包括新老系统，未建户先建户。</div></div>
+            <div class="relation">关联：模块4→互联网+AI监管→明厨亮灶行业树维护</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="level-1">
+        <div class="level-1-title">AI行业应用平台交付 <span class="l1-tag">云中台最新规则</span></div>
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>派单准备流程</div>
+          <div class="level-3">
+            <div class="level-3-item"><div class="level-3-content">① 地市中台明确AI行业应用平台交付人员</div></div>
+            <div class="level-3-item"><div class="level-3-content">② 地市训练系统管理员为平台建立人员工号</div></div>
+            <div class="level-3-item"><div class="level-3-content">③ 地市总管理员配置"天翼视联政策派单标识、施工工单派单策略"到平台交付人员工号</div></div>
+            <div class="level-3-item"><div class="level-3-content">④ 完成配置后依据受理流程验证能否自动接单、回单</div></div>
+          </div>
+        </div>
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>交付职责文件 <span class="tag tag-file">📎附件</span></div>
+          <div class="level-3">
+            <div class="level-3-item"><div class="level-3-content"><strong>中国电信云业〔2026〕16号</strong> 关于落实视联网行业应用交付职责的通知</div></div>
+          </div>
+        </div>
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>受理流程 <span class="tag tag-file">📎附件</span></div>
+          <div class="level-3">
+            <div class="level-3-item"><div class="level-3-content"><strong>受理主备：</strong>910016343 天翼云眼基础功能</div></div>
+            <div class="level-3-item"><div class="level-3-content"><strong>受理行业应用：</strong>910016350 智显监管（明厨亮灶）应用</div></div>
+            <div class="level-3-item"><div class="level-3-content">910016349 平安乡村/安全生产应用、云回看、AI功能、消防预警行业应用包月等</div></div>
+            <div class="level-3-item"><div class="level-3-content">受理派单到中台的路径："3月20日541行业应用报备至客户工程价"</div></div>
+          </div>
+        </div>
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>平台交付标准</div>
+          <div class="level-3">
+            <div class="level-3-item"><div class="level-3-content">详见《关于明确AI联网联销到端部分工作要求的通知》，包括明厨亮灶类大屏AI终端调取等操作指引。</div></div>
+            <div class="relation">关联：模块4→互联网+AI监管→市公司→设备交付及挂行业树</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="level-1">
+        <div class="level-1-title">中台把关、二开 <span class="l1-tag">云中台最新规则</span></div>
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>中台把关</div>
+          <div class="level-3">
+            <div class="level-3-item"><div class="level-3-content">ICT项目中，涉及监控类需求应集约使用视联网平台能力。</div></div>
+          </div>
+        </div>
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>二开</div>
+          <div class="level-3">
+            <div class="level-3-item"><div class="level-3-content">涉及监控类开发需求，由云平台承接。</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="level-1">
+        <div class="level-1-title">协同变现 · 高质量运营</div>
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>运营协同流程</div>
+          <div class="level-3">
+            <div class="level-3-item"><div class="level-3-content"><strong>交付会</strong>（五级与民警结对）→ <strong>警示会</strong>（可选）→ <strong>联合走访/发展入网</strong></div></div>
+            <div class="relation">关联：售后→质态监控（协同变现后进入运维质态管理）</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 模块3: 售后 -->
+  <div class="module module-3" id="m3">
+    <div class="module-header" onclick="vw_toggleModule(this)">
+      <div class="module-num">3</div>
+      <div>
+        <div class="module-title">售后运营</div>
+        <div class="module-desc">质态监控 · 运营数据 · 入湖数据</div>
+      </div>
+      <div class="module-arrow">▼</div>
+    </div>
+    <div class="module-body">
+      <div class="level-1">
+        <div class="level-1-title">质态监控 <span class="l1-tag">谁交付谁维护</span></div>
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>核心考核指标</div>
+          <div class="level-3">
+            <div class="level-3-item"><div class="level-3-content"><strong>终端月在线率 ≥ 60%</strong></div></div>
+            <div class="level-3-item"><div class="level-3-content"><strong>云回看绑定率 ≥ 75%</strong></div></div>
+            <div class="level-3-item"><div class="level-3-content"><strong>AI绑定率 ≥ 60%</strong></div></div>
+            <div class="relation">关联：售中→设备交付及云回看、AI绑定（交付质量决定售后质态）</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="level-1">
+        <div class="level-1-title">运营数据</div>
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>数据维度</div>
+          <div class="level-3">
+            <div class="level-3-item"><div class="level-3-content">① 设备、AI、云回看、视联宽带运营数据</div></div>
+            <div class="level-3-item"><div class="level-3-content">② 视联网点拉新数据</div></div>
+            <div class="level-3-item"><div class="level-3-content">③ 智看合约数据</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="level-1">
+        <div class="level-1-title">入湖数据</div>
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>【集团】集约产品入湖表字表 <span class="tag tag-file">📎附件</span></div>
+          <div class="level-3">
+            <div class="level-3-item"><div class="level-3-content">集团级集约产品入湖数据表。</div></div>
+          </div>
+        </div>
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>【省内】OA-自助算数-天翼视联专区已加载数据表 <span class="tag tag-file">📎附件</span></div>
+          <div class="level-3">
+            <div class="level-3-item"><div class="level-3-content">省内OA系统自助算数模块下天翼视联专区数据表。</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 模块4: 互联网+AI监管 -->
+  <div class="module module-4" id="m4">
+    <div class="module-header" onclick="vw_toggleModule(this)">
+      <div class="module-num">4</div>
+      <div>
+        <div class="module-title">互联网+AI监管全流程</div>
+        <div class="module-desc">明厨亮灶专项场景 · 省公司统筹→市公司落地</div>
+      </div>
+      <div class="module-arrow">▼</div>
+    </div>
+    <div class="module-body">
+      <!-- 省公司 -->
+      <div class="level-1" style="border-left-color:#C8102E;">
+        <div class="level-1-title">省公司</div>
+
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>对接省市场局 <span class="tag tag-blue">🔵专项</span></div>
+          <div class="level-3">
+            <div class="level-3-item"><div class="level-3-content"><strong>对接MT，签署协议，下发清单</strong></div></div>
+            <div class="level-3-item"><div class="level-3-content"><strong>方案部署：</strong>《食品安全"互联网+AI监管"切入，推动冬季营销"明厨亮灶"规模发展》</div></div>
+            <div class="level-3-item"><div class="level-3-content">规划行业树架构，建强自主可控的明厨亮灶行业树。云中台按市场局要求必填设备信息并推送流，提高直连率。<strong style="color:#C62828;">以行业树方式推送，不挂行业树设备不予赋能，严禁账号赋能方式赋能。</strong></div></div>
+            <div class="relation">关联：售中→新增云票及汇聚设备挂行业树</div>
+          </div>
+        </div>
+
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>统一宣传海报 <span class="tag tag-file">📎附件</span> <span class="tag tag-code">📱二维码</span></div>
+          <div class="level-3"><div class="level-3-item"><div class="level-3-content">全省统一的宣传推广海报素材。</div></div></div>
+        </div>
+
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>拟申请美团补贴用户信息 <span class="tag tag-file">📎附件</span></div>
+          <div class="level-3"><div class="level-3-item"><div class="level-3-content">美团补贴申请用户信息汇总文件。</div></div></div>
+        </div>
+
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>一线推广高频问题FAQ <span class="tag tag-file">📎附件</span> <span class="tag tag-code">📱二维码</span></div>
+          <div class="level-3"><div class="level-3-item"><div class="level-3-content">一线推广中高频问题解答汇编。</div></div></div>
+        </div>
+
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>营销组织 <span class="tag tag-blue">🔵落地操作</span></div>
+          <div class="level-3">
+            <div class="level-3-item"><div class="level-3-content"><strong>（1）做好迎检培训</strong> — 确保要理抓、抓县区、网格进行美团产品政策、交付、挂树等关键流程的培训。<br>联系人：产品中心 师瑶</div></div>
+            <div class="level-3-item"><div class="level-3-content"><strong>（2）拜访市场监管，联合召开推进会</strong> — 美团与电信补助，加速本地市局"互联网+AI监管"工作落地。争取美团清单全部由电信负责。邀请区县局和企业、商家代表参加政会，监管局讲政策，美团讲补贴，电信讲服务。以推动食安和食安局为主题的推广会，现场受理支破局。</div></div>
+            <div class="level-3-item"><div class="level-3-content"><strong>（3）做好潜力商户摸排数据</strong> — 商户单价低于<strong>11.26元/天</strong>，要针对商户和产户优先开展走访消化。<br>联系人：全渠道 周雨晴</div></div>
+            <div class="level-3-item"><div class="level-3-content"><strong>（4）充分使用支付券，确保设备落地</strong> — 终端支付券优先配套"明厨亮灶"各类设备，以市场定价为基础，享受双重折扣优惠，同时满足清库存处理。<br>联系人：终端中心 王芳</div></div>
+            <div class="level-3-item"><div class="level-3-content"><strong>（5）市公司专人负责</strong> — 明确定期向市网信专人负责互联网+AI监管工作，包括：在美团平台确认订单、通知现场施工人员受理业务，遇问题地市云中台维护行业树。</div></div>
+          </div>
+        </div>
+
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>业务受理 <span class="tag tag-blue">🔵落地操作</span></div>
+          <div class="level-3">
+            <div class="level-3-item"><div class="level-3-content"><strong>受理流程：</strong>营销人员商户扫描美团二维码下单并支付<strong>298元</strong> → 市电信人员在美团平台确认订单 → 市电信人员通知地市云中台维护行业树商户节点</div></div>
+            <div class="level-3-item"><div class="level-3-content"><strong style="color:#C62828;">⚠备注：</strong>营销人员通知商户现在在美团APP确认收货（不确认的2个月自动打款，美团确认的工单美团不给电信结算）</div></div>
+            <div class="level-3-item"><div class="level-3-content"><strong>重点关注 - 规范选址：</strong>如在营业前台达不到商户的标准地址，应按公司标准地址维护流程为商户建立标准地址后受理业务</div></div>
+            <div class="level-3-item"><div class="level-3-content"><strong>（1）行业树维护：</strong>地市中台按商户营业执照名称在行业树商户分类（普通食品生产、普通食品销售、餐饮服务、特种食品生产、特种食品销售、餐饮服务）。如遇系统无商户名称："亮厨行动-基层局-街道/所-区县-市场局-商户分类-商户名称" <span class="tag tag-code">📱二维码</span></div></div>
+            <div class="level-3-item"><div class="level-3-content"><strong>（2）装维施工：</strong>装维接单施工并在天翼视联APP-网亮项目-创建门店-上线团选业态</div></div>
+            <div class="level-3-item"><div class="level-3-content"><strong>（3）设备挂行业树：</strong>天翼视联APP-我的-获取申请-申请级联-选择行业级根、亮厨行动-基层局/监所/区县-市场局-目标层级-选择对应商户名称-选择待挂载设备/联网-确认申请 <span class="tag tag-code">📱二维码</span></div></div>
+            <div class="level-3-item"><div class="level-3-content"><strong>明厨亮灶行业树说明：</strong><br>① "亮厨行动/明厨亮灶"全国行业树：云中台维护商户名称，装维人员通过天翼视联APP绑定设备至行业树商户节点下<br>② 市场监管（互联网+AI监管）行业树：仅由云中台按本地市场局报备需求维护挂载，不需要其他人操作</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 市公司 -->
+      <div class="level-1" style="border-left-color:#E86E82;">
+        <div class="level-1-title">市公司</div>
+
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>设备交付及挂行业树 <span class="tag tag-blue">🔵落地操作</span></div>
+          <div class="level-3">
+            <div class="level-3-item"><div class="level-3-content">市公司承接省公司要求，完成设备交付及挂行业树工作。</div></div>
+            <div class="relation">关联：售中→设备交付及云回看、AI绑定 + 售中→新增云票及汇聚设备挂行业树</div>
+          </div>
+        </div>
+
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>推送至市场局 <span class="tag tag-blue">🔵落地操作</span></div>
+          <div class="level-3">
+            <div class="level-3-item"><div class="level-3-content"><strong>（1）</strong>地市业务部门根据各地市场局需求，确定推送店铺清单并通知平台交付人员操作。</div></div>
+            <div class="level-3-item"><div class="level-3-content"><strong>（2）</strong>地市平台交付人员根据商户清单将"亮厨行动/基础市监"行业树上对应该设备推送给"黑龙江省-市场监管（互联网+AI）监管"<br><strong>秘钥：SQL74G3W</strong> <span class="tag tag-code">📱二维码</span></div></div>
+            <div class="level-3-item"><div class="level-3-content"><strong>（3）</strong>地市平台交付人员联系省云中台专家（微信：18945501814），开展进一步工作。</div></div>
+          </div>
+        </div>
+
+        <div class="level-2">
+          <div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>对账流程 <span class="tag tag-blue">🔵落地操作</span></div>
+          <div class="level-3">
+            <div class="level-3-item"><div class="level-3-content"><strong>资金流转路径：</strong><br>美团订单施工 → 美团次月向电信支付<strong>298元/订单</strong> → 省公司按订单将费用分解市公司对公账户 → 市公司将费用分解到市县分公司运营层面 → 区县领用资金为商户补缴</div></div>
+            <div class="relation">关联：售前→发展目标 + 售后→运营数据（对账数据需入运营质态管理）</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="add-module-btn" id="vwAddModuleBtn" onclick="vw_addModule()">+ 添加新模块</button>
+
+  </div><!-- /modulesContainer -->
+</div><!-- /main-content -->
+
+<button id="vwBackToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<!-- 编辑提示条 -->
+<div class="edit-banner"><div class="edit-banner-inner">📝 编辑模式已开启 — 点击任意文字可直接编辑，使用各节点下方的按钮添加或删除内容，可上传附件，修改后请点击「保存」</div></div>
+
+<!-- 编辑工具栏（平台底部） -->
+<div class="edit-toolbar" style="margin-bottom:20px;">
+  <button class="etl-btn primary" id="vwEditToggleBtn" onclick="vw_toggleEditMode()">✏️ 编辑模式</button>
+  <div class="etl-sep"></div>
+  <button class="etl-btn" onclick="vw_saveData()">💾 保存</button>
+  <button class="etl-btn" onclick="vw_loadData(false)">📂 加载存档</button>
+  <div class="etl-sep"></div>
+  <button class="etl-btn" onclick="vw_exportData()">📤 导出</button>
+  <button class="etl-btn" onclick="document.getElementById('importFile').click()">📥 导入</button>
+  <input type="file" id="vwImportFile" accept=".json" onchange="vw_handleImportFile(event)" />
+  <div class="etl-sep"></div>
+  <button class="etl-btn danger" onclick="vw_resetData()">🔄 重置</button>
+  <span class="etl-status" id="vwEditStatus"><span class="dot" id="vwStatusDot"></span><span id="vwStatusText">就绪</span></span>
+</div>
+
+<div class="footer">
+  <p><strong>视联网业务知识查询平台</strong> — 基于《中国电信2026年视联网/天翼云眼业务全流程操作指引》构建</p>
+  <p>数据来源：产品运营中心 · 更新日期：2026年7月</p>
+</div>
   </div>
 </div>
 
@@ -1739,6 +2917,972 @@ function initTheme(){
     localStorage.setItem('cockpit-theme', next);
   });
 }
+
+
+/* ================================================================
+ *  视联网专区 - 独立模块
+ * ================================================================ */
+(function() {
+// ============ 折叠/展开 ============
+function toggleModule(headerEl){
+  const ev = window.event;
+  if(editMode && ev && ev.target && ev.target.closest('.module-title, .module-desc, .module-del-btn')) return;
+  const module = headerEl.closest('.module');
+  module.classList.toggle('collapsed');
+}
+
+function toggleLevel2(titleEl){
+  const ev = window.event;
+  if(editMode && ev && ev.target && !ev.target.classList.contains('expand-icon')) return;
+  const level2 = titleEl.closest('.level-2');
+  level2.classList.toggle('collapsed');
+}
+
+// ============ 流程导航 ============
+function scrollToModule(id){
+  const el = document.getElementById(id);
+  if(el){
+    el.classList.remove('collapsed');
+    el.scrollIntoView({behavior:'smooth',block:'start'});
+    // 高亮导航
+    document.querySelectorAll('.flow-nav-item').forEach((item,i)=>{
+      item.classList.toggle('active', 'm'+(i+1) === id || item.getAttribute('onclick')?.includes(id));
+    });
+  }
+}
+
+// ============ 搜索功能 ============
+const searchInput = document.getElementById('vwSearchInput');
+const searchStats = document.getElementById('vwSearchStats');
+const noResult = document.getElementById('vwNoResult');
+const modulesContainer = document.getElementById('vwModulesContainer');
+
+let originalHTML = '';
+let isSearching = false;
+
+function doSearch(){
+  const keyword = searchInput.value.trim().toLowerCase();
+  
+  if(!keyword){
+    // 清除搜索，恢复全部
+    if(isSearching){
+      restoreOriginal();
+    }
+    searchStats.innerHTML = '';
+    noResult.style.display = 'none';
+    return;
+  }
+
+  if(!isSearching){
+    originalHTML = modulesContainer.innerHTML;
+    isSearching = true;
+  }
+
+  // 重置
+  modulesContainer.innerHTML = originalHTML;
+
+  // 展开所有模块和层级
+  document.querySelectorAll('.module').forEach(m => m.classList.remove('collapsed'));
+  document.querySelectorAll('.level-2').forEach(l => l.classList.remove('collapsed'));
+
+  let totalMatches = 0;
+  const moduleMatchCount = {};
+
+  // 遍历所有模块
+  document.querySelectorAll('.module').forEach(module => {
+    const moduleId = module.id;
+    let moduleHasMatch = false;
+
+    // 遍历所有 level-3-item 和 level-2-title
+    const allTextElements = module.querySelectorAll('.level-3-item, .level-2-title, .level-1-title, .relation');
+
+    allTextElements.forEach(el => {
+      const text = el.textContent.toLowerCase();
+      if(text.includes(keyword)){
+        moduleHasMatch = true;
+        totalMatches++;
+        el.classList.add('search-match');
+        highlightText(el, keyword);
+      }
+    });
+
+    if(!moduleHasMatch){
+      module.classList.add('hidden-by-search');
+    } else {
+      // 统计各模块匹配数
+      const moduleTitle = module.querySelector('.module-title')?.textContent || moduleId;
+      moduleMatchCount[moduleTitle] = (moduleMatchCount[moduleTitle] || 0);
+    }
+  });
+
+  // 显示统计
+  if(totalMatches > 0){
+    let statsHTML = `找到 <span class="count">${totalMatches}</span> 处匹配`;
+    const visibleModules = [];
+    document.querySelectorAll('#vwModulesContainer .module').forEach(mod => {
+      if(!mod.classList.contains('hidden-by-search')){
+        visibleModules.push(mod.querySelector('.module-title')?.textContent?.trim() || mod.id);
+      }
+    });
+    if(visibleModules.length > 0){
+      statsHTML += `<span style="margin-left:8px;">涉及模块：</span>`;
+      visibleModules.forEach(name => {
+        statsHTML += `<span class="stat-badge">${name}</span>`;
+      });
+    }
+    searchStats.innerHTML = statsHTML;
+    noResult.style.display = 'none';
+
+    // 滚动到第一个匹配项
+    const firstMatch = document.querySelector('.search-match');
+    if(firstMatch){
+      setTimeout(() => {
+        firstMatch.scrollIntoView({behavior:'smooth',block:'center'});
+      }, 100);
+    }
+  } else {
+    searchStats.innerHTML = `找到 <span class="count">0</span> 处匹配`;
+    noResult.style.display = 'block';
+  }
+}
+
+// ============ 高亮关键词 ============
+function highlightText(element, keyword){
+  // 只处理文本节点
+  const walker = document.createTreeWalker(
+    element,
+    NodeFilter.SHOW_TEXT,
+    null,
+    false
+  );
+  
+  const textNodes = [];
+  let node;
+  while(node = walker.nextNode()){
+    // 跳过script和style
+    const parentTag = node.parentElement.tagName;
+    if(parentTag === 'SCRIPT' || parentTag === 'STYLE') continue;
+    textNodes.push(node);
+  }
+  
+  const kwLower = keyword.toLowerCase();
+  
+  textNodes.forEach(textNode => {
+    const text = textNode.nodeValue;
+    const lowerText = text.toLowerCase();
+    const index = lowerText.indexOf(kwLower);
+    
+    if(index >= 0){
+      const before = text.substring(0, index);
+      const match = text.substring(index, index + keyword.length);
+      const after = text.substring(index + keyword.length);
+      
+      const span = document.createElement('span');
+      span.className = 'highlight';
+      span.textContent = match;
+      
+      const fragment = document.createDocumentFragment();
+      if(before) fragment.appendChild(document.createTextNode(before));
+      fragment.appendChild(span);
+      if(after) fragment.appendChild(document.createTextNode(after));
+      
+      textNode.parentNode.replaceChild(fragment, textNode);
+    }
+  });
+}
+
+// ============ 恢复原始 ============
+function restoreOriginal(){
+  modulesContainer.innerHTML = originalHTML;
+  isSearching = false;
+  // 移除所有高亮和搜索匹配标记
+  document.querySelectorAll('.highlight').forEach(el => {
+    const parent = el.parentNode;
+    parent.replaceChild(document.createTextNode(el.textContent), el);
+    parent.normalize();
+  });
+  document.querySelectorAll('.search-match').forEach(el => el.classList.remove('search-match'));
+  document.querySelectorAll('.hidden-by-search').forEach(el => el.classList.remove('hidden-by-search'));
+}
+
+// ============ 快捷搜索 ============
+function quickSearch(keyword){
+  searchInput.value = keyword;
+  doSearch();
+}
+
+// ============ 回车搜索 ============
+searchInput.addEventListener('keydown', function(e){
+  if(e.key === 'Enter'){
+    doSearch();
+  }
+});
+
+// ============ 实时搜索（输入时自动搜索） ============
+let searchTimer = null;
+searchInput.addEventListener('input', function(){
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => {
+    doSearch();
+  }, 300);
+});
+
+// ============ 回到顶部按钮 ============
+window.addEventListener('scroll', function(){
+  const btn = document.getElementById('vwBackToTop');
+  if(window.scrollY > 400){
+    btn.style.display = 'flex';
+  } else {
+    btn.style.display = 'none';
+  }
+});
+
+// ============ 流程导航高亮联动 ============
+window.addEventListener('scroll', function(){
+  const scrollPos = window.scrollY + 100;
+  const moduleEls = Array.from(document.querySelectorAll('#vwModulesContainer .module'));
+  let currentIdx = 0;
+  moduleEls.forEach((m, i) => {
+    if(m.offsetTop <= scrollPos) currentIdx = i;
+  });
+  document.querySelectorAll('.flow-nav-item').forEach((item, i) => {
+    item.classList.toggle('active', i === currentIdx);
+  });
+});
+
+// ============ 编辑模式 ============
+let editMode = false;
+let initialHTML = '';
+const STORAGE_KEY = 'vw_platform_v1';
+const STORAGE_ATTACH_KEY = 'vw_platform_v1_attach';
+
+function toggleEditMode(){
+  if(editMode){
+    exitEditMode();
+    document.getElementById('vwEditToggleBtn').classList.remove('active-edit');
+    document.getElementById('vwEditToggleBtn').textContent = '✏️ 编辑模式';
+  } else {
+    enterEditMode();
+    document.getElementById('vwEditToggleBtn').classList.add('active-edit');
+    document.getElementById('vwEditToggleBtn').textContent = '👁️ 退出编辑';
+  }
+}
+
+function enterEditMode(){
+  editMode = true;
+  document.body.classList.add('edit-mode');
+  // 清除搜索
+  searchInput.value = '';
+  if(isSearching) restoreOriginal();
+  searchInput.disabled = true;
+  searchInput.placeholder = '编辑模式下搜索不可用';
+  // 所有文字字段设为可编辑
+  document.querySelectorAll('.module-title, .module-desc, .level-1-title, .level-2-title, .level-3-content').forEach(el => {
+    el.setAttribute('contenteditable', 'true');
+  });
+  // 为所有节点注入编辑控件
+  addEditControlsAll();
+}
+
+function exitEditMode(){
+  editMode = false;
+  document.body.classList.remove('edit-mode');
+  searchInput.disabled = false;
+  searchInput.placeholder = '输入关键词搜索，如：明厨亮灶、挂行业树、劳动竞赛、受理指引...';
+  // 移除可编辑
+  document.querySelectorAll('[contenteditable]').forEach(el => {
+    el.removeAttribute('contenteditable');
+  });
+  // 移除编辑控件
+  document.querySelectorAll('.edit-node-controls').forEach(el => el.remove());
+  document.querySelectorAll('.module-del-btn').forEach(el => el.remove());
+  document.querySelectorAll('.l3-del').forEach(el => el.remove());
+  // 附件：保留下载和预览按钮，隐藏删除按钮
+  document.querySelectorAll('.attach-item').forEach(item => {
+    item.querySelectorAll('.attach-act.del').forEach(b => b.style.display = 'none');
+  });
+  // 更新搜索备份
+  originalHTML = modulesContainer.innerHTML;
+}
+
+// ============ 为所有节点注入编辑控件 ============
+function addEditControlsAll(){
+  // 模块删除按钮
+  document.querySelectorAll('.module').forEach(mod => {
+    const header = mod.querySelector(':scope > .module-header');
+    if(header && !header.querySelector('.module-del-btn')){
+      header.style.position = 'relative';
+      const del = document.createElement('button');
+      del.className = 'module-del-btn';
+      del.textContent = '删除模块';
+      del.onclick = function(e){ e.stopPropagation(); deleteModule(mod); };
+      header.appendChild(del);
+    }
+  });
+  // 一级分类：添加/删除
+  document.querySelectorAll('.level-1').forEach(l1 => {
+    if(!l1.querySelector(':scope > .edit-node-controls')){
+      const ctrl = document.createElement('div');
+      ctrl.className = 'edit-node-controls';
+      ctrl.innerHTML = '<button class="edit-act add" onclick="vw_addLevel2(this.closest(&quot;.level-1&quot;))">+ 添加二级</button><button class="edit-act del" onclick="vw_deleteNode(this.closest(&quot;.level-1&quot;))">🗑 删除此分类</button>';
+      l1.appendChild(ctrl);
+    }
+  });
+  // 二级分类：添加内容/上传附件/删除 + 三级项目删除
+  document.querySelectorAll('.level-2').forEach(l2 => {
+    if(!l2.querySelector(':scope > .edit-node-controls')){
+      const ctrl = document.createElement('div');
+      ctrl.className = 'edit-node-controls';
+      ctrl.innerHTML = '<button class="edit-act add" onclick="vw_addLevel3(this.closest(&quot;.level-2&quot;))">+ 添加内容项</button><button class="edit-act" onclick="vw_uploadAttach(this.closest(&quot;.level-2&quot;))">📎 上传附件</button><button class="edit-act del" onclick="vw_deleteNode(this.closest(&quot;.level-2&quot;))">🗑 删除此分类</button>';
+      l2.appendChild(ctrl);
+    }
+    l2.querySelectorAll(':scope > .level-3 > .level-3-item').forEach(l3 => {
+      if(!l3.querySelector(':scope > .l3-del')){
+        const del = document.createElement('span');
+        del.className = 'l3-del';
+        del.textContent = '✕';
+        del.title = '删除此项';
+        del.onclick = function(){ l3.remove(); markUnsaved(); };
+        l3.appendChild(del);
+      }
+    });
+  });
+  // 模块底部：添加一级分类
+  document.querySelectorAll('.module-body').forEach(body => {
+    if(!body.querySelector(':scope > .edit-node-controls')){
+      const ctrl = document.createElement('div');
+      ctrl.className = 'edit-node-controls';
+      ctrl.style.marginTop = '12px';
+      ctrl.innerHTML = '<button class="edit-act add" onclick="vw_addLevel1(this.closest(&quot;.module&quot;))">+ 添加一级分类</button>';
+      body.appendChild(ctrl);
+    }
+  });
+}
+
+function addEditControlsToNode(node){
+  if(node.classList.contains('level-1')){
+    const ctrl = document.createElement('div');
+    ctrl.className = 'edit-node-controls';
+    ctrl.innerHTML = '<button class="edit-act add" onclick="vw_addLevel2(this.closest(&quot;.level-1&quot;))">+ 添加二级</button><button class="edit-act del" onclick="vw_deleteNode(this.closest(&quot;.level-1&quot;))">🗑 删除此分类</button>';
+    node.appendChild(ctrl);
+    node.querySelectorAll(':scope > .level-2').forEach(l2 => addEditControlsToNode(l2));
+  } else if(node.classList.contains('level-2')){
+    const ctrl = document.createElement('div');
+    ctrl.className = 'edit-node-controls';
+    ctrl.innerHTML = '<button class="edit-act add" onclick="vw_addLevel3(this.closest(&quot;.level-2&quot;))">+ 添加内容项</button><button class="edit-act" onclick="vw_uploadAttach(this.closest(&quot;.level-2&quot;))">📎 上传附件</button><button class="edit-act del" onclick="vw_deleteNode(this.closest(&quot;.level-2&quot;))">🗑 删除此分类</button>';
+    node.appendChild(ctrl);
+    node.querySelectorAll(':scope > .level-3 > .level-3-item').forEach(l3 => {
+      const del = document.createElement('span');
+      del.className = 'l3-del';
+      del.textContent = '✕';
+      del.title = '删除此项';
+      del.onclick = function(){ l3.remove(); markUnsaved(); };
+      l3.appendChild(del);
+    });
+  }
+}
+
+// ============ 添加节点 ============
+function addLevel1(moduleEl){
+  const body = moduleEl.querySelector(':scope > .module-body');
+  const newL1 = document.createElement('div');
+  newL1.className = 'level-1';
+  newL1.innerHTML = '<div class="level-1-title" contenteditable="true">新一级分类（点击编辑标题）</div><div class="level-2"><div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>新二级分类（点击编辑）</div><div class="level-3"><div class="level-3-item"><div class="level-3-content" contenteditable="true">新内容（点击编辑）</div></div></div></div>';
+  const addCtrl = body.querySelector(':scope > .edit-node-controls');
+  if(addCtrl) body.insertBefore(newL1, addCtrl);
+  else body.appendChild(newL1);
+  addEditControlsToNode(newL1);
+  markUnsaved();
+  newL1.scrollIntoView({behavior:'smooth',block:'center'});
+  setTimeout(() => { newL1.querySelector('.level-1-title').focus(); document.execCommand('selectAll',false,null); }, 300);
+}
+
+function addLevel2(level1El){
+  const newL2 = document.createElement('div');
+  newL2.className = 'level-2';
+  newL2.innerHTML = '<div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>新二级分类（点击编辑）</div><div class="level-3"><div class="level-3-item"><div class="level-3-content" contenteditable="true">新内容（点击编辑）</div></div></div>';
+  const addCtrl = level1El.querySelector(':scope > .edit-node-controls');
+  if(addCtrl) level1El.insertBefore(newL2, addCtrl);
+  else level1El.appendChild(newL2);
+  addEditControlsToNode(newL2);
+  markUnsaved();
+  newL2.scrollIntoView({behavior:'smooth',block:'center'});
+  setTimeout(() => { newL2.querySelector('.level-2-title').focus(); document.execCommand('selectAll',false,null); }, 300);
+}
+
+function addLevel3(level2El){
+  let level3 = level2El.querySelector(':scope > .level-3');
+  if(!level3){
+    level3 = document.createElement('div');
+    level3.className = 'level-3';
+    level2El.appendChild(level3);
+  }
+  const newItem = document.createElement('div');
+  newItem.className = 'level-3-item';
+  newItem.innerHTML = '<div class="level-3-content" contenteditable="true">新内容（点击编辑）</div>';
+  const del = document.createElement('span');
+  del.className = 'l3-del';
+  del.textContent = '✕';
+  del.title = '删除此项';
+  del.onclick = function(){ newItem.remove(); markUnsaved(); };
+  newItem.appendChild(del);
+  level3.appendChild(newItem);
+  markUnsaved();
+  newItem.scrollIntoView({behavior:'smooth',block:'center'});
+  setTimeout(() => { newItem.querySelector('.level-3-content').focus(); document.execCommand('selectAll',false,null); }, 300);
+}
+
+// ============ 附件管理 ============
+let _attachInput = null;
+// attachStore: { id -> {name,size,type,dataUrl,isImage,uploadTime} }
+// DOM 上只存 data-attach-id（短UUID），dataUrl 等大数据不写入 DOM
+const attachStore = {};
+let _attachSeq = 0;
+
+function genAttachId(){
+  _attachSeq++;
+  return 'att_' + Date.now().toString(36) + '_' + _attachSeq.toString(36);
+}
+
+function uploadAttach(level2El){
+  // 清理旧的 input
+  if(_attachInput){ _attachInput.remove(); }
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.multiple = true;
+  input.style.display = 'none';
+  _attachInput = input;
+  document.body.appendChild(input);
+  input.onchange = function(e){
+    Array.from(e.target.files).forEach(file => {
+      const reader = new FileReader();
+      reader.onload = function(ev){
+        const isImage = file.type.startsWith('image/');
+        const id = genAttachId();
+        attachStore[id] = {
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          dataUrl: ev.target.result,
+          isImage: isImage,
+          uploadTime: new Date().toLocaleString('zh-CN')
+        };
+        renderAttachItem(level2El, id);
+        markUnsaved();
+      };
+      reader.readAsDataURL(file);
+    });
+    input.remove();
+    if(_attachInput === input) _attachInput = null;
+    showToast('附件已添加');
+  };
+  input.click();
+}
+
+function renderAttachItem(level2El, attachId){
+  const data = attachStore[attachId];
+  if(!data) return;
+  let attachList = level2El.querySelector(':scope > .attach-list');
+  if(!attachList){
+    attachList = document.createElement('div');
+    attachList.className = 'attach-list';
+    level2El.appendChild(attachList);
+  }
+  const item = document.createElement('div');
+  item.className = 'attach-item';
+  const ext = getFileExt(data.name);
+  const icon = getFileIcon(data.type, ext);
+  const sizeStr = formatSize(data.size);
+
+  let innerHTML = '<span class="attach-icon">' + icon + '</span>';
+  innerHTML += '<div class="attach-info">';
+  innerHTML += '<div class="attach-name">' + escapeHtml(data.name) + '</div>';
+  innerHTML += '<div class="attach-meta">' + sizeStr + ' · ' + (data.uploadTime || '') + '</div>';
+  innerHTML += '</div>';
+  innerHTML += '<div class="attach-actions">';
+  if(data.isImage){
+    innerHTML += '<button class="attach-act" onclick="vw_previewAttach(this)">👁 预览</button>';
+  }
+  innerHTML += '<button class="attach-act" onclick="vw_downloadAttach(this)">⬇ 下载</button>';
+  innerHTML += '<button class="attach-act del" onclick="vw_removeAttach(this)">✕</button>';
+  innerHTML += '</div>';
+  item.innerHTML = innerHTML;
+  // DOM 上只存短ID，不存 dataUrl
+  item.setAttribute('data-attach-id', attachId);
+  attachList.appendChild(item);
+  // 退出编辑模式时隐藏删除按钮（下载和预览保留）
+  if(!editMode){
+    item.querySelector('.attach-act.del')?.style.setProperty('display','none');
+  }
+}
+
+function previewAttach(btn){
+  const item = btn.closest('.attach-item');
+  const id = item.getAttribute('data-attach-id');
+  const data = attachStore[id];
+  if(!data || !data.isImage) return;
+  // 创建预览遮罩
+  let overlay = document.getElementById('attachPreviewOverlay');
+  if(!overlay){
+    overlay = document.createElement('div');
+    overlay.id = 'attachPreviewOverlay';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:9999;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:40px;';
+    overlay.onclick = function(){ overlay.style.display='none'; };
+    document.body.appendChild(overlay);
+  }
+  overlay.innerHTML = '<div style="position:relative;max-width:90%;max-height:90%;"><img src="' + data.dataUrl + '" style="max-width:90vw;max-height:85vh;border-radius:8px;box-shadow:0 8px 40px rgba(0,0,0,0.5);" /><div style="position:absolute;top:-30px;right:0;color:#fff;font-size:14px;cursor:pointer;">点击任意处关闭 ✕</div></div>';
+  overlay.style.display = 'flex';
+}
+
+function downloadAttach(btn){
+  const item = btn.closest('.attach-item');
+  const id = item.getAttribute('data-attach-id');
+  const data = attachStore[id];
+  if(!data) { showToast('附件数据丢失'); return; }
+  const a = document.createElement('a');
+  a.href = data.dataUrl;
+  a.download = data.name;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+function removeAttach(btn){
+  if(confirm('确认删除此附件？')){
+    const item = btn.closest('.attach-item');
+    const id = item.getAttribute('data-attach-id');
+    const list = item.closest('.attach-list');
+    item.remove();
+    if(list && list.children.length === 0) list.remove();
+    delete attachStore[id];
+    markUnsaved();
+  }
+}
+
+// 从 DOM 重建 attachStore（用于加载存档/导入后恢复附件数据）
+// 如果存档中带了 attachments 字段，用它填充；否则附件不可下载但页面结构保留
+function restoreAttachStore(attachments){
+  // 清空旧 store
+  Object.keys(attachStore).forEach(k => delete attachStore[k]);
+  if(attachments && typeof attachments === 'object'){
+    Object.keys(attachments).forEach(k => { attachStore[k] = attachments[k]; });
+  }
+}
+
+function getFileExt(name){
+  const parts = (name || '').split('.');
+  return parts.length > 1 ? parts[parts.length - 1].toLowerCase() : '';
+}
+
+function getFileIcon(mimeType, ext){
+  if(mimeType && mimeType.startsWith('image/')) return '🖼️';
+  if(mimeType && mimeType.startsWith('video/')) return '🎬';
+  if(mimeType && mimeType.startsWith('audio/')) return '🎵';
+  if(['pdf'].includes(ext)) return '📕';
+  if(['doc','docx'].includes(ext)) return '📘';
+  if(['xls','xlsx','csv'].includes(ext)) return '📗';
+  if(['ppt','pptx'].includes(ext)) return '📙';
+  if(['zip','rar','7z','tar','gz'].includes(ext)) return '📦';
+  if(['txt','md'].includes(ext)) return '📄';
+  if(['js','ts','py','java','c','cpp','html','css','json','xml'].includes(ext)) return '💻';
+  return '📎';
+}
+
+function formatSize(bytes){
+  if(bytes < 1024) return bytes + ' B';
+  if(bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  if(bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  return (bytes / (1024 * 1024 * 1024)).toFixed(1) + ' GB';
+}
+
+function addModule(){
+  const existing = document.querySelectorAll('#vwModulesContainer .module');
+  const num = existing.length + 1;
+  let id = 'm' + num;
+  let counter = num;
+  while(document.getElementById(id)){ id = 'm' + (++counter); }
+  const colorClass = 'module-' + ((num - 1) % 5 + 1);
+  const newModule = document.createElement('div');
+  newModule.className = 'module ' + colorClass;
+  newModule.id = id;
+  newModule.innerHTML = '<div class="module-header" onclick="vw_toggleModule(this)" style="position:relative;"><div class="module-num">' + counter + '</div><div><div class="module-title" contenteditable="true">新模块（点击编辑标题）</div><div class="module-desc" contenteditable="true">模块描述（点击编辑）</div></div><div class="module-arrow">▼</div></div><div class="module-body"><div class="level-1"><div class="level-1-title" contenteditable="true">新一级分类（点击编辑）</div><div class="level-2"><div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>新二级分类（点击编辑）</div><div class="level-3"><div class="level-3-item"><div class="level-3-content" contenteditable="true">新内容（点击编辑）</div></div></div></div></div><div class="edit-node-controls" style="margin-top:12px;"><button class="edit-act add" onclick="vw_addLevel1(this.closest(&quot;.module&quot;))">+ 添加一级分类</button></div></div>';
+  const addBtn = document.getElementById('vwAddModuleBtn');
+  addBtn.parentNode.insertBefore(newModule, addBtn);
+  // 模块删除按钮
+  const del = document.createElement('button');
+  del.className = 'module-del-btn';
+  del.textContent = '删除模块';
+  del.onclick = function(e){ e.stopPropagation(); deleteModule(newModule); };
+  newModule.querySelector('.module-header').appendChild(del);
+  // 一级分类控件
+  const l1 = newModule.querySelector('.level-1');
+  if(l1) addEditControlsToNode(l1);
+  renderFlowNav();
+  markUnsaved();
+  newModule.scrollIntoView({behavior:'smooth',block:'center'});
+  setTimeout(() => { newModule.querySelector('.module-title').focus(); document.execCommand('selectAll',false,null); }, 300);
+}
+
+// ============ 删除节点 ============
+function deleteNode(el){
+  if(confirm('确认删除此项及其所有子内容？')){
+    el.remove();
+    markUnsaved();
+    showToast('已删除');
+  }
+}
+
+function deleteModule(mod){
+  const title = mod.querySelector('.module-title')?.textContent || '';
+  if(confirm('确认删除整个模块「' + title + '」？此操作不可撤销！')){
+    mod.remove();
+    renderFlowNav();
+    markUnsaved();
+    showToast('模块已删除');
+  }
+}
+
+// ============ 保存 / 加载 ============
+function saveData(){
+  try {
+    const clone = modulesContainer.cloneNode(true);
+    clone.querySelectorAll('.edit-node-controls, .module-del-btn, .l3-del, .add-module-btn').forEach(el => el.remove());
+    clone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
+    const contentData = { html: clone.innerHTML, timestamp: new Date().toISOString(), version: 2 };
+
+    // 收集当前 DOM 中引用的附件 ID
+    const usedIds = [];
+    clone.querySelectorAll('[data-attach-id]').forEach(el => {
+      usedIds.push(el.getAttribute('data-attach-id'));
+    });
+    // 只保存仍被引用的附件
+    const savedAttach = {};
+    usedIds.forEach(id => {
+      if(attachStore[id]) savedAttach[id] = attachStore[id];
+    });
+
+    // 分两步存储：先存附件（大数据），再存内容（小数据）
+    // 如果附件过大导致 localStorage 超限，内容仍尝试保存并提示
+    let attachSaved = true;
+    let attachErrMsg = '';
+    try {
+      const attachJson = JSON.stringify(savedAttach);
+      localStorage.setItem(STORAGE_ATTACH_KEY, attachJson);
+    } catch(eAttach){
+      attachSaved = false;
+      attachErrMsg = eAttach.message;
+    }
+
+    // 存内容（HTML 中只有短ID，不含 dataUrl，通常很小）
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(contentData));
+    } catch(eContent){
+      showToast('保存失败：' + eContent.message);
+      return;
+    }
+
+    markSaved();
+    if(!attachSaved){
+      showToast('内容已保存，但附件过大无法存入浏览器本地（' + attachErrMsg + '）。建议使用「导出」功能备份附件。');
+    } else {
+      const attachCount = Object.keys(savedAttach).length;
+      showToast('保存成功！内容' + (attachCount > 0 ? ' + ' + attachCount + '个附件' : '') + '已存储到浏览器本地');
+    }
+  } catch(e){
+    showToast('保存失败：' + e.message);
+  }
+}
+
+function loadData(showToastFlag){
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if(!saved){
+    if(showToastFlag) showToast('未找到存档数据');
+    return false;
+  }
+  try {
+    const data = JSON.parse(saved);
+    modulesContainer.innerHTML = data.html;
+    // 确保 add-module 按钮存在
+    if(!document.getElementById('vwAddModuleBtn')){
+      const btn = document.createElement('button');
+      btn.className = 'add-module-btn';
+      btn.id = 'vwAddModuleBtn';
+      btn.textContent = '+ 添加新模块';
+      btn.onclick = addModule;
+      modulesContainer.appendChild(btn);
+    }
+
+    // 加载附件数据
+    const savedAttach = localStorage.getItem(STORAGE_ATTACH_KEY);
+    if(savedAttach){
+      try {
+        restoreAttachStore(JSON.parse(savedAttach));
+      } catch(eA){
+        restoreAttachStore({});
+      }
+    } else {
+      restoreAttachStore({});
+    }
+
+    originalHTML = modulesContainer.innerHTML;
+    renderFlowNav();
+    if(editMode){ exitEditMode(); enterEditMode(); }
+    const time = new Date(data.timestamp).toLocaleString('zh-CN');
+    const attachCount = Object.keys(attachStore).length;
+    if(showToastFlag) showToast('加载成功！上次保存：' + time + (attachCount > 0 ? '（含' + attachCount + '个附件）' : ''));
+    markSaved();
+    return true;
+  } catch(e){
+    if(showToastFlag) showToast('加载失败：' + e.message);
+    return false;
+  }
+}
+
+// ============ 导出 / 导入 ============
+function exportData(){
+  const clone = modulesContainer.cloneNode(true);
+  clone.querySelectorAll('.edit-node-controls, .module-del-btn, .l3-del, .add-module-btn').forEach(el => el.remove());
+  clone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
+
+  // 收集导出文件中引用的附件
+  const usedIds = [];
+  clone.querySelectorAll('[data-attach-id]').forEach(el => {
+    usedIds.push(el.getAttribute('data-attach-id'));
+  });
+  const exportAttach = {};
+  usedIds.forEach(id => { if(attachStore[id]) exportAttach[id] = attachStore[id]; });
+
+  const exportObj = {
+    title: '视联网业务知识查询平台',
+    exportDate: new Date().toISOString(),
+    html: clone.innerHTML,
+    attachments: exportAttach,
+    summary: extractSummary()
+  };
+  const json = JSON.stringify(exportObj, null, 2);
+  const blob = new Blob([json], {type:'application/json;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = '视联网业务知识_' + new Date().toISOString().slice(0,10) + '.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  const attachCount = Object.keys(exportAttach).length;
+  showToast('已导出JSON文件' + (attachCount > 0 ? '（含' + attachCount + '个附件）' : ''));
+}
+
+function extractSummary(){
+  const lines = [];
+  document.querySelectorAll('#vwModulesContainer .module').forEach(mod => {
+    lines.push('## ' + (mod.querySelector('.module-title')?.textContent?.trim() || ''));
+    mod.querySelectorAll('.level-1').forEach(l1 => {
+      lines.push('  ### ' + (l1.querySelector(':scope > .level-1-title')?.textContent?.trim() || ''));
+      l1.querySelectorAll(':scope > .level-2').forEach(l2 => {
+        const t = l2.querySelector(':scope > .level-2-title')?.textContent?.trim() || '';
+        if(t) lines.push('    - ' + t);
+      });
+    });
+  });
+  return lines.join('\n');
+}
+
+function handleImportFile(event){
+  const file = event.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    try {
+      const data = JSON.parse(e.target.result);
+      if(data.html){
+        modulesContainer.innerHTML = data.html;
+      } else if(data.modules){
+        modulesContainer.innerHTML = buildHTMLFromModules(data.modules);
+      } else {
+        showToast('导入失败：不支持的文件格式');
+        return;
+      }
+      // 确保 add-module 按钮存在
+      if(!document.getElementById('vwAddModuleBtn')){
+        const btn = document.createElement('button');
+        btn.className = 'add-module-btn';
+        btn.id = 'vwAddModuleBtn';
+        btn.textContent = '+ 添加新模块';
+        btn.onclick = addModule;
+        modulesContainer.appendChild(btn);
+      }
+      // 恢复附件数据
+      if(data.attachments && typeof data.attachments === 'object'){
+        restoreAttachStore(data.attachments);
+      } else {
+        restoreAttachStore({});
+      }
+      originalHTML = modulesContainer.innerHTML;
+      renderFlowNav();
+      if(editMode){ exitEditMode(); enterEditMode(); }
+      markUnsaved();
+      const attachCount = Object.keys(attachStore).length;
+      showToast('导入成功！' + (attachCount > 0 ? '含' + attachCount + '个附件，' : '') + '请检查内容并保存');
+    } catch(err){
+      showToast('导入失败：JSON格式错误');
+    }
+  };
+  reader.readAsText(file, 'UTF-8');
+  event.target.value = '';
+}
+
+function buildHTMLFromModules(modules){
+  let html = '';
+  modules.forEach((mod, i) => {
+    const num = i + 1;
+    const id = 'm' + num;
+    const colorClass = 'module-' + ((i % 5) + 1);
+    html += '<div class="module ' + colorClass + '" id="' + id + '"><div class="module-header" onclick="vw_toggleModule(this)"><div class="module-num">' + num + '</div><div><div class="module-title">' + escapeHtml(mod.title) + '</div><div class="module-desc">' + escapeHtml(mod.desc) + '</div></div><div class="module-arrow">▼</div></div><div class="module-body">';
+    if(mod.level1s){
+      mod.level1s.forEach(l1 => {
+        html += '<div class="level-1"><div class="level-1-title">' + escapeHtml(l1.title) + '</div>';
+        if(l1.level2s){
+          l1.level2s.forEach(l2 => {
+            html += '<div class="level-2"><div class="level-2-title" onclick="vw_toggleLevel2(this)"><span class="expand-icon">▼</span>' + escapeHtml(l2.title) + '</div>';
+            if(l2.items && l2.items.length > 0){
+              html += '<div class="level-3">';
+              l2.items.forEach(item => {
+                html += '<div class="level-3-item"><div class="level-3-content">' + escapeHtml(item) + '</div></div>';
+              });
+              html += '</div>';
+            }
+            html += '</div>';
+          });
+        }
+        html += '</div>';
+      });
+    }
+    html += '</div></div>';
+  });
+  return html;
+}
+
+function escapeHtml(text){
+  const div = document.createElement('div');
+  div.textContent = text || '';
+  return div.innerHTML;
+}
+
+// ============ 重置 ============
+function resetData(){
+  if(confirm('确认重置为初始内容？所有自定义编辑将被清除（已保存的存档不受影响）！')){
+    modulesContainer.innerHTML = initialHTML;
+    // 确保 add-module 按钮存在
+    if(!document.getElementById('vwAddModuleBtn')){
+      const btn = document.createElement('button');
+      btn.className = 'add-module-btn';
+      btn.id = 'vwAddModuleBtn';
+      btn.textContent = '+ 添加新模块';
+      btn.onclick = addModule;
+      modulesContainer.appendChild(btn);
+    }
+    originalHTML = modulesContainer.innerHTML;
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(STORAGE_ATTACH_KEY);
+    restoreAttachStore({});
+    renderFlowNav();
+    if(editMode){ exitEditMode(); enterEditMode(); }
+    showToast('已重置为初始内容');
+    const dot = document.getElementById('vwStatusDot');
+    const text = document.getElementById('vwStatusText');
+    if(dot) dot.className = 'dot';
+    if(text) text.textContent = '未保存';
+  }
+}
+
+// ============ 状态管理 ============
+function markUnsaved(){
+  const dot = document.getElementById('vwStatusDot');
+  const text = document.getElementById('vwStatusText');
+  if(dot) dot.className = 'dot unsaved';
+  if(text) text.textContent = '有未保存的修改';
+}
+
+function markSaved(){
+  const dot = document.getElementById('vwStatusDot');
+  const text = document.getElementById('vwStatusText');
+  if(dot) dot.className = 'dot saved';
+  if(text) text.textContent = '已保存 ' + new Date().toLocaleTimeString('zh-CN');
+}
+
+// ============ Toast 提示 ============
+function showToast(msg){
+  let toast = document.getElementById('vwToast');
+  if(!toast){
+    toast = document.createElement('div');
+    toast.id = 'vwToast';
+    document.body.appendChild(toast);
+  }
+  toast.textContent = msg;
+  toast.className = 'show';
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => { toast.className = ''; }, 2800);
+}
+
+// ============ 自动保存检测 ============
+let _autoSaveTimer = null;
+modulesContainer.addEventListener('input', function(){
+  if(editMode){
+    markUnsaved();
+    clearTimeout(_autoSaveTimer);
+    _autoSaveTimer = setTimeout(() => { saveData(); }, 30000);
+  }
+});
+
+// ============ 流程导航动态渲染 ============
+function renderFlowNav(){
+  const nav = document.getElementById('vwFlowNav');
+  if(!nav) return;
+  const modules = document.querySelectorAll('#vwModulesContainer .module');
+  let html = '';
+  modules.forEach((m, i) => {
+    const title = m.querySelector('.module-title')?.textContent?.trim() || ('模块' + (i+1));
+    const id = m.id;
+    html += '<div class="flow-nav-item" onclick="vw_scrollToModule(\'' + id + '\')"><span class="num">' + (i+1) + '</span>' + title + '</div>';
+    if(i < modules.length - 1) html += '<div class="flow-nav-arrow">→</div>';
+  });
+  nav.innerHTML = html;
+  const first = nav.querySelector('.flow-nav-item');
+  if(first) first.classList.add('active');
+}
+
+// ============ 初始化 ============
+initialHTML = modulesContainer.innerHTML;
+const _hasSaved = loadData(false);
+if(!_hasSaved){
+  renderFlowNav();
+}
+originalHTML = modulesContainer.innerHTML;
+
+// 暴露函数到全局以供 onclick 调用
+window.vw_toggleModule = toggleModule;
+window.vw_toggleLevel2 = toggleLevel2;
+window.vw_scrollToModule = scrollToModule;
+window.vw_doSearch = doSearch;
+window.vw_quickSearch = quickSearch;
+window.vw_toggleEditMode = toggleEditMode;
+window.vw_saveData = saveData;
+window.vw_loadData = loadData;
+window.vw_exportData = exportData;
+window.vw_handleImportFile = handleImportFile;
+window.vw_resetData = resetData;
+window.vw_addLevel1 = addLevel1;
+window.vw_addLevel2 = addLevel2;
+window.vw_addLevel3 = addLevel3;
+window.vw_addModule = addModule;
+window.vw_deleteNode = deleteNode;
+window.vw_deleteModule = deleteModule;
+window.vw_uploadAttach = uploadAttach;
+window.vw_previewAttach = previewAttach;
+window.vw_downloadAttach = downloadAttach;
+window.vw_removeAttach = removeAttach;
+})();
 
 function init(){
   initTheme();
