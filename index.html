@@ -1017,9 +1017,81 @@ body {
 #page-video .module { overflow: visible; }
 
 
+
+/* ============ 登录系统 ============ */
+.login-overlay {
+  position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:99999;
+  display:flex;align-items:center;justify-content:center;
+  backdrop-filter:blur(4px);
+}
+.login-card {
+  background:#fff;border-radius:16px;padding:40px 36px;width:380px;max-width:90vw;
+  box-shadow:0 20px 60px rgba(0,0,0,0.3);text-align:center;
+}
+[data-theme="dark"] .login-card {background:#1e293b;box-shadow:0 20px 60px rgba(0,0,0,0.6);}
+.login-card h2 {font-size:22px;font-weight:700;margin:0 0 6px;color:#1e293b;}
+[data-theme="dark"] .login-card h2 {color:#e2e8f0;}
+.login-card .login-subtitle {font-size:13px;color:#64748b;margin-bottom:24px;}
+.login-card input {
+  width:100%;padding:12px 16px;border:1px solid #e2e8f0;border-radius:10px;
+  font-size:15px;margin-bottom:14px;outline:none;transition:border-color .2s;
+  background:#f8fafc;color:#1e293b;box-sizing:border-box;
+}
+.login-card input:focus {border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,0.1);}
+[data-theme="dark"] .login-card input {background:#0f172a;border-color:#334155;color:#e2e8f0;}
+.login-card .login-btn {
+  width:100%;padding:12px;border:none;border-radius:10px;font-size:15px;font-weight:600;
+  cursor:pointer;background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;
+  transition:all .2s;margin-top:4px;
+}
+.login-card .login-btn:hover {box-shadow:0 4px 16px rgba(37,99,235,0.35);transform:translateY(-1px);}
+.login-card .login-error {
+  color:#ef4444;font-size:13px;margin-top:10px;min-height:18px;
+}
+.login-card .pwd-rules {font-size:12px;color:#94a3b4;text-align:left;margin:-6px 0 14px;}
+.login-user-bar {
+  display:flex;align-items:center;gap:8px;font-size:13px;color:#e2e8f0;
+}
+.login-user-bar .user-name {font-weight:600;color:#fff;}
+.login-user-bar .user-scope {background:rgba(255,255,255,0.15);padding:2px 8px;border-radius:6px;font-size:11px;}
+.login-logout-btn {
+  background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);
+  color:#e2e8f0;padding:3px 10px;border-radius:6px;cursor:pointer;font-size:12px;
+  transition:all .2s;
+}
+.login-logout-btn:hover {background:rgba(239,68,68,0.2);border-color:rgba(239,68,68,0.4);color:#fca5a5;}
+
 </style>
 </head>
 <body>
+
+<!-- 登录弹窗 -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-card">
+    <div style="font-size:36px;margin-bottom:8px;">&#128274;</div>
+    <h2>营销驾驶舱</h2>
+    <div class="login-subtitle">大庆分公司 · 请登录您的账号</div>
+    <input type="text" id="loginUsername" placeholder="请输入账号" autocomplete="off" />
+    <input type="password" id="loginPassword" placeholder="请输入密码" />
+    <button class="login-btn" id="loginBtn" onclick="handleLogin()">登 录</button>
+    <div class="login-error" id="loginError"></div>
+  </div>
+</div>
+
+<!-- 修改密码弹窗 -->
+<div class="login-overlay" id="changePwdOverlay" style="display:none;">
+  <div class="login-card">
+    <div style="font-size:36px;margin-bottom:8px;">&#128272;</div>
+    <h2>首次登录，请修改密码</h2>
+    <div class="login-subtitle">默认密码123456已失效，请设置您的新密码</div>
+    <input type="password" id="newPwd1" placeholder="请输入新密码" />
+    <input type="password" id="newPwd2" placeholder="请再次确认新密码" />
+    <div class="pwd-rules">提示：密码长度至少6位，建议包含字母和数字</div>
+    <button class="login-btn" onclick="handleChangePwd()">确认修改</button>
+    <div class="login-error" id="changePwdError"></div>
+  </div>
+</div>
+
 
 <nav class="top-nav">
   <div class="nav-brand">
@@ -3048,7 +3120,136 @@ function init(){
   switchPage('overview');
 }
 
-init();
+// init() is called after login via enterApp()
+
+// ============ 登录系统 ============
+const USER_DB = {"xujiahong": {"name": "徐嘉鸿", "dept": "财务部", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "taorui": {"name": "陶瑞", "dept": "财务部", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "weilei": {"name": "魏磊", "dept": "市场部", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "yangyu": {"name": "杨雨", "dept": "市场部", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "zhaohongwei": {"name": "赵洪伟", "dept": "市场部", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "liuyanjie": {"name": "刘艳杰", "dept": "市场部", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "mengwanqiu": {"name": "孟婉秋", "dept": "市场部", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "liqinghui": {"name": "李庆会", "dept": "市场部", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "liying": {"name": "李颖", "dept": "市场部", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "zhaodongbing": {"name": "赵东兵", "dept": "市场部", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "haojiuyuan": {"name": "郝久源", "dept": "市场部", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "wangyingqian": {"name": "王英乾", "dept": "市场部", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "liubingyan": {"name": "刘冰焱", "dept": "市场部", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "wangchunquan": {"name": "王春泉", "dept": "大数据应用及AI+推广", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "zhangyueyue": {"name": "张跃越", "dept": "大数据应用及AI+推广", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "gaodazhi": {"name": "高大治", "dept": "大数据应用及AI+推广", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "lixiaodan": {"name": "李晓丹", "dept": "大数据应用及AI+推广", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "gexiao": {"name": "葛晓", "dept": "大数据应用及AI+推广", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "caoweiwei": {"name": "曹微微", "dept": "大数据应用及AI+推广", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "zhouyilu": {"name": "周一璐", "dept": "大数据应用及AI+推广", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "caoyuanchi": {"name": "曹源池", "dept": "大数据应用及AI+推广", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "yangshumei": {"name": "杨淑梅", "dept": "大数据应用及AI+推广", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "zhangjing": {"name": "张静", "dept": "大数据应用及AI+推广", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "renyuan": {"name": "任媛", "dept": "大数据应用及AI+推广", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "qiuyuwen": {"name": "邱玉文", "dept": "大数据应用及AI+推广", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "lichunli": {"name": "李春利", "dept": "大数据应用及AI+推广", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "lubaohai": {"name": "鲁宝海", "dept": "云中台", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "shenqiuming": {"name": "沈秋铭", "dept": "云中台", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "songzeyu": {"name": "宋泽玉", "dept": "云中台", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "liuxiaolei": {"name": "刘晓磊", "dept": "云中台", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "wuyinbing": {"name": "吴垠冰", "dept": "云中台", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "qinyifan": {"name": "秦一凡", "dept": "云中台", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "sunruinan": {"name": "孙瑞南", "dept": "云中台", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "sunzhigang": {"name": "孙志刚", "dept": "云中台", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "wangjian": {"name": "王健", "dept": "云中台", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "rongruotong": {"name": "荣若桐", "dept": "云中台", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "lishuhang": {"name": "李抒航", "dept": "云中台", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "renzexu": {"name": "任泽旭", "dept": "云中台", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "wangsongbo": {"name": "王嵩博", "dept": "云中台", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "jinyimeng": {"name": "金祎萌", "dept": "云中台", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "xurui": {"name": "许睿", "dept": "云中台", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "suichenyang": {"name": "隋辰阳", "dept": "云中台", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "zhaochengxin": {"name": "赵成信", "dept": "云中台", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "zhaoyuhang": {"name": "赵宇航", "dept": "云中台", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "wangxinxin": {"name": "王鑫鑫", "dept": "云中台", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "miaojunpeng": {"name": "苗钧芃", "dept": "云中台", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "wangbaoxin": {"name": "王宝昕", "dept": "云中台", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "yaoruizhu": {"name": "姚睿珠", "dept": "云中台", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "zhangjing2": {"name": "张婧", "dept": "云中台", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "sunyong": {"name": "孙墉", "dept": "云中台", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "chaizexin": {"name": "柴泽鑫", "dept": "云中台", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "rentianqi": {"name": "任天奇", "dept": "云中台", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "wangyu": {"name": "王玉", "dept": "市场部", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}, "zhangxiaofeng": {"name": "张晓峰", "dept": "云网部", "scope": "全市", "pwd": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "first": true}};
+
+let currentUser = null; // {username, name, dept, scope}
+
+// SHA-256 hash
+async function sha256(msg) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(msg));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+function getStoredPwd(username) {
+  const d = localStorage.getItem('cockpit_pwd_' + username);
+  return d ? JSON.parse(d) : null;
+}
+
+function setStoredPwd(username, pwdHash) {
+  localStorage.setItem('cockpit_pwd_' + username, JSON.stringify({pwd: pwdHash, changed: true}));
+}
+
+function isPasswordChanged(username) {
+  const d = getStoredPwd(username);
+  return d ? d.changed === true : false;
+}
+
+function getEffectivePwdHash(username) {
+  const d = getStoredPwd(username);
+  return d ? d.pwd : USER_DB[username].pwd;
+}
+
+async function handleLogin() {
+  const username = document.getElementById('loginUsername').value.trim().toLowerCase();
+  const password = document.getElementById('loginPassword').value;
+  const errEl = document.getElementById('loginError');
+  errEl.textContent = '';
+
+  if(!username || !password) { errEl.textContent = '请输入账号和密码'; return; }
+  if(!USER_DB[username]) { errEl.textContent = '用户不存在，请联系管理员'; return; }
+
+  const inputHash = await sha256(password);
+  const storedHash = getEffectivePwdHash(username);
+  if(inputHash !== storedHash) { errEl.textContent = '密码错误'; return; }
+
+  // Login success
+  currentUser = {username, name: USER_DB[username].name, dept: USER_DB[username].dept, scope: USER_DB[username].scope};
+
+  // Check first login
+  if(!isPasswordChanged(username)) {
+    document.getElementById('loginOverlay').style.display = 'none';
+    document.getElementById('changePwdOverlay').style.display = 'flex';
+    return;
+  }
+
+  enterApp();
+}
+
+async function handleChangePwd() {
+  const p1 = document.getElementById('newPwd1').value;
+  const p2 = document.getElementById('newPwd2').value;
+  const errEl = document.getElementById('changePwdError');
+  errEl.textContent = '';
+
+  if(!p1 || p1.length < 6) { errEl.textContent = '密码长度至少6位'; return; }
+  if(p1 !== p2) { errEl.textContent = '两次输入的密码不一致'; return; }
+  if(p1 === '123456') { errEl.textContent = '新密码不能与默认密码相同'; return; }
+
+  const hash = await sha256(p1);
+  setStoredPwd(currentUser.username, hash);
+  enterApp();
+}
+
+function enterApp() {
+  document.getElementById('loginOverlay').style.display = 'none';
+  document.getElementById('changePwdOverlay').style.display = 'none';
+
+  // Apply scope restriction
+  applyScopeRestriction();
+
+  // Show user info bar
+  const scopeText = currentUser.scope === '全市' ? '全市' : currentUser.scope;
+  const nav = document.querySelector('.top-nav');
+  const userBar = document.createElement('div');
+  userBar.className = 'login-user-bar';
+  userBar.innerHTML = '<span class="user-name">' + currentUser.name + '</span><span class="user-scope">' + scopeText + '</span><button class="login-logout-btn" onclick="handleLogout()">退出</button>';
+  nav.querySelector('.nav-right').insertBefore(userBar, nav.querySelector('.nav-right').firstChild);
+
+  // Continue normal init
+  init();
+}
+
+function applyScopeRestriction() {
+  const scopeBtn = document.getElementById('scopeBtn');
+  const scopeDropdown = document.getElementById('scopeDropdown');
+  if(currentUser.scope === '全市') {
+    // No restriction - can switch to any scope
+    currentScope = '全市';
+    if(scopeBtn) scopeBtn.textContent = '全市 ▼';
+  } else {
+    // Restrict to user's scope only
+    currentScope = currentUser.scope;
+    if(scopeBtn) {
+      scopeBtn.textContent = currentUser.scope + ' ▼';
+      scopeBtn.style.cursor = 'default';
+      scopeBtn.onclick = null;
+    }
+    if(scopeDropdown) scopeDropdown.innerHTML = '';
+  }
+}
+
+function handleLogout() {
+  localStorage.removeItem('cockpit_session');
+  currentUser = null;
+  location.reload();
+}
+
+// Enter key support for login
+document.getElementById('loginPassword').addEventListener('keydown', function(e) {
+  if(e.key === 'Enter') handleLogin();
+});
+document.getElementById('loginUsername').addEventListener('keydown', function(e) {
+  if(e.key === 'Enter') document.getElementById('loginPassword').focus();
+});
+document.getElementById('newPwd2').addEventListener('keydown', function(e) {
+  if(e.key === 'Enter') handleChangePwd();
+});
+
+// Override init - don't call init() until login succeeds
+// The original init() call at the bottom is replaced by the login flow
 </script>
 </body>
 </html>
