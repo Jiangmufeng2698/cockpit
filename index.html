@@ -1618,6 +1618,19 @@ function renderYoYBulletin(rows, nameField, indicators, elId, scopeLabel) {
     </div>`;
 }
 
+// 将同比四级原始dict转为rows数组格式
+function yoyDictToRows(tm, lm, indicators) {
+  return Object.keys(tm).map(name => {
+    const cells = {};
+    indicators.forEach(ind => {
+      const tv = tm[name][ind] || 0;
+      const lv = (lm[name] && lm[name][ind]) || 0;
+      cells[ind] = { thisMonth: tv, lastMonth: lv, yoy: tv - lv };
+    });
+    return { name, cells };
+  });
+}
+
 /* ---- 营销月报 ---- */
 let monthlyDate = DEFAULT_DATE;
 function renderMonthlyDatePicker(){
@@ -1666,9 +1679,9 @@ function renderYoYChannelReport(){
     document.getElementById('yoyChannelTitle').textContent = currentScope+'渠道条线营销月报（'+m+'.1-'+m+'.'+d+' 同比）';
     const {tm, lm} = getYoYLevel4(yoyChannelDate, currentScope, false);
     renderLevel4YoY(document.getElementById('yoyChannelTableWrap'), tm, lm, CH_IND, HB_CLS, HBS_CLS, DB_CLS, 'yoy', currentScope);
-    renderYoYBulletin(tm, 'name', CH_IND, 'yoyChannelBulletin', currentScope + '整体');
+    const tmRows = yoyDictToRows(tm, lm, CH_IND);
+    renderYoYBulletin(tmRows, 'name', CH_IND, 'yoyChannelBulletin', currentScope + '整体');
   }
-}
 }
 
 /* ---- 政企条线营销月报 ---- */
@@ -1694,9 +1707,9 @@ function renderYoYZQReport(){
     document.getElementById('yoyZqTitle').textContent = currentScope+'政企条线营销月报（'+m+'.1-'+m+'.'+d+' 同比）';
     const {tm, lm} = getYoYZQLevel4(yoyZqDate, currentScope);
     renderLevel4YoY(document.getElementById('yoyZqTableWrap'), tm, lm, ZQ_IND, zqHB, zqHBS, zqDB, 'yoy_zq', currentScope);
-    renderYoYBulletin(tm, 'name', ZQ_IND, 'yoyZqBulletin', currentScope + '整体');
+    const tmRows = yoyDictToRows(tm, lm, ZQ_IND);
+    renderYoYBulletin(tmRows, 'name', ZQ_IND, 'yoyZqBulletin', currentScope + '整体');
   }
-}
 }
 
 function initTheme(){
