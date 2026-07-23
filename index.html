@@ -517,17 +517,6 @@ body {
     <div class="tw" id="yoyZqTableWrap"></div>
   </div>
 
-  <!-- 营销数据 - 更多模块 -->
-  <div class="page" id="page-more">
-    <div class="page-title">更多模块</div>
-    <div class="quick-grid" id="moreGrid"></div>
-    <div class="module-placeholder" style="margin-top:20px">
-      <div class="icon">&#x1F4E6;</div>
-      <div class="text">模块扩展区</div>
-      <div class="hint">新功能模块在此注册后自动出现</div>
-    </div>
-  </div>
-
   <!-- 存量质态 -->
   <div class="page" id="page-stock">
     <div class="empty-zone">
@@ -1298,11 +1287,10 @@ moduleRegistry.register({id:'daily',navLabel:'营销日报',order:1});
 moduleRegistry.register({id:'monthly',navLabel:'营销月报',order:2});
 moduleRegistry.register({id:'yoy_channel',navLabel:'渠道条线营销月报',order:3});
 moduleRegistry.register({id:'yoy_zq',navLabel:'政企条线营销月报',order:4});
-moduleRegistry.register({id:'more',navLabel:'更多',order:99});
 
 // 一级大板块：3大导航
 const ZONES = [
-  { id:'marketing', label:'营销数据', pages:['overview','daily','monthly','yoy_channel','yoy_zq','more'] },
+  { id:'marketing', label:'营销数据', pages:['overview','daily','monthly','yoy_channel','yoy_zq'] },
   { id:'stock', label:'存量质态', pages:['stock'] },
   { id:'video', label:'视联网专区', pages:['video'] },
 ];
@@ -1486,8 +1474,7 @@ function renderQuick(){
     {name:(Math.floor(DATA.dateRange.end/100)%100)+'.'+(DATA.dateRange.end%100)+' 日报',sub:'今日营销通报',icon:'&#x1F4C5;',cls:'blue',page:'daily'},
     {name:(Math.floor(DATA.dateRange.end/100)%100)+'月月报',sub:'本月完成情况',icon:'&#x1F4C3;',cls:'cyan',page:'monthly'},
     {name:'渠道条线',sub:'渠道同比月报',icon:'&#x1F4CA;',cls:'green',page:'yoy_channel'},
-    {name:'政企条线',sub:'政企同比月报',icon:'&#x1F3E2;',cls:'purple',page:'yoy_zq'},
-    {name:'更多模块',sub:'扩展功能入口',icon:'&#x2795;',cls:'gold',page:'more'}
+    {name:'政企条线',sub:'政企同比月报',icon:'&#x1F3E2;',cls:'purple',page:'yoy_zq'}
   ].map(q=>`<div class="quick-card" onclick="switchPage('${q.page}')">
     <div class="icon-wrap ${q.cls}">${q.icon}</div>
     <div><div class="label">${q.name}</div><div class="sub">${q.sub}</div></div>
@@ -1627,17 +1614,6 @@ function renderYoYZQReport(){
   }
 }
 
-function renderMore(){
-  document.getElementById('moreGrid').innerHTML = [
-    {name:'融合宽带活跃率',sub:'3-5月活跃率通报',icon:'&#x1F310;',cls:'cyan'},
-    {name:'移宽活跃用户',sub:'出账与计费分析',icon:'&#x1F4F1;',cls:'blue'},
-    {name:'趋势图表提炼',sub:'多期指标对比',icon:'&#x1F4C8;',cls:'gold'},
-  ].map(q=>`<div class="quick-card" style="cursor:default">
-    <div class="icon-wrap ${q.cls}">${q.icon}</div>
-    <div><div class="label">${q.name}</div><div class="sub">${q.sub}</div></div>
-  </div>`).join('');
-}
-
 function initTheme(){
   const saved = localStorage.getItem('cockpit-theme');
   if (saved) document.documentElement.setAttribute('data-theme', saved);
@@ -1673,7 +1649,6 @@ function init(){
   renderYoYChannelReport();
   renderYoYZQDatePicker();
   renderYoYZQReport();
-  renderMore();
   switchPage('overview');
 }
 
