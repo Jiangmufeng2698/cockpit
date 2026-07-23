@@ -1086,7 +1086,7 @@ body {
     <div class="login-subtitle">默认密码123456已失效，请设置您的新密码</div>
     <input type="password" id="newPwd1" placeholder="请输入新密码" />
     <input type="password" id="newPwd2" placeholder="请再次确认新密码" />
-    <div class="pwd-rules">提示：密码长度至少6位，建议包含字母和数字</div>
+    <div class="pwd-rules">提示：请设置您的新密码</div>
     <button class="login-btn" onclick="handleChangePwd()">确认修改</button>
     <div class="login-error" id="changePwdError"></div>
   </div>
@@ -3184,7 +3184,7 @@ async function handleChangePwd() {
   const errEl = document.getElementById('changePwdError');
   errEl.textContent = '';
 
-  if(!p1 || p1.length < 6) { errEl.textContent = '密码长度至少6位'; return; }
+  if(!p1) { errEl.textContent = '请输入新密码'; return; }
   if(p1 !== p2) { errEl.textContent = '两次输入的密码不一致'; return; }
   if(p1 === '123456') { errEl.textContent = '新密码不能与默认密码相同'; return; }
 
