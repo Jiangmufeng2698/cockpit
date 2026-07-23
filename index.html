@@ -3123,7 +3123,7 @@ function init(){
 
 // init() is called after login via enterApp()
 
-// ============ 登录系统 ============
+// ============ 登录系统（Supabase云端密码） ============
 
 // 全局错误捕获——手机端调试利器，任何JS错误都会显示在登录框下方
 window.onerror = function(msg, url, line, col, err) {
@@ -3133,13 +3133,48 @@ window.onerror = function(msg, url, line, col, err) {
 };
 
 let currentUser = null; // {username, name, dept, scope}
-const PWD_STORE_VERSION = 4; // 密码存储版本号，变更时清除旧数据重置密码
 const LOGIN_SESSION_KEY = 'cockpit_login_session';
 const LOGIN_SESSION_HOURS = 18; // 登录态保持时长（小时）
 
-// 密码编码函数（用btoa，所有浏览器100%支持，不需要sha256那种复杂的位运算）
+// Supabase配置
+const SB_URL = 'https://wedaijqtdfazduzgfcvs.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlZGFpanF0ZGZhemR1emdmY3ZzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTYyMjgsImV4cCI6MjEwMDM3MjIyOH0.bviYDCHSgzyGA_FWPf4Iq56mBsEvWhvxvijz0vVjs4M';
+
+// 缓存从云端拉取的密码数据 {username: {pwd, changed}}
+var cloudPwdCache = null;
+
 function encodePwd(pwd) {
-  try { return btoa(pwd); } catch(e) { return pwd; }
+  try { return btoa(unescape(encodeURIComponent(pwd))); } catch(e) { return pwd; }
+}
+
+// 从Supabase拉取某用户密码信息，返回 {pwd, changed} 或 null
+function fetchPwdFromCloud(username) {
+  try {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', SB_URL + '/rest/v1/passwords?select=pwd,changed&username=eq.' + encodeURIComponent(username), false);
+    xhr.setRequestHeader('apikey', SB_KEY);
+    xhr.setRequestHeader('Authorization', 'Bearer ' + SB_KEY);
+    xhr.send();
+    if(xhr.status === 200) {
+      var rows = JSON.parse(xhr.responseText);
+      if(rows && rows.length > 0) return rows[0];
+    }
+  } catch(e) {}
+  return null;
+}
+
+// 更新Supabase中的密码
+function updatePwdToCloud(username, newPwdHash) {
+  try {
+    var xhr = new XMLHttpRequest();
+    xhr.open('PATCH', SB_URL + '/rest/v1/passwords?username=eq.' + encodeURIComponent(username), false);
+    xhr.setRequestHeader('apikey', SB_KEY);
+    xhr.setRequestHeader('Authorization', 'Bearer ' + SB_KEY);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.setRequestHeader('Prefer', 'return=minimal');
+    xhr.send(JSON.stringify({pwd: newPwdHash, changed: true}));
+    return xhr.status === 204;
+  } catch(e) { return false; }
 }
 
 function saveLoginSession(username) {
@@ -3161,38 +3196,11 @@ function tryAutoLogin() {
     if(!raw) return false;
     var s = JSON.parse(raw);
     if(!s.username || !s.ts) { clearLoginSession(); return false; }
-    // 18小时过期
     if(Date.now() - s.ts > LOGIN_SESSION_HOURS * 3600 * 1000) { clearLoginSession(); return false; }
-    // 账号必须仍在数据库中
     if(!USER_DB[s.username]) { clearLoginSession(); return false; }
-    // 自动恢复登录态
     currentUser = {username: s.username, name: USER_DB[s.username].name, dept: USER_DB[s.username].dept, scope: USER_DB[s.username].scope};
     return true;
   } catch(e) { clearLoginSession(); return false; }
-}
-
-function getStoredPwd(username) {
-  try {
-    const raw = localStorage.getItem('cockpit_pwd_' + username);
-    if(!raw) return null;
-    const d = JSON.parse(raw);
-    if(d.v !== PWD_STORE_VERSION) { localStorage.removeItem('cockpit_pwd_' + username); return null; }
-    return d;
-  } catch(e) { return null; }
-}
-
-function setStoredPwd(username, pwdHash) {
-  localStorage.setItem('cockpit_pwd_' + username, JSON.stringify({pwd: pwdHash, changed: true, v: PWD_STORE_VERSION}));
-}
-
-function isPasswordChanged(username) {
-  const d = getStoredPwd(username);
-  return d ? d.changed === true : false;
-}
-
-function getEffectivePwdHash(username) {
-  const d = getStoredPwd(username);
-  return d ? d.pwd : USER_DB[username].pwd;
 }
 
 function handleLogin() {
@@ -3214,16 +3222,19 @@ function handleLogin() {
 
     errEl.textContent = '正在验证...';
     var inputHash = encodePwd(password);
-    var storedHash = getEffectivePwdHash(username);
-    if(inputHash !== storedHash) { errEl.textContent = '密码错误'; return; }
+
+    // 从云端获取该用户密码
+    var cloudData = fetchPwdFromCloud(username);
+    if(!cloudData) { errEl.textContent = '验证服务暂不可用，请稍后重试'; return; }
+    if(inputHash !== cloudData.pwd) { errEl.textContent = '密码错误'; return; }
     errEl.textContent = '';
 
     // Login success
     currentUser = {username: username, name: USER_DB[username].name, dept: USER_DB[username].dept, scope: USER_DB[username].scope};
     saveLoginSession(username);
 
-    // Check first login
-    if(!isPasswordChanged(username)) {
+    // Check first login（云端 changed=false 说明还没改过密码）
+    if(!cloudData.changed) {
       document.getElementById('loginOverlay').style.display = 'none';
       document.getElementById('changePwdOverlay').style.display = 'flex';
       return;
@@ -3234,21 +3245,25 @@ function handleLogin() {
 }
 
 function handleChangePwd() {
+  var errEl = document.getElementById('changePwdError');
   try {
-    const p1 = document.getElementById('newPwd1').value;
-    const p2 = document.getElementById('newPwd2').value;
-    const errEl = document.getElementById('changePwdError');
+    var p1 = document.getElementById('newPwd1').value;
+    var p2 = document.getElementById('newPwd2').value;
     errEl.textContent = '';
 
     if(!p1) { errEl.textContent = '请输入新密码'; return; }
     if(p1 !== p2) { errEl.textContent = '两次输入的密码不一致'; return; }
     if(p1 === '123456') { errEl.textContent = '新密码不能与默认密码相同'; return; }
 
+    errEl.textContent = '正在保存...';
     var hash = encodePwd(p1);
-    setStoredPwd(currentUser.username, hash);
+    // 写入Supabase云端，所有设备同步
+    var ok = updatePwdToCloud(currentUser.username, hash);
+    if(!ok) { errEl.textContent = '保存失败，请稍后重试'; return; }
+    errEl.textContent = '';
     saveLoginSession(currentUser.username);
     enterApp();
-  } catch(e) { document.getElementById('changePwdError').textContent = '修改失败：' + e.message; }
+  } catch(e) { if(errEl) errEl.textContent = '修改失败：' + (e.message || e); }
 }
 
 function enterApp() {
@@ -3256,36 +3271,30 @@ function enterApp() {
   document.getElementById('changePwdOverlay').style.display = 'none';
   document.body.style.overflow = '';
 
-  // Apply scope restriction
   applyScopeRestriction();
 
-  // Show user info bar
-  const scopeText = currentUser.scope === '全市' ? '全市' : currentUser.scope;
-  const nav = document.querySelector('.top-nav');
-  const userBar = document.createElement('div');
+  var scopeText = currentUser.scope === '全市' ? '全市' : currentUser.scope;
+  var nav = document.querySelector('.top-nav');
+  var userBar = document.createElement('div');
   userBar.className = 'login-user-bar';
   userBar.innerHTML = '<span class="user-name">' + currentUser.name + '</span><span class="user-scope">' + scopeText + '</span><button class="login-logout-btn" onclick="handleLogout()">退出</button>';
   nav.querySelector('.nav-right').insertBefore(userBar, nav.querySelector('.nav-right').firstChild);
 
-  // Continue normal init
   init();
 }
 
 function applyScopeRestriction() {
-  const scopeBtn = document.getElementById('scopeBtn');
-  const scopeDropdown = document.getElementById('scopeDropdown');
-  const scopeBtnLabel = document.getElementById('scopeBtnLabel');
+  var scopeBtn = document.getElementById('scopeBtn');
+  var scopeDropdown = document.getElementById('scopeDropdown');
+  var scopeBtnLabel = document.getElementById('scopeBtnLabel');
   if(currentUser.scope === '全市') {
-    // 全市权限：可自由切换任意区县，不做任何限制
     currentScope = '全市';
     if(scopeBtnLabel) scopeBtnLabel.textContent = '全市';
     if(scopeBtn) { scopeBtn.style.cursor = ''; scopeBtn.onclick = null; }
-    // 恢复下拉菜单内容（防止之前区县用户退出后清空了）
     if(scopeDropdown && !scopeDropdown.innerHTML.trim()) {
       renderScopeSelector();
     }
   } else {
-    // 区县权限：锁定到该区县，禁止切换
     currentScope = currentUser.scope;
     if(scopeBtnLabel) scopeBtnLabel.textContent = currentUser.scope;
     if(scopeBtn) { scopeBtn.style.cursor = 'default'; scopeBtn.onclick = function(e){e.stopPropagation();}; }
@@ -3296,8 +3305,7 @@ function applyScopeRestriction() {
 function handleLogout() {
   currentUser = null;
   clearLoginSession();
-  // Reset login overlay to visible before reload
-  const overlay = document.getElementById('loginOverlay');
+  var overlay = document.getElementById('loginOverlay');
   if(overlay) overlay.style.display = '';
   location.reload();
 }
@@ -3310,21 +3318,15 @@ function handleLogout() {
   if(lp) lp.addEventListener('keydown', function(e){ if(e.key==='Enter') handleLogin(); });
   if(lu) lu.addEventListener('keydown', function(e){ if(e.key==='Enter') { if(lp) lp.focus(); } });
   if(np) np.addEventListener('keydown', function(e){ if(e.key==='Enter') handleChangePwd(); });
-  // 用 addEventListener 绑定登录按钮（比 onclick 更可靠，兼容手机端 touch 事件）
   var lb = document.getElementById('loginBtn');
   if(lb) lb.addEventListener('click', handleLogin);
 })();
 
-// Override init - don't call init() until login succeeds
-// The original init() call at the bottom is replaced by the login flow
-
 // 页面加载时自动尝试恢复登录态（18小时内免登录）
 (function autoLoginCheck(){
   if(tryAutoLogin()){
-    // 登录态有效，隐藏登录框，直接进入
     enterApp();
   }
-  // 否则显示登录框，等待用户手动登录
 })();
 </script>
 </body>
