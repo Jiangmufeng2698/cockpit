@@ -505,6 +505,7 @@ body {
     </div>
     <div class="date-picker-row" id="yoyChannelDatePicker"></div>
     <div class="tw" id="yoyChannelTableWrap"></div>
+    <div class="bulletin" id="yoyChannelBulletin"></div>
   </div>
 
   <!-- 营销数据 - 政企条线营销月报页 -->
@@ -515,6 +516,7 @@ body {
     </div>
     <div class="date-picker-row" id="yoyZqDatePicker"></div>
     <div class="tw" id="yoyZqTableWrap"></div>
+    <div class="bulletin" id="yoyZqBulletin"></div>
   </div>
 
   <!-- 存量质态 -->
@@ -1504,37 +1506,115 @@ function renderDailyReport(){
     document.getElementById('dailyTitle').textContent = '【'+m+'月'+d+'日营销通报】';
     const data = getDailyData(dailyDate);
     renderMainTable(document.getElementById('dailyTableWrap'), data, 'rate', 'day');
-    renderBulletin(data, dailyDate, '日增');
+    renderCompletionBulletin(data, 'district', '日增', 'dailyBulletin', '公司整体');
   } else {
     document.getElementById('dailyTitle').textContent = '【'+currentScope+' '+m+'月'+d+'日营销通报】';
     const data = getDailyLevel4(dailyDate, currentScope);
     renderLevel4Completion(document.getElementById('dailyTableWrap'), data, 'day', currentScope);
-    const bulletinEl = document.getElementById('dailyBulletin');
-    if (bulletinEl) bulletinEl.innerHTML = '';
+    renderCompletionBulletin(data, 'name', '日增', 'dailyBulletin', currentScope + '整体');
   }
 }
 
-// 通报摘要（日报/月报共用）
-function renderBulletin(data, dateInt, label, elId) {
-  const targetEl = document.getElementById(elId || 'dailyBulletin');
-  const cityRow = data.find(r => r.district === '全市');
-  const sum = {}; CH_IND.forEach(ind => sum[ind] = cityRow ? cityRow.cells[ind].val : 0);
-  const ranked = [...data].filter(r => r.district!=='政企' && r.district!=='全市').sort((a,b) => b.cells['宽带'].rate - a.cells['宽带'].rate);
-  const top3 = ranked.slice(0,3).map(r=>r.district);
-  const bottom3 = ranked.slice(-3).map(r=>r.district);
-  const m = Math.floor(dateInt/100)%100, d = dateInt%100;
-  let indStr = CH_IND.map(ind => {
-    const v = sum[ind];
-    if (ind==='宽带'||ind==='融合'||ind==='FTTR-H') return ind+label+'<span class="highlight">'+v+'</span>';
-    return ind+label+v;
-  }).join('、');
-  targetEl.innerHTML = `
+// 通报摘要 — 完成数/完成率类（日报/月报共用，支持全市/区县scope）
+function renderCompletionBulletin(rows, nameField, label, elId, scopeLabel) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  const overall = rows.find(r => r[nameField] === '全市');
+
+  // 1. 整体情况
+  let overallStr;
+  if (overall) {
+    overallStr = CH_IND.map(ind => {
+      const c = overall.cells[ind];
+      if (ind === '宽带' || ind === '融合') return ind + label + c.val + '（' + c.rate + '%）';
+      return ind + label + c.val;
+    }).join('、');
+  } else {
+    // 区县scope：汇总所有四级
+    const sum = {}; CH_IND.forEach(i => sum[i] = 0);
+    rows.forEach(r => CH_IND.forEach(i => sum[i] += r.cells[i].val || 0));
+    overallStr = CH_IND.map(ind => ind + label + sum[ind]).join('、');
+  }
+
+  // 2. 经营单位/四级承包体：零销 + 后三
+  const unitRows = rows.filter(r => r[nameField] !== '全市' && r[nameField] !== '政企');
+  let unitParts = [];
+
+  // 各指标零销
+  CH_IND.forEach(ind => {
+    const zeros = unitRows.filter(r => (r.cells[ind].val || 0) === 0).map(r => r[nameField]);
+    if (zeros.length > 0) unitParts.push(ind + '零销' + zeros.length + '个（' + zeros.join('、') + '）');
+  });
+
+  // 宽带完成率后三（有rate时按rate，否则按val）
+  if (unitRows.length > 0) {
+    const hasRate = unitRows[0].cells['宽带'].rate !== undefined;
+    const ranked = [...unitRows].sort((a,b) =>
+      hasRate ? b.cells['宽带'].rate - a.cells['宽带'].rate : (b.cells['宽带'].val||0) - (a.cells['宽带'].val||0)
+    );
+    const bottom3 = ranked.slice(-3).filter(r => hasRate ? r.cells['宽带'].rate < 100 : true);
+    if (bottom3.length > 0) {
+      unitParts.push('宽带' + (hasRate ? '完成率后三：' : '量后三：') +
+        bottom3.map(r => r[nameField] + (hasRate ? '(' + r.cells['宽带'].rate + '%)' : '')).join('、'));
+    }
+  }
+
+  const unitLabel = overall ? '经营单位' : '四级承包体';
+  el.innerHTML = `
     <div class="bulletin-title">通报摘要</div>
     <div class="bulletin-body">
-      <p>1、公司整体：${indStr}。</p>
-      <p>2、区县单位：</p>
-      <p>${top3.join('、')} 宽带及融合完成率前三</p>
-      <p>${bottom3.join('、')} 宽带及融合完成率后三</p>
+      <p>1、${scopeLabel}：${overallStr}。</p>
+      <p>2、${unitLabel}：${unitParts.length > 0 ? unitParts.join('；') : '各指标均正常'}。</p>
+    </div>`;
+}
+
+// 通报摘要 — 同比类（渠道/政企条线共用，支持全市/区县scope）
+function renderYoYBulletin(rows, nameField, indicators, elId, scopeLabel) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  const overall = rows.find(r => r[nameField] === '全市');
+
+  // 1. 整体情况
+  let overallStr;
+  if (overall) {
+    overallStr = indicators.map(ind => {
+      const c = overall.cells[ind];
+      const yoyStr = c.yoy >= 0 ? '+' + c.yoy : '' + c.yoy;
+      return ind + '本月' + c.thisMonth + '（同比' + yoyStr + '）';
+    }).join('、');
+  } else {
+    // 区县scope：汇总
+    const sum = {}; indicators.forEach(i => { sum[i] = {thisMonth: 0, lastMonth: 0}; });
+    rows.forEach(r => indicators.forEach(i => {
+      sum[i].thisMonth += r.cells[i].thisMonth || 0;
+      sum[i].lastMonth += r.cells[i].lastMonth || 0;
+    }));
+    overallStr = indicators.map(ind => {
+      const yoy = sum[ind].thisMonth - sum[ind].lastMonth;
+      const yoyStr = yoy >= 0 ? '+' + yoy : '' + yoy;
+      return ind + '本月' + sum[ind].thisMonth + '（同比' + yoyStr + '）';
+    }).join('、');
+  }
+
+  // 2. 经营单位/四级承包体
+  const unitRows = rows.filter(r => r[nameField] !== '全市');
+  let unitParts = [];
+
+  indicators.forEach(ind => {
+    // 零销（本月为0）
+    const zeros = unitRows.filter(r => (r.cells[ind].thisMonth || 0) === 0).map(r => r[nameField]);
+    if (zeros.length > 0) unitParts.push(ind + '零销' + zeros.length + '个（' + zeros.join('、') + '）');
+    // 同比负增长
+    const neg = unitRows.filter(r => (r.cells[ind].yoy || 0) < 0).map(r => r[nameField]);
+    if (neg.length > 0) unitParts.push(ind + '同比负增长' + neg.length + '个（' + neg.join('、') + '）');
+  });
+
+  const unitLabel = overall ? '经营单位' : '四级承包体';
+  el.innerHTML = `
+    <div class="bulletin-title">通报摘要</div>
+    <div class="bulletin-body">
+      <p>1、${scopeLabel}：${overallStr}。</p>
+      <p>2、${unitLabel}：${unitParts.length > 0 ? unitParts.join('；') : '各指标同比均正增长'}。</p>
     </div>`;
 }
 
@@ -1555,13 +1635,12 @@ function renderMonthlyReport(){
     document.getElementById('monthlyTitle').textContent = '大庆分公司营销月报（'+m+'.1-'+m+'.'+d+'）';
     const data = getMonthlyData(monthlyDate);
     renderMainTable(document.getElementById('monthlyTableWrap'), data, 'rate', 'month');
-    renderBulletin(data, monthlyDate, '月增', 'monthlyBulletin');
+    renderCompletionBulletin(data, 'district', '月增', 'monthlyBulletin', '公司整体');
   } else {
     document.getElementById('monthlyTitle').textContent = currentScope+'营销月报（'+m+'.1-'+m+'.'+d+'）';
     const data = getMonthlyLevel4(monthlyDate, currentScope);
     renderLevel4Completion(document.getElementById('monthlyTableWrap'), data, 'month', currentScope);
-    const bulletinEl = document.getElementById('monthlyBulletin');
-    if (bulletinEl) bulletinEl.innerHTML = '';
+    renderCompletionBulletin(data, 'name', '月增', 'monthlyBulletin', currentScope + '整体');
   }
 }
 
@@ -1582,11 +1661,14 @@ function renderYoYChannelReport(){
     document.getElementById('yoyChannelTitle').textContent = '大庆分公司渠道条线营销月报（'+m+'.1-'+m+'.'+d+' 同比）';
     const data = getYoYChannelData(yoyChannelDate);
     renderMainTable(document.getElementById('yoyChannelTableWrap'), data, 'yoy', 'yoy');
+    renderYoYBulletin(data, 'district', CH_IND, 'yoyChannelBulletin', '公司整体');
   } else {
     document.getElementById('yoyChannelTitle').textContent = currentScope+'渠道条线营销月报（'+m+'.1-'+m+'.'+d+' 同比）';
-    const {tm,lm} = getYoYLevel4(yoyChannelDate, currentScope, false);
+    const {tm, lm} = getYoYLevel4(yoyChannelDate, currentScope, false);
     renderLevel4YoY(document.getElementById('yoyChannelTableWrap'), tm, lm, CH_IND, HB_CLS, HBS_CLS, DB_CLS, 'yoy', currentScope);
+    renderYoYBulletin(tm, 'name', CH_IND, 'yoyChannelBulletin', currentScope + '整体');
   }
+}
 }
 
 /* ---- 政企条线营销月报 ---- */
@@ -1607,11 +1689,14 @@ function renderYoYZQReport(){
     document.getElementById('yoyZqTitle').textContent = '大庆分公司政企条线营销月报（'+m+'.1-'+m+'.'+d+' 同比）';
     const data = getYoYZQData(yoyZqDate);
     renderMainTable(document.getElementById('yoyZqTableWrap'), data, 'yoy_zq', '');
+    renderYoYBulletin(data, 'district', ZQ_IND, 'yoyZqBulletin', '公司整体');
   } else {
     document.getElementById('yoyZqTitle').textContent = currentScope+'政企条线营销月报（'+m+'.1-'+m+'.'+d+' 同比）';
-    const {tm,lm} = getYoYZQLevel4(yoyZqDate, currentScope);
+    const {tm, lm} = getYoYZQLevel4(yoyZqDate, currentScope);
     renderLevel4YoY(document.getElementById('yoyZqTableWrap'), tm, lm, ZQ_IND, zqHB, zqHBS, zqDB, 'yoy_zq', currentScope);
+    renderYoYBulletin(tm, 'name', ZQ_IND, 'yoyZqBulletin', currentScope + '整体');
   }
+}
 }
 
 function initTheme(){
