@@ -3267,18 +3267,21 @@ function enterApp() {
 function applyScopeRestriction() {
   const scopeBtn = document.getElementById('scopeBtn');
   const scopeDropdown = document.getElementById('scopeDropdown');
+  const scopeBtnLabel = document.getElementById('scopeBtnLabel');
   if(currentUser.scope === '全市') {
-    // No restriction - can switch to any scope
+    // 全市权限：可自由切换任意区县，不做任何限制
     currentScope = '全市';
-    if(scopeBtn) scopeBtn.textContent = '全市 ▼';
-  } else {
-    // Restrict to user's scope only
-    currentScope = currentUser.scope;
-    if(scopeBtn) {
-      scopeBtn.textContent = currentUser.scope + ' ▼';
-      scopeBtn.style.cursor = 'default';
-      scopeBtn.onclick = null;
+    if(scopeBtnLabel) scopeBtnLabel.textContent = '全市';
+    if(scopeBtn) { scopeBtn.style.cursor = ''; scopeBtn.onclick = null; }
+    // 恢复下拉菜单内容（防止之前区县用户退出后清空了）
+    if(scopeDropdown && !scopeDropdown.innerHTML.trim()) {
+      renderScopeSelector();
     }
+  } else {
+    // 区县权限：锁定到该区县，禁止切换
+    currentScope = currentUser.scope;
+    if(scopeBtnLabel) scopeBtnLabel.textContent = currentUser.scope;
+    if(scopeBtn) { scopeBtn.style.cursor = 'default'; scopeBtn.onclick = function(e){e.stopPropagation();}; }
     if(scopeDropdown) scopeDropdown.innerHTML = '';
   }
 }
