@@ -1063,7 +1063,7 @@ body {
 
 </style>
 </head>
-<body>
+<body style="overflow:hidden;">
 
 <!-- 登录弹窗 -->
 <div class="login-overlay" id="loginOverlay">
@@ -3196,6 +3196,7 @@ async function handleChangePwd() {
 function enterApp() {
   document.getElementById('loginOverlay').style.display = 'none';
   document.getElementById('changePwdOverlay').style.display = 'none';
+  document.body.style.overflow = '';
 
   // Apply scope restriction
   applyScopeRestriction();
@@ -3232,8 +3233,10 @@ function applyScopeRestriction() {
 }
 
 function handleLogout() {
-  localStorage.removeItem('cockpit_session');
   currentUser = null;
+  // Reset login overlay to visible before reload
+  const overlay = document.getElementById('loginOverlay');
+  if(overlay) overlay.style.display = '';
   location.reload();
 }
 
