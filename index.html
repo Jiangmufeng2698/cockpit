@@ -1511,12 +1511,12 @@ function renderDailyReport(){
     document.getElementById('dailyTitle').textContent = '【'+currentScope+' '+m+'月'+d+'日营销通报】';
     const data = getDailyLevel4(dailyDate, currentScope);
     renderLevel4Completion(document.getElementById('dailyTableWrap'), data, 'day', currentScope);
-    renderCompletionBulletin(data, 'name', '日增', 'dailyBulletin', currentScope + '整体');
+    renderCompletionBulletin(data, 'name', '日增', 'dailyBulletin', currentScope + '整体', false);
   }
 }
 
 // 通报摘要 — 完成数/完成率类（日报/月报共用，支持全市/区县scope）
-function renderCompletionBulletin(rows, nameField, label, elId, scopeLabel) {
+function renderCompletionBulletin(rows, nameField, label, elId, scopeLabel, showUnit) {
   const el = document.getElementById(elId);
   if (!el) return;
   const overall = rows.find(r => r[nameField] === '全市');
@@ -1560,16 +1560,17 @@ function renderCompletionBulletin(rows, nameField, label, elId, scopeLabel) {
   }
 
   const unitLabel = overall ? '经营单位' : '四级承包体';
+  const unitHtml = showUnit === false ? '' : `<p>2、${unitLabel}：${unitParts.length > 0 ? unitParts.join('；') : '各指标均正常'}。</p>`;
   el.innerHTML = `
     <div class="bulletin-title">通报摘要</div>
     <div class="bulletin-body">
       <p>1、${scopeLabel}：${overallStr}。</p>
-      <p>2、${unitLabel}：${unitParts.length > 0 ? unitParts.join('；') : '各指标均正常'}。</p>
+      ${unitHtml}
     </div>`;
 }
 
 // 通报摘要 — 同比类（渠道/政企条线共用，支持全市/区县scope）
-function renderYoYBulletin(rows, nameField, indicators, elId, scopeLabel) {
+function renderYoYBulletin(rows, nameField, indicators, elId, scopeLabel, showUnit) {
   const el = document.getElementById(elId);
   if (!el) return;
   const overall = rows.find(r => r[nameField] === '全市');
@@ -1610,11 +1611,12 @@ function renderYoYBulletin(rows, nameField, indicators, elId, scopeLabel) {
   });
 
   const unitLabel = overall ? '经营单位' : '四级承包体';
+  const unitHtml = showUnit === false ? '' : `<p>2、${unitLabel}：${unitParts.length > 0 ? unitParts.join('；') : '各指标同比均正增长'}。</p>`;
   el.innerHTML = `
     <div class="bulletin-title">通报摘要</div>
     <div class="bulletin-body">
       <p>1、${scopeLabel}：${overallStr}。</p>
-      <p>2、${unitLabel}：${unitParts.length > 0 ? unitParts.join('；') : '各指标同比均正增长'}。</p>
+      ${unitHtml}
     </div>`;
 }
 
@@ -1653,7 +1655,7 @@ function renderMonthlyReport(){
     document.getElementById('monthlyTitle').textContent = currentScope+'营销月报（'+m+'.1-'+m+'.'+d+'）';
     const data = getMonthlyLevel4(monthlyDate, currentScope);
     renderLevel4Completion(document.getElementById('monthlyTableWrap'), data, 'month', currentScope);
-    renderCompletionBulletin(data, 'name', '月增', 'monthlyBulletin', currentScope + '整体');
+    renderCompletionBulletin(data, 'name', '月增', 'monthlyBulletin', currentScope + '整体', false);
   }
 }
 
@@ -1680,7 +1682,7 @@ function renderYoYChannelReport(){
     const {tm, lm} = getYoYLevel4(yoyChannelDate, currentScope, false);
     renderLevel4YoY(document.getElementById('yoyChannelTableWrap'), tm, lm, CH_IND, HB_CLS, HBS_CLS, DB_CLS, 'yoy', currentScope);
     const tmRows = yoyDictToRows(tm, lm, CH_IND);
-    renderYoYBulletin(tmRows, 'name', CH_IND, 'yoyChannelBulletin', currentScope + '整体');
+    renderYoYBulletin(tmRows, 'name', CH_IND, 'yoyChannelBulletin', currentScope + '整体', false);
   }
 }
 
@@ -1708,7 +1710,7 @@ function renderYoYZQReport(){
     const {tm, lm} = getYoYZQLevel4(yoyZqDate, currentScope);
     renderLevel4YoY(document.getElementById('yoyZqTableWrap'), tm, lm, ZQ_IND, zqHB, zqHBS, zqDB, 'yoy_zq', currentScope);
     const tmRows = yoyDictToRows(tm, lm, ZQ_IND);
-    renderYoYBulletin(tmRows, 'name', ZQ_IND, 'yoyZqBulletin', currentScope + '整体');
+    renderYoYBulletin(tmRows, 'name', ZQ_IND, 'yoyZqBulletin', currentScope + '整体', false);
   }
 }
 
