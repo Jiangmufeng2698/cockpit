@@ -107,6 +107,25 @@ body {
   background: linear-gradient(135deg, #00b4d8, #0077b6);
 }
 .nav-right { display:flex; align-items:center; gap:12px; margin-left:auto; }
+
+/* 二级导航栏 */
+.sub-nav {
+  position: fixed; top:52px; left:0; right:0; z-index:90;
+  background: var(--bg-card); border-bottom:1px solid var(--border-color);
+  display:flex; align-items:center; padding:0 16px; height:40px; gap:2px;
+  overflow-x:auto; overflow-y:hidden; -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+.sub-nav::-webkit-scrollbar { display:none; }
+.sub-tab {
+  padding:5px 14px; border:none; background:transparent; color:var(--text-secondary);
+  font-size:13px; font-weight:500; cursor:pointer; border-radius:var(--radius-sm);
+  transition:all 0.2s; white-space:nowrap; flex-shrink:0;
+}
+.sub-tab:hover { color:var(--text-primary); background:var(--bg-hover); }
+.sub-tab.active { color:var(--b); font-weight:700; background:var(--accent-blue-light); }
+[data-theme="dark"] .sub-tab.active { color:var(--accent-blue); background:rgba(0,180,216,0.12); }
+.sub-nav-hidden { display:none; }
 .theme-toggle {
   width:44px; height:24px; border-radius:12px; background:var(--text-tertiary);
   border:none; cursor:pointer; position:relative; transition: background 0.3s;
@@ -121,7 +140,8 @@ body {
 .nav-date { font-size:13px; color:var(--text-secondary); font-weight:500; white-space:nowrap; }
 
 /* 主内容 */
-.main-content { margin-top:52px; padding:16px; min-height: calc(100vh - 52px); }
+.main-content { margin-top:92px; padding:16px; min-height: calc(100vh - 92px); }
+.main-content.no-subnav { margin-top:52px; min-height: calc(100vh - 52px); }
 .page { display:none; animation: fadeIn 0.4s ease; }
 .page.active { display:block; }
 @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
@@ -370,6 +390,15 @@ body {
 .module-placeholder .text { font-size:15px; font-weight:500; margin-bottom:6px; }
 .module-placeholder .hint { font-size:12px; }
 
+/* 大板块空页面占位 */
+.empty-zone {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  min-height:calc(100vh - 120px); text-align:center;
+}
+.empty-zone .ez-icon { font-size:56px; margin-bottom:16px; opacity:0.5; }
+.empty-zone .ez-title { font-size:22px; font-weight:700; color:var(--text-primary); margin-bottom:8px; }
+.empty-zone .ez-hint { font-size:14px; color:var(--text-tertiary); }
+
 @media (max-width:768px) {
   .top-nav { padding:0 10px; gap:4px; }
   .nav-brand { font-size:14px; min-width:auto; }
@@ -381,6 +410,8 @@ body {
     flex: 1; min-width: 0;
   }
   .nav-tabs::-webkit-scrollbar { display: none; }
+  .sub-nav { padding:0 10px; }
+  .sub-tab { padding:4px 10px; font-size:12px; }
   .main-content { padding:12px; }
   .kpi-grid { grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap:6px; }
   .report-header { flex-direction:column; align-items:flex-start; }
@@ -432,8 +463,11 @@ body {
   </div>
 </nav>
 
-<div class="main-content">
-  <!-- 概览页 -->
+<!-- 二级导航栏 -->
+<nav class="sub-nav" id="subNav"></nav>
+
+<div class="main-content" id="mainContent">
+  <!-- 营销数据 - 概览页 -->
   <div class="page" id="page-overview">
     <div class="page-title">经营概览</div>
     <div class="quick-grid" id="quickGrid"></div>
@@ -441,7 +475,7 @@ body {
     <div class="trend-section" id="trendSection"></div>
   </div>
 
-  <!-- 日报页 -->
+  <!-- 营销数据 - 日报页 -->
   <div class="page" id="page-daily">
     <div class="report-header">
       <div class="report-title" id="dailyTitle"></div>
@@ -452,7 +486,7 @@ body {
     <div class="bulletin" id="dailyBulletin"></div>
   </div>
 
-  <!-- 营销月报页 -->
+  <!-- 营销数据 - 营销月报页 -->
   <div class="page" id="page-monthly">
     <div class="report-header">
       <div class="report-title" id="monthlyTitle"></div>
@@ -463,7 +497,7 @@ body {
     <div class="bulletin" id="monthlyBulletin"></div>
   </div>
 
-  <!-- 渠道条线营销月报页 -->
+  <!-- 营销数据 - 渠道条线营销月报页 -->
   <div class="page" id="page-yoy_channel">
     <div class="report-header">
       <div class="report-title" id="yoyChannelTitle"></div>
@@ -473,7 +507,7 @@ body {
     <div class="tw" id="yoyChannelTableWrap"></div>
   </div>
 
-  <!-- 政企条线营销月报页 -->
+  <!-- 营销数据 - 政企条线营销月报页 -->
   <div class="page" id="page-yoy_zq">
     <div class="report-header">
       <div class="report-title" id="yoyZqTitle"></div>
@@ -483,7 +517,7 @@ body {
     <div class="tw" id="yoyZqTableWrap"></div>
   </div>
 
-  <!-- 更多模块 -->
+  <!-- 营销数据 - 更多模块 -->
   <div class="page" id="page-more">
     <div class="page-title">更多模块</div>
     <div class="quick-grid" id="moreGrid"></div>
@@ -491,6 +525,24 @@ body {
       <div class="icon">&#x1F4E6;</div>
       <div class="text">模块扩展区</div>
       <div class="hint">新功能模块在此注册后自动出现</div>
+    </div>
+  </div>
+
+  <!-- 存量质态 -->
+  <div class="page" id="page-stock">
+    <div class="empty-zone">
+      <div class="ez-icon">&#x1F4CA;</div>
+      <div class="ez-title">存量质态</div>
+      <div class="ez-hint">模块建设中，敬请期待</div>
+    </div>
+  </div>
+
+  <!-- 视联网专区 -->
+  <div class="page" id="page-video">
+    <div class="empty-zone">
+      <div class="ez-icon">&#x1F4F1;</div>
+      <div class="ez-title">视联网专区</div>
+      <div class="ez-hint">模块建设中，敬请期待</div>
     </div>
   </div>
 </div>
@@ -1248,6 +1300,14 @@ moduleRegistry.register({id:'yoy_channel',navLabel:'渠道条线营销月报',or
 moduleRegistry.register({id:'yoy_zq',navLabel:'政企条线营销月报',order:4});
 moduleRegistry.register({id:'more',navLabel:'更多',order:99});
 
+// 一级大板块：3大导航
+const ZONES = [
+  { id:'marketing', label:'营销数据', pages:['overview','daily','monthly','yoy_channel','yoy_zq','more'] },
+  { id:'stock', label:'存量质态', pages:['stock'] },
+  { id:'video', label:'视联网专区', pages:['video'] },
+];
+
+let currentZone = 'marketing';
 let currentPage = 'overview';
 let currentScope = '全市';
 const SCOPE_LIST = ['全市','大同','杜蒙','红岗','林甸','龙凤','让胡路','萨尔图','肇源','肇州','政企'];
@@ -1283,17 +1343,66 @@ function rerenderAll(){
 }
 
 function renderNav(){
+  // 一级导航：3大板块
   const c = document.getElementById('navTabs');
-  c.innerHTML = moduleRegistry.getAll().sort((a,b)=>a.order-b.order).map(m=>
-    `<button class="nav-tab${m.id===currentPage?' active':''}" data-page="${m.id}">${m.navLabel}</button>`
+  c.innerHTML = ZONES.map(z=>
+    `<button class="nav-tab${z.id===currentZone?' active':''}" data-zone="${z.id}">${z.label}</button>`
   ).join('');
-  c.querySelectorAll('.nav-tab').forEach(b=>b.addEventListener('click',()=>switchPage(b.dataset.page)));
+  c.querySelectorAll('.nav-tab').forEach(b=>b.addEventListener('click',()=>switchZone(b.dataset.zone)));
+  // 渲染二级导航
+  renderSubNav();
 }
+
+function renderSubNav(){
+  const subNav = document.getElementById('subNav');
+  const mainContent = document.getElementById('mainContent');
+  const zone = ZONES.find(z=>z.id===currentZone);
+  if(!zone || zone.pages.length<=1){
+    // 没有子页面（或只有一个），隐藏二级导航
+    subNav.classList.add('sub-nav-hidden');
+    mainContent.classList.add('no-subnav');
+    return;
+  }
+  // 营销数据下展示二级tab
+  subNav.classList.remove('sub-nav-hidden');
+  mainContent.classList.remove('no-subnav');
+  const mods = moduleRegistry.getAll();
+  subNav.innerHTML = zone.pages.map(pid=>{
+    const m = mods.find(m=>m.id===pid);
+    if(!m) return '';
+    return `<button class="sub-tab${m.id===currentPage?' active':''}" data-page="${m.id}">${m.navLabel}</button>`;
+  }).join('');
+  subNav.querySelectorAll('.sub-tab').forEach(b=>b.addEventListener('click',()=>switchPage(b.dataset.page)));
+}
+
+function switchZone(zid){
+  currentZone = zid;
+  document.querySelectorAll('.nav-tabs .nav-tab').forEach(t=>t.classList.toggle('active',t.dataset.zone===zid));
+  const zone = ZONES.find(z=>z.id===zid);
+  if(zone){
+    // 切换到该板块的第一个页面
+    currentPage = zone.pages[0];
+    showPage(currentPage);
+  }
+  renderSubNav();
+}
+
 function switchPage(id){
+  // 自动查找该页面属于哪个板块
+  const zone = ZONES.find(z=>z.pages.includes(id));
+  if(zone && zone.id !== currentZone){
+    currentZone = zone.id;
+    document.querySelectorAll('.nav-tabs .nav-tab').forEach(t=>t.classList.toggle('active',t.dataset.zone===currentZone));
+    renderSubNav();
+  }
   currentPage = id;
+  showPage(id);
+  document.querySelectorAll('.sub-tab').forEach(t=>t.classList.toggle('active',t.dataset.page===id));
+}
+
+function showPage(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+id)?.classList.add('active');
-  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.toggle('active',t.dataset.page===id));
 }
 
 // 概览KPI（7日折线图）
