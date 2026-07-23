@@ -3126,6 +3126,37 @@ function init(){
 // ============ 登录系统 ============
 let currentUser = null; // {username, name, dept, scope}
 const PWD_STORE_VERSION = 3; // 密码存储版本号，变更时清除旧数据重置密码
+const LOGIN_SESSION_KEY = 'cockpit_login_session';
+const LOGIN_SESSION_HOURS = 18; // 登录态保持时长（小时）
+
+function saveLoginSession(username) {
+  try {
+    localStorage.setItem(LOGIN_SESSION_KEY, JSON.stringify({
+      username: username,
+      ts: Date.now()
+    }));
+  } catch(e) {}
+}
+
+function clearLoginSession() {
+  try { localStorage.removeItem(LOGIN_SESSION_KEY); } catch(e) {}
+}
+
+function tryAutoLogin() {
+  try {
+    var raw = localStorage.getItem(LOGIN_SESSION_KEY);
+    if(!raw) return false;
+    var s = JSON.parse(raw);
+    if(!s.username || !s.ts) { clearLoginSession(); return false; }
+    // 18小时过期
+    if(Date.now() - s.ts > LOGIN_SESSION_HOURS * 3600 * 1000) { clearLoginSession(); return false; }
+    // 账号必须仍在数据库中
+    if(!USER_DB[s.username]) { clearLoginSession(); return false; }
+    // 自动恢复登录态
+    currentUser = {username: s.username, name: USER_DB[s.username].name, dept: USER_DB[s.username].dept, scope: USER_DB[s.username].scope};
+    return true;
+  } catch(e) { clearLoginSession(); return false; }
+}
 
 // SHA-256 hash (纯JS实现，兼容所有浏览器)
 function sha256(msg) {
@@ -3215,6 +3246,7 @@ function handleLogin() {
 
     // Login success
     currentUser = {username, name: USER_DB[username].name, dept: USER_DB[username].dept, scope: USER_DB[username].scope};
+    saveLoginSession(username);
 
     // Check first login
     if(!isPasswordChanged(username)) {
@@ -3240,6 +3272,7 @@ function handleChangePwd() {
 
     const hash = sha256(p1);
     setStoredPwd(currentUser.username, hash);
+    saveLoginSession(currentUser.username);
     enterApp();
   } catch(e) { document.getElementById('changePwdError').textContent = '修改失败：' + e.message; }
 }
@@ -3288,6 +3321,7 @@ function applyScopeRestriction() {
 
 function handleLogout() {
   currentUser = null;
+  clearLoginSession();
   // Reset login overlay to visible before reload
   const overlay = document.getElementById('loginOverlay');
   if(overlay) overlay.style.display = '';
@@ -3307,6 +3341,15 @@ document.getElementById('newPwd2').addEventListener('keydown', function(e) {
 
 // Override init - don't call init() until login succeeds
 // The original init() call at the bottom is replaced by the login flow
+
+// 页面加载时自动尝试恢复登录态（18小时内免登录）
+(function autoLoginCheck(){
+  if(tryAutoLogin()){
+    // 登录态有效，隐藏登录框，直接进入
+    enterApp();
+  }
+  // 否则显示登录框，等待用户手动登录
+})();
 </script>
 </body>
 </html>
