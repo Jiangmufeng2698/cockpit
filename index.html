@@ -3124,6 +3124,34 @@ function init(){
 // init() is called after login via enterApp()
 
 // ============ 登录系统 ============
+
+// 全局错误捕获——手机端调试利器，任何JS错误都会显示在登录框下方
+window.onerror = function(msg, url, line, col, err) {
+  var el = document.getElementById('loginError');
+  if(el) el.textContent = '错误(L' + line + '): ' + msg;
+  return false;
+};
+
+// TextEncoder polyfill（兼容极少数不支持的手机浏览器）
+if(typeof TextEncoder === 'undefined'){
+  TextEncoder = function(){};
+  TextEncoder.prototype.encode = function(s){
+    var bytes = [];
+    for(var i=0;i<s.length;i++){
+      var c = s.charCodeAt(i);
+      if(c < 0x80) bytes.push(c);
+      else if(c < 0x800){ bytes.push(0xc0|(c>>6)); bytes.push(0x80|(c&0x3f)); }
+      else if(c >= 0xd800 && c <= 0xdbff){
+        var hi = c, lo = s.charCodeAt(++i);
+        var cp = ((hi-0xd800)<<10)+(lo-0xdc00)+0x10000;
+        bytes.push(0xf0|(cp>>18)); bytes.push(0x80|((cp>>12)&0x3f));
+        bytes.push(0x80|((cp>>6)&0x3f)); bytes.push(0x80|(cp&0x3f));
+      } else { bytes.push(0xe0|(c>>12)); bytes.push(0x80|((c>>6)&0x3f)); bytes.push(0x80|(c&0x3f)); }
+    }
+    return new Uint8Array(bytes);
+  };
+}
+
 let currentUser = null; // {username, name, dept, scope}
 const PWD_STORE_VERSION = 3; // 密码存储版本号，变更时清除旧数据重置密码
 const LOGIN_SESSION_KEY = 'cockpit_login_session';
@@ -3231,21 +3259,30 @@ function getEffectivePwdHash(username) {
 }
 
 function handleLogin() {
+  var errEl = document.getElementById('loginError');
   try {
-    const username = document.getElementById('loginUsername').value.trim().toLowerCase();
-    const password = document.getElementById('loginPassword').value;
-    const errEl = document.getElementById('loginError');
+    var usernameEl = document.getElementById('loginUsername');
+    var passwordEl = document.getElementById('loginPassword');
+    if(!usernameEl || !passwordEl || !errEl) {
+      if(errEl) errEl.textContent = '页面元素未就绪，请刷新重试';
+      return;
+    }
+    var username = usernameEl.value.trim().toLowerCase();
+    var password = passwordEl.value;
     errEl.textContent = '';
 
     if(!username || !password) { errEl.textContent = '请输入账号和密码'; return; }
+    if(typeof USER_DB === 'undefined' || !USER_DB) { errEl.textContent = '用户数据未加载，请刷新重试'; return; }
     if(!USER_DB[username]) { errEl.textContent = '用户不存在，请联系管理员'; return; }
 
-    const inputHash = sha256(password);
-    const storedHash = getEffectivePwdHash(username);
+    errEl.textContent = '正在验证...';
+    var inputHash = sha256(password);
+    var storedHash = getEffectivePwdHash(username);
     if(inputHash !== storedHash) { errEl.textContent = '密码错误'; return; }
+    errEl.textContent = '';
 
     // Login success
-    currentUser = {username, name: USER_DB[username].name, dept: USER_DB[username].dept, scope: USER_DB[username].scope};
+    currentUser = {username: username, name: USER_DB[username].name, dept: USER_DB[username].dept, scope: USER_DB[username].scope};
     saveLoginSession(username);
 
     // Check first login
@@ -3256,7 +3293,7 @@ function handleLogin() {
     }
 
     enterApp();
-  } catch(e) { document.getElementById('loginError').textContent = '登录失败：' + e.message; }
+  } catch(e) { if(errEl) errEl.textContent = '登录失败：' + (e.message || e); }
 }
 
 function handleChangePwd() {
@@ -3329,15 +3366,17 @@ function handleLogout() {
 }
 
 // Enter key support for login
-document.getElementById('loginPassword').addEventListener('keydown', function(e) {
-  if(e.key === 'Enter') handleLogin();
-});
-document.getElementById('loginUsername').addEventListener('keydown', function(e) {
-  if(e.key === 'Enter') document.getElementById('loginPassword').focus();
-});
-document.getElementById('newPwd2').addEventListener('keydown', function(e) {
-  if(e.key === 'Enter') handleChangePwd();
-});
+(function(){
+  var lp = document.getElementById('loginPassword');
+  var lu = document.getElementById('loginUsername');
+  var np = document.getElementById('newPwd2');
+  if(lp) lp.addEventListener('keydown', function(e){ if(e.key==='Enter') handleLogin(); });
+  if(lu) lu.addEventListener('keydown', function(e){ if(e.key==='Enter') { if(lp) lp.focus(); } });
+  if(np) np.addEventListener('keydown', function(e){ if(e.key==='Enter') handleChangePwd(); });
+  // 用 addEventListener 绑定登录按钮（比 onclick 更可靠，兼容手机端 touch 事件）
+  var lb = document.getElementById('loginBtn');
+  if(lb) lb.addEventListener('click', handleLogin);
+})();
 
 // Override init - don't call init() until login succeeds
 // The original init() call at the bottom is replaced by the login flow
