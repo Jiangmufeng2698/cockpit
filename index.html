@@ -1049,6 +1049,12 @@ body {
   color:#ef4444;font-size:13px;margin-top:10px;min-height:18px;
 }
 .login-card .pwd-rules {font-size:12px;color:#94a3b4;text-align:left;margin:-6px 0 14px;}
+.login-link-btn {
+  width:100%;padding:10px;border:none;border-radius:8px;font-size:14px;
+  cursor:pointer;background:transparent;color:#2563eb;margin-top:6px;
+  transition:all .2s;
+}
+.login-link-btn:hover {background:rgba(37,99,235,0.08);}
 .login-user-bar {
   display:flex;align-items:center;gap:8px;font-size:13px;color:#e2e8f0;
 }
@@ -1075,6 +1081,7 @@ body {
     <input type="password" id="loginPassword" placeholder="请输入密码" />
     <button class="login-btn" id="loginBtn" onclick="handleLogin()">登 录</button>
     <div class="login-error" id="loginError"></div>
+    <button class="login-link-btn" onclick="showChangePwdForm()">修改密码</button>
   </div>
 </div>
 
@@ -1089,6 +1096,22 @@ body {
     <div class="pwd-rules">提示：请设置您的新密码</div>
     <button class="login-btn" onclick="handleChangePwd()">确认修改</button>
     <div class="login-error" id="changePwdError"></div>
+  </div>
+</div>
+
+<!-- 主动修改密码弹窗 -->
+<div class="login-overlay" id="manualChangePwdOverlay" style="display:none;">
+  <div class="login-card">
+    <div style="font-size:36px;margin-bottom:8px;">&#128273;</div>
+    <h2>修改密码</h2>
+    <div class="login-subtitle">请输入账号、旧密码和新密码</div>
+    <input type="text" id="cpdUsername" placeholder="请输入账号" autocomplete="off" />
+    <input type="password" id="cpdOldPwd" placeholder="请输入旧密码" />
+    <input type="password" id="cpdNewPwd1" placeholder="请输入新密码" />
+    <input type="password" id="cpdNewPwd2" placeholder="请再次确认新密码" />
+    <button class="login-btn" onclick="handleManualChangePwd()">确认修改</button>
+    <button class="login-link-btn" onclick="backToLogin()">返回登录</button>
+    <div class="login-error" id="manualChangePwdError"></div>
   </div>
 </div>
 
@@ -3266,9 +3289,60 @@ function handleChangePwd() {
   } catch(e) { if(errEl) errEl.textContent = '修改失败：' + (e.message || e); }
 }
 
+// ===== 主动修改密码（从登录页入口） =====
+function showChangePwdForm() {
+  document.getElementById('loginOverlay').style.display = 'none';
+  document.getElementById('manualChangePwdOverlay').style.display = 'flex';
+  document.getElementById('manualChangePwdError').textContent = '';
+}
+
+function backToLogin() {
+  document.getElementById('manualChangePwdOverlay').style.display = 'none';
+  document.getElementById('loginOverlay').style.display = 'flex';
+  // 清空修改密码表单
+  document.getElementById('cpdUsername').value = '';
+  document.getElementById('cpdOldPwd').value = '';
+  document.getElementById('cpdNewPwd1').value = '';
+  document.getElementById('cpdNewPwd2').value = '';
+  document.getElementById('manualChangePwdError').textContent = '';
+}
+
+function handleManualChangePwd() {
+  var errEl = document.getElementById('manualChangePwdError');
+  try {
+    var username = document.getElementById('cpdUsername').value.trim().toLowerCase();
+    var oldPwd = document.getElementById('cpdOldPwd').value;
+    var newPwd1 = document.getElementById('cpdNewPwd1').value;
+    var newPwd2 = document.getElementById('cpdNewPwd2').value;
+    errEl.textContent = '';
+
+    if(!username || !oldPwd || !newPwd1 || !newPwd2) { errEl.textContent = '请填写所有字段'; return; }
+    if(newPwd1 !== newPwd2) { errEl.textContent = '两次输入的新密码不一致'; return; }
+    if(newPwd1 === oldPwd) { errEl.textContent = '新密码不能与旧密码相同'; return; }
+    if(newPwd1 === '123456') { errEl.textContent = '新密码不能与默认密码相同'; return; }
+    if(typeof USER_DB === 'undefined' || !USER_DB[username]) { errEl.textContent = '用户不存在，请联系管理员'; return; }
+
+    errEl.textContent = '正在验证旧密码...';
+    // 验证旧密码
+    var cloudData = fetchPwdFromCloud(username);
+    if(!cloudData) { errEl.textContent = '验证服务暂不可用，请稍后重试'; return; }
+    if(encodePwd(oldPwd) !== cloudData.pwd) { errEl.textContent = '旧密码错误'; return; }
+
+    errEl.textContent = '正在保存新密码...';
+    var hash = encodePwd(newPwd1);
+    var ok = updatePwdToCloud(username, hash);
+    if(!ok) { errEl.textContent = '保存失败，请稍后重试'; return; }
+
+    errEl.textContent = '';
+    alert('密码修改成功！请用新密码登录。');
+    backToLogin();
+  } catch(e) { if(errEl) errEl.textContent = '修改失败：' + (e.message || e); }
+}
+
 function enterApp() {
   document.getElementById('loginOverlay').style.display = 'none';
   document.getElementById('changePwdOverlay').style.display = 'none';
+  document.getElementById('manualChangePwdOverlay').style.display = 'none';
   document.body.style.overflow = '';
 
   applyScopeRestriction();
