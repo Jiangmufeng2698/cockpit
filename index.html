@@ -455,6 +455,48 @@ body {
 }
 
 
+/* ========== 产品Tab + 产品页 ========== */
+.product-tabs{display:flex;gap:6px;padding:6px 0 10px;overflow-x:auto;flex-wrap:nowrap;}
+.product-tabs .ptab{padding:5px 14px;border:1px solid var(--border-color);border-radius:16px;background:var(--bg-card);color:var(--text-secondary);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:.15s;flex-shrink:0;}
+.product-tabs .ptab:hover{border-color:var(--b);color:var(--b);}
+.product-tabs .ptab.active{background:var(--b);color:#fff;border-color:var(--b);}
+.product-trend-card{background:var(--bg-card);border-radius:8px;padding:14px 16px;margin-bottom:12px;box-shadow:var(--shadow-card);}
+.product-trend-card .ptc-title{font-size:14px;font-weight:700;color:var(--bd);margin-bottom:6px;display:flex;align-items:center;gap:8px;}
+[data-theme="dark"] .product-trend-card .ptc-title{color:var(--text-primary);}
+.product-trend-card .ptc-stats{font-size:12px;color:var(--text-secondary);font-weight:400;display:inline-flex;gap:12px;}
+.product-trend-card .ptc-stats b{color:var(--b);}
+.product-trend-card .ptc-chart{width:100%;overflow-x:auto;padding-top:4px;}
+.product-trend-card svg{max-width:none;}
+/* 产品页宽表格 */
+.pw-table{width:100%;border-collapse:separate;border-spacing:0;font-size:11px;border-radius:6px;box-shadow:0 1px 6px rgba(30,58,95,0.06);}
+.pw-table thead th{background:var(--bl);color:var(--bd);padding:6px 4px;text-align:center;font-weight:600;border-bottom:1px solid var(--bd2);white-space:nowrap;position:sticky;top:0;z-index:10;}
+[data-theme="dark"] .pw-table thead th{color:var(--text-primary);}
+.pw-table thead th:first-child{text-align:left;padding-left:10px;position:sticky;left:0;z-index:15;min-width:70px;max-width:90px;}
+.pw-table tbody td{padding:4px 4px;text-align:center;border-bottom:1px solid rgba(0,0,0,0.04);white-space:nowrap;font-variant-numeric:tabular-nums;}
+.pw-table tbody td:first-child{text-align:left;padding-left:10px;font-weight:700;color:var(--b);position:sticky;left:0;z-index:5;max-width:90px;overflow:hidden;text-overflow:ellipsis;cursor:pointer;}
+[data-theme="dark"] .pw-table tbody td:first-child{background:var(--bg-card);}
+.pw-table tbody td:first-child:hover{color:var(--r);}
+.pw-table tbody tr:nth-child(even) td:first-child{background:var(--bg-table-stripe);}
+[data-theme="dark"] .pw-table tbody tr:nth-child(even) td:first-child{background:rgba(255,255,255,0.03);}
+.pw-table tbody tr.pw-sum td{background:#F0F4F8;font-weight:700;}
+[data-theme="dark"] .pw-table tbody tr.pw-sum td{background:rgba(255,255,255,0.06);}
+.pw-table tbody tr.pw-sum td:first-child{background:#F0F4F8;}
+[data-theme="dark"] .pw-table tbody tr.pw-sum td:first-child{background:rgba(255,255,255,0.06);}
+.pw-up{color:var(--r);}
+.pw-dn{color:var(--accent-green);}
+.product-analysis{background:var(--bg-card);border-radius:8px;padding:12px 16px;box-shadow:var(--shadow-card);font-size:13px;line-height:1.8;color:var(--text-primary);}
+.product-analysis .pa-title{font-size:14px;font-weight:700;color:var(--bd);margin-bottom:4px;}
+[data-theme="dark"] .product-analysis .pa-title{color:var(--text-primary);}
+@media(max-width:600px){
+  .product-tabs .ptab{font-size:11px;padding:4px 10px;}
+  .pw-table{font-size:10px;}
+  .pw-table thead th{padding:4px 2px;}
+  .pw-table tbody td{padding:3px 2px;}
+  .pw-table thead th:first-child{min-width:60px;}
+  .pw-table tbody td:first-child{min-width:60px;max-width:70px;}
+}
+
+
 /* ========== 视联网专区 - 适配驾驶舱蓝色主题 ========== */
 #page-video {
   --vw-primary: var(--b);
@@ -1260,8 +1302,8 @@ body {
       <div class="report-meta"><span class="dot"></span> 数据已更新</div>
     </div>
     <div class="date-picker-row" id="dailyDatePicker"></div>
-    <div class="tw" id="dailyTableWrap"></div>
-    <div class="bulletin" id="dailyBulletin"></div>
+    <div class="product-tabs" id="dailyProductTabs"></div>
+    <div id="dailyContentWrap"></div>
   </div>
 
   <!-- 营销数据 - 营销月报页 -->
@@ -1271,8 +1313,8 @@ body {
       <div class="report-meta"><span class="dot"></span> 数据已更新</div>
     </div>
     <div class="date-picker-row" id="monthlyDatePicker"></div>
-    <div class="tw" id="monthlyTableWrap"></div>
-    <div class="bulletin" id="monthlyBulletin"></div>
+    <div class="product-tabs" id="monthlyProductTabs"></div>
+    <div id="monthlyContentWrap"></div>
   </div>
 
   <!-- 营销数据 - 渠道条线营销月报页 -->
@@ -3545,8 +3587,282 @@ function renderQuick(){
   </div>`).join('');
 }
 
+/* ================================================================
+ *  产品Tab + 产品页（日报/月报共用）
+ * ================================================================ */
+
+// 获取可用月份列表 {month,label,dayCount,dates}
+function getMonthList(dateInt) {
+  const months = [];
+  const seen = new Set();
+  for (const d of DATA_DATES) {
+    const m = Math.floor(d/100);
+    if (!seen.has(m)) {
+      seen.add(m);
+      let dates = DATA_DATES.filter(x => Math.floor(x/100) === m);
+      if (m === Math.floor(dateInt/100)) dates = dates.filter(x => x <= dateInt);
+      months.push({ month: m, label: parseInt(String(m).slice(4,6))+'月', dayCount: dates.length, dates });
+    }
+  }
+  return months;
+}
+
+// 高效获取单日单指标值（避免重复调用getDailyData）
+// ind=指标, dateInt=日期, scope=区县(or null=全市), name=区县名, l4name=四级名, l5name=五级名
+function getIndValue(ind, dateInt, scope, name, l4name, l5name) {
+  const dstr = String(dateInt);
+  if (l5name) {
+    if (ind === 'FTTR-B')
+      return ((DATA.fttrb[dstr]?.[scope]?.[l4name]?.[l5name]) || 0) +
+             ((DATA.fttrbZq[dstr]?.[scope]?.[l4name]?.[l5name]) || 0);
+    return (DATA.newdev[dstr]?.[scope]?.[l4name]?.[l5name]?.[ind]) || 0;
+  }
+  if (l4name) {
+    if (ind === 'FTTR-B') {
+      let t = 0;
+      const fb = DATA.fttrb[dstr]?.[scope]?.[l4name] || {};
+      for (const l5 in fb) t += fb[l5] || 0;
+      const fz = DATA.fttrbZq[dstr]?.[scope]?.[l4name] || {};
+      for (const l5 in fz) t += fz[l5] || 0;
+      return t;
+    }
+    const nd = DATA.newdev[dstr]?.[scope]?.[l4name] || {};
+    let t = 0;
+    for (const l5 in nd) t += nd[l5][ind] || 0;
+    return t;
+  }
+  if (name) {
+    if (ind === 'FTTR-B') {
+      let t = 0;
+      const fb = DATA.fttrb[dstr]?.[name] || {};
+      for (const l4 in fb) for (const l5 in fb[l4]) t += fb[l4][l5] || 0;
+      const fz = DATA.fttrbZq[dstr]?.[name] || {};
+      for (const l4 in fz) for (const l5 in fz[l4]) t += fz[l4][l5] || 0;
+      return t;
+    }
+    const nd = DATA.newdev[dstr]?.[name] || {};
+    let t = 0;
+    for (const l4 in nd) for (const l5 in nd[l4]) t += nd[l4][l5][ind] || 0;
+    return t;
+  }
+  // 全市（含电渠）
+  if (ind === 'FTTR-B') {
+    let t = 0;
+    const fb = DATA.fttrb[dstr] || {};
+    for (const d in fb) for (const l4 in fb[d]) for (const l5 in fb[d][l4]) t += fb[d][l4][l5] || 0;
+    const fz = DATA.fttrbZq[dstr] || {};
+    for (const d in fz) for (const l4 in fz[d]) for (const l5 in fz[d][l4]) t += fz[d][l4][l5] || 0;
+    return t;
+  }
+  let t = 0;
+  const nd = DATA.newdev[dstr] || {};
+  for (const d in nd) for (const l4 in nd[d]) for (const l5 in nd[d][l4]) t += nd[d][l4][l5][ind] || 0;
+  t += (DATA.dianqu[dstr]?.[ind]) || 0;
+  return t;
+}
+
+// 日报产品页 — 趋势数据（当月1日至选定日期）
+function getDailyProductTrend(ind, dateInt, scope) {
+  const month = Math.floor(dateInt/100), ms = month*100+1;
+  const dates = DATA_DATES.filter(d => d >= ms && d <= dateInt);
+  const values = dates.map(d => scope === '全市' ? getIndValue(ind, d) : getIndValue(ind, d, null, scope));
+  return { dates, values, labels: dates.map(d => formatMD(d)) };
+}
+
+// 日报产品页 — 表格数据（区县/四级 × 日期）
+function getDailyProductTable(ind, dateInt, scope) {
+  const month = Math.floor(dateInt/100), ms = month*100+1;
+  const dates = DATA_DATES.filter(d => d >= ms && d <= dateInt);
+  const headers = dates.map(d => parseInt(String(d).slice(6,8))+'日');
+  const isCity = scope === '全市';
+  const names = isCity ? Object.keys(DATA.target) : Object.keys(DATA.roster?.[scope] || {});
+  const rows = names.map(name => {
+    const values = dates.map(d => isCity ? getIndValue(ind, d, null, name) : getIndValue(ind, d, scope, null, name));
+    return { name, values, sum: values.reduce((a,b)=>a+b, 0) };
+  });
+  rows.sort((a, b) => {
+    if (a.name === '政企') return 1;
+    if (b.name === '政企') return -1;
+    return b.sum - a.sum;
+  });
+  let summaryRow;
+  if (isCity) {
+    const sv = dates.map(d => getIndValue(ind, d));
+    summaryRow = { name: '全市', values: sv, sum: sv.reduce((a,b)=>a+b, 0) };
+  } else {
+    const sv = dates.map((_, i) => rows.reduce((s, r) => s + r.values[i], 0));
+    summaryRow = { name: '合计', values: sv, sum: sv.reduce((a,b)=>a+b, 0) };
+  }
+  return { headers, rows, summaryRow, dates, scope, ind, isCity };
+}
+
+// 月报产品页 — 趋势数据（各月日均）
+function getMonthlyProductTrend(ind, dateInt, scope) {
+  const months = getMonthList(dateInt);
+  const values = months.map(m => {
+    let total = 0;
+    for (const d of m.dates) total += scope === '全市' ? getIndValue(ind, d) : getIndValue(ind, d, null, scope);
+    return m.dayCount > 0 ? +(total / m.dayCount).toFixed(1) : 0;
+  });
+  return { months, values, labels: months.map(m => m.label+'日均') };
+}
+
+// 月报产品页 — 表格数据（区县/四级 × 月日均）
+function getMonthlyProductTable(ind, dateInt, scope) {
+  const months = getMonthList(dateInt);
+  const headers = months.map(m => m.label+'日均');
+  const isCity = scope === '全市';
+  const names = isCity ? Object.keys(DATA.target) : Object.keys(DATA.roster?.[scope] || {});
+  const rows = names.map(name => {
+    const values = months.map(m => {
+      let total = 0;
+      for (const d of m.dates) total += isCity ? getIndValue(ind, d, null, name) : getIndValue(ind, d, scope, null, name);
+      return m.dayCount > 0 ? +(total / m.dayCount).toFixed(1) : 0;
+    });
+    return { name, values, sum: +(values.reduce((a,b)=>a+b, 0)).toFixed(1) };
+  });
+  rows.sort((a, b) => {
+    if (a.name === '政企') return 1;
+    if (b.name === '政企') return -1;
+    return b.values[b.values.length-1] - a.values[a.values.length-1];
+  });
+  let summaryRow;
+  if (isCity) {
+    const sv = months.map(m => {
+      let total = 0;
+      for (const d of m.dates) total += getIndValue(ind, d);
+      return m.dayCount > 0 ? +(total / m.dayCount).toFixed(1) : 0;
+    });
+    summaryRow = { name: '全市', values: sv, sum: +(sv.reduce((a,b)=>a+b, 0)).toFixed(1) };
+  } else {
+    const sv = months.map((_, mi) => +(rows.reduce((s, r) => s + r.values[mi], 0)).toFixed(1));
+    summaryRow = { name: '日均', values: sv, sum: +(sv.reduce((a,b)=>a+b, 0)).toFixed(1) };
+  }
+  return { headers, rows, summaryRow, months, scope, ind, isCity };
+}
+
+// 格式化产品页数值
+function fmtProdVal(v) {
+  if (typeof v !== 'number') return v;
+  if (v === 0) return '<span style="color:var(--text-tertiary)">0</span>';
+  return v % 1 === 0 ? String(v) : v.toFixed(1);
+}
+
+// 渲染产品Tab按钮
+function renderProductTabs(containerId, activeTab, callback) {
+  const tabs = ['总览', ...CH_IND];
+  const el = document.getElementById(containerId);
+  el.innerHTML = tabs.map(t => '<div class="ptab'+(t===activeTab?' active':'')+'" data-ptab="'+t+'">'+t+'</div>').join('');
+  el.querySelectorAll('.ptab').forEach(b => b.addEventListener('click', () => callback(b.dataset.ptab)));
+}
+
+// 渲染产品表格（日报/月报共用）
+function renderProductTable(tableData, mode) {
+  const { headers, rows, summaryRow, scope, isCity } = tableData;
+  const drillSrc = mode === 'day' ? 'day' : 'month';
+  const exclude = isCity ? ['全市', '政企'] : [];
+  const sumLabel = mode === 'day' ? '累计' : '总均';
+  let html = '<table class="pw-table"><thead><tr>';
+  html += '<th>' + (isCity ? '经营单位' : '四级承包体') + '</th>';
+  headers.forEach(h => html += '<th>'+h+'</th>');
+  html += '<th>'+sumLabel+'</th></tr></thead><tbody>';
+  rows.forEach(row => {
+    const isEx = exclude.includes(row.name);
+    let attr = '';
+    if (!isEx) {
+      if (isCity) attr = ' data-dr="1" data-cn="'+row.name+'" data-src="'+drillSrc+'"';
+      else attr = ' data-dr="2" data-cn="'+scope+'" data-fn="'+row.name+'" data-src="'+drillSrc+'"';
+    }
+    html += '<tr><td class="'+(isEx?'':'cl')+'"'+attr+'>'+row.name+'</td>';
+    row.values.forEach(v => html += '<td>'+fmtProdVal(v)+'</td>');
+    html += '<td><b>'+fmtProdVal(row.sum)+'</b></td></tr>';
+  });
+  if (summaryRow) {
+    html += '<tr class="pw-sum"><td>'+summaryRow.name+'</td>';
+    summaryRow.values.forEach(v => html += '<td>'+fmtProdVal(v)+'</td>');
+    html += '<td><b>'+fmtProdVal(summaryRow.sum)+'</b></td></tr>';
+  }
+  html += '</tbody></table>';
+  return html;
+}
+
+// 日报产品页 — 渲染
+function renderDailyProductPage(wrap, ind, dateInt) {
+  const color = IND_COLORS[CH_IND.indexOf(ind)];
+  const trend = getDailyProductTrend(ind, dateInt, currentScope);
+  const tableData = getDailyProductTable(ind, dateInt, currentScope);
+  const trendW = Math.max(trend.values.length * 40 + 20, 280);
+  const total = trend.values.reduce((a,b)=>a+b, 0);
+  const avg = trend.values.length > 0 ? (total / trend.values.length).toFixed(1) : 0;
+  const maxVal = Math.max(...trend.values, 0);
+  const maxIdx = trend.values.indexOf(maxVal);
+  const lastVal = trend.values[trend.values.length-1];
+
+  let analysis = '<div class="pa-title">'+ind+' 日发展分析</div>';
+  analysis += '<p>本月1日至今'+currentScope+'累计'+ind+'发展<b>'+total+'</b>，日均<b>'+avg+'</b>。';
+  if (maxVal > 0) analysis += '最高日为'+trend.labels[maxIdx]+'（<b>'+maxVal+'</b>），';
+  analysis += '最近一日（'+trend.labels[trend.labels.length-1]+'）发展<b>'+lastVal+'</b>。</p>';
+  if (currentScope === '全市') {
+    const valid = tableData.rows.filter(r => r.name !== '政企');
+    const sorted = [...valid].sort((a,b) => b.sum - a.sum);
+    if (sorted.length > 3) {
+      analysis += '<p>累计前三位：'+sorted.slice(0,3).map(r => r.name+'（'+r.sum+'）').join('、')+'；';
+      analysis += '后三位：'+sorted.slice(-3).map(r => r.name+'（'+r.sum+'）').join('、')+'。</p>';
+    }
+  }
+
+  wrap.innerHTML =
+    '<div class="product-trend-card"><div class="ptc-title">'+
+    currentScope+' '+ind+'日发展趋势<span class="ptc-stats">累计<b>'+total+'</b> 日均<b>'+avg+'</b> 峰值<b>'+maxVal+'</b></span></div>'+
+    '<div class="ptc-chart">'+sparklineSvg(trend.values, color, trendW, 100, trend.labels)+'</div></div>'+
+    '<div style="overflow:auto;max-height:480px;margin-bottom:12px;border-radius:6px;box-shadow:var(--shadow-card)">'+
+    renderProductTable(tableData, 'day')+'</div>'+
+    '<div class="product-analysis">'+analysis+'</div>';
+}
+
+// 月报产品页 — 渲染
+function renderMonthlyProductPage(wrap, ind, dateInt) {
+  const color = IND_COLORS[CH_IND.indexOf(ind)];
+  const trend = getMonthlyProductTrend(ind, dateInt, currentScope);
+  const tableData = getMonthlyProductTable(ind, dateInt, currentScope);
+  const trendW = Math.max(trend.values.length * 80 + 40, 280);
+  const months = tableData.months;
+
+  let analysis = '<div class="pa-title">'+ind+' 月日均分析</div>';
+  analysis += '<p>'+currentScope+' '+ind+'月日均趋势：';
+  analysis += months.map((m, i) => m.label+'<b>'+trend.values[i]+'</b>').join(' → ')+'。</p>';
+  if (trend.values.length >= 2) {
+    const prev = trend.values[trend.values.length-2];
+    const curr = trend.values[trend.values.length-1];
+    const diff = +(curr - prev).toFixed(1);
+    if (diff > 0) analysis += '<p>'+months[months.length-2].label+'→'+months[months.length-1].label+'：日均增长<b style="color:var(--r)">+'+diff+'</b>。</p>';
+    else if (diff < 0) analysis += '<p>'+months[months.length-2].label+'→'+months[months.length-1].label+'：日均下降<b style="color:var(--accent-green)">'+diff+'</b>。</p>';
+    else analysis += '<p>'+months[months.length-2].label+'→'+months[months.length-1].label+'：日均持平。</p>';
+  }
+  if (currentScope === '全市') {
+    const valid = tableData.rows.filter(r => r.name !== '政企');
+    const li = trend.values.length - 1;
+    const sorted = [...valid].sort((a,b) => b.values[li] - a.values[li]);
+    if (sorted.length > 3) {
+      const lm = months[months.length-1].label;
+      analysis += '<p>'+lm+'日均前三位：'+sorted.slice(0,3).map(r => r.name+'（'+r.values[li]+'）').join('、')+'；';
+      analysis += '后三位：'+sorted.slice(-3).map(r => r.name+'（'+r.values[li]+'）').join('、')+'。</p>';
+    }
+  }
+
+  wrap.innerHTML =
+    '<div class="product-trend-card"><div class="ptc-title">'+
+    currentScope+' '+ind+'月日均趋势<span class="ptc-stats">'+
+    months.map((m,i)=>m.label+'<b>'+trend.values[i]+'</b>').join(' ')+'</span></div>'+
+    '<div class="ptc-chart">'+sparklineSvg(trend.values, color, trendW, 100, trend.labels)+'</div></div>'+
+    '<div style="overflow:auto;max-height:480px;margin-bottom:12px;border-radius:6px;box-shadow:var(--shadow-card)">'+
+    renderProductTable(tableData, 'month')+'</div>'+
+    '<div class="product-analysis">'+analysis+'</div>';
+}
+
 /* ---- 日报 ---- */
 let dailyDate = DEFAULT_DATE;
+let dailyProductTab = '总览';
 function renderDailyDatePicker(){
   const wrap = document.getElementById('dailyDatePicker');
   wrap.innerHTML = `
@@ -3564,16 +3880,31 @@ function renderDailyReport(){
   const m = Math.floor(dailyDate/100)%100, d = dailyDate%100;
   const input = document.getElementById('dailyDateInput');
   if (input) input.value = intToDateStr(dailyDate);
-  if (currentScope === '全市') {
-    document.getElementById('dailyTitle').textContent = '【'+m+'月'+d+'日营销通报】';
-    const data = getDailyData(dailyDate);
-    renderMainTable(document.getElementById('dailyTableWrap'), data, 'rate', 'day');
-    renderCompletionBulletin(data, 'district', '日增', 'dailyBulletin', '公司整体');
+
+  renderProductTabs('dailyProductTabs', dailyProductTab, function(tab){
+    dailyProductTab = tab;
+    renderDailyReport();
+  });
+
+  const wrap = document.getElementById('dailyContentWrap');
+
+  if (dailyProductTab === '总览') {
+    if (currentScope === '全市') {
+      document.getElementById('dailyTitle').textContent = '【'+m+'月'+d+'日营销通报】';
+      wrap.innerHTML = '<div class="tw" id="dailyTableWrap"></div><div class="bulletin" id="dailyBulletin"></div>';
+      const data = getDailyData(dailyDate);
+      renderMainTable(document.getElementById('dailyTableWrap'), data, 'rate', 'day');
+      renderCompletionBulletin(data, 'district', '日增', 'dailyBulletin', '公司整体');
+    } else {
+      document.getElementById('dailyTitle').textContent = '【'+currentScope+' '+m+'月'+d+'日营销通报】';
+      wrap.innerHTML = '<div class="tw" id="dailyTableWrap"></div><div class="bulletin" id="dailyBulletin"></div>';
+      const data = getDailyLevel4(dailyDate, currentScope);
+      renderLevel4Completion(document.getElementById('dailyTableWrap'), data, 'day', currentScope);
+      renderCompletionBulletin(data, 'name', '日增', 'dailyBulletin', currentScope + '整体', false);
+    }
   } else {
-    document.getElementById('dailyTitle').textContent = '【'+currentScope+' '+m+'月'+d+'日营销通报】';
-    const data = getDailyLevel4(dailyDate, currentScope);
-    renderLevel4Completion(document.getElementById('dailyTableWrap'), data, 'day', currentScope);
-    renderCompletionBulletin(data, 'name', '日增', 'dailyBulletin', currentScope + '整体', false);
+    document.getElementById('dailyTitle').textContent = m+'月'+d+'日 · '+dailyProductTab+'日发展';
+    renderDailyProductPage(wrap, dailyProductTab, dailyDate);
   }
 }
 
@@ -3699,6 +4030,7 @@ function yoyDictToRows(tm, lm, indicators) {
 
 /* ---- 营销月报 ---- */
 let monthlyDate = DEFAULT_DATE;
+let monthlyProductTab = '总览';
 function renderMonthlyDatePicker(){
   const wrap = document.getElementById('monthlyDatePicker');
   wrap.innerHTML = `
@@ -3710,16 +4042,31 @@ function renderMonthlyDatePicker(){
 
 function renderMonthlyReport(){
   const m = Math.floor(monthlyDate/100)%100, d = monthlyDate%100;
-  if (currentScope === '全市') {
-    document.getElementById('monthlyTitle').textContent = '大庆分公司营销月报（'+m+'.1-'+m+'.'+d+'）';
-    const data = getMonthlyData(monthlyDate);
-    renderMainTable(document.getElementById('monthlyTableWrap'), data, 'rate', 'month');
-    renderCompletionBulletin(data, 'district', '月增', 'monthlyBulletin', '公司整体');
+
+  renderProductTabs('monthlyProductTabs', monthlyProductTab, function(tab){
+    monthlyProductTab = tab;
+    renderMonthlyReport();
+  });
+
+  const wrap = document.getElementById('monthlyContentWrap');
+
+  if (monthlyProductTab === '总览') {
+    if (currentScope === '全市') {
+      document.getElementById('monthlyTitle').textContent = '大庆分公司营销月报（'+m+'.1-'+m+'.'+d+'）';
+      wrap.innerHTML = '<div class="tw" id="monthlyTableWrap"></div><div class="bulletin" id="monthlyBulletin"></div>';
+      const data = getMonthlyData(monthlyDate);
+      renderMainTable(document.getElementById('monthlyTableWrap'), data, 'rate', 'month');
+      renderCompletionBulletin(data, 'district', '月增', 'monthlyBulletin', '公司整体');
+    } else {
+      document.getElementById('monthlyTitle').textContent = currentScope+'营销月报（'+m+'.1-'+m+'.'+d+'）';
+      wrap.innerHTML = '<div class="tw" id="monthlyTableWrap"></div><div class="bulletin" id="monthlyBulletin"></div>';
+      const data = getMonthlyLevel4(monthlyDate, currentScope);
+      renderLevel4Completion(document.getElementById('monthlyTableWrap'), data, 'month', currentScope);
+      renderCompletionBulletin(data, 'name', '月增', 'monthlyBulletin', currentScope + '整体', false);
+    }
   } else {
-    document.getElementById('monthlyTitle').textContent = currentScope+'营销月报（'+m+'.1-'+m+'.'+d+'）';
-    const data = getMonthlyLevel4(monthlyDate, currentScope);
-    renderLevel4Completion(document.getElementById('monthlyTableWrap'), data, 'month', currentScope);
-    renderCompletionBulletin(data, 'name', '月增', 'monthlyBulletin', currentScope + '整体', false);
+    document.getElementById('monthlyTitle').textContent = m+'.1-'+m+'.'+d+' · '+monthlyProductTab+'月日均';
+    renderMonthlyProductPage(wrap, monthlyProductTab, monthlyDate);
   }
 }
 
