@@ -3971,7 +3971,7 @@ window.vw_quickSearch = quickSearch;
     modules.forEach(function(mod, i) {
       if (i > 0) html += '<span class="cf-flow-arrow">→</span>';
       var title = mod.querySelector('.cf-module-title').textContent;
-      html += '<span class="cf-flow-item" data-target="' + mod.id + '" onclick="cf_scrollToModule('' + mod.id + '')">' + title + '</span>';
+      html += '<span class="cf-flow-item" data-target="' + mod.id + '" onclick="cf_scrollToModule(\'' + mod.id + '\')">' + title + '</span>';
     });
     nav.innerHTML = html;
   }
