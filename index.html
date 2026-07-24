@@ -3914,7 +3914,7 @@ window.vw_quickSearch = quickSearch;
       } else {
         visibleModules++;
         // 统计匹配次数
-        var regex = new RegExp(keyword.replace(/[.*+?^${}()|[\]\]/g, '\$&'), 'gi');
+        var regex = new RegExp(keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
         var matches = text.match(regex);
         totalMatch += matches ? matches.length : 0;
         // 展开模块
@@ -3939,7 +3939,7 @@ window.vw_quickSearch = quickSearch;
     nodes.forEach(function(node) {
       if (node.parentElement && node.parentElement.classList.contains('cf-highlight')) return;
       var text = node.textContent;
-      var regex = new RegExp('(' + keyword.replace(/[.*+?^${}()|[\]\]/g, '\$&') + ')', 'gi');
+      var regex = new RegExp('(' + keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
       if (regex.test(text)) {
         var span = document.createElement('span');
         span.innerHTML = text.replace(regex, '<span class="cf-highlight">$1</span>');
