@@ -462,6 +462,8 @@ body {
   --vw-primary-light: var(--accent-cyan);
   --vw-primary-bg: var(--accent-blue-light);
   --vw-shadow: 0 2px 12px rgba(37,99,235,0.06);
+  margin-top: -16px;
+  padding: 0;
 }
 
 /* 深色模式视联网变量覆盖 */
@@ -1024,7 +1026,7 @@ body {
 
 
 /* 橙分期专区 */
-#page-cf { --cf-primary: #ea580c; --cf-primary-dark: #c2410c; --cf-primary-light: #fed7aa; --cf-primary-bg: #fff7ed; --cf-shadow: 0 4px 20px rgba(234,88,12,0.15); }
+#page-cf { --cf-primary: #ea580c; --cf-primary-dark: #c2410c; --cf-primary-light: #fed7aa; --cf-primary-bg: #fff7ed; --cf-shadow: 0 4px 20px rgba(234,88,12,0.15); margin-top: -16px; padding: 0; }
 [data-theme="dark"] #page-cf { --cf-primary: #fb923c; --cf-primary-dark: #f97316; --cf-primary-light: rgba(251,146,60,0.15); --cf-primary-bg: rgba(30,20,10,0.6); --cf-shadow: 0 4px 20px rgba(251,146,60,0.1); }
 
 #page-cf .cf-header { background: linear-gradient(135deg, #ea580c 0%, #f97316 40%, #fb923c 100%); padding:48px 32px 36px; text-align:center; color:white; position:relative; overflow:hidden; }
@@ -3929,6 +3931,14 @@ window.vw_quickSearch = quickSearch;
 
     noResult.style.display = visibleModules === 0 ? '' : 'none';
     searchStats.textContent = '找到 ' + totalMatch + ' 处匹配，共 ' + visibleModules + ' 个模块';
+
+    // 搜索后自动跳转到第一个匹配的模块
+    var firstMatch = modulesContainer.querySelector('.cf-module:not(.cf-hidden-by-search)');
+    if (firstMatch) {
+      setTimeout(function() {
+        firstMatch.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
   }
 
   // 高亮关键词
