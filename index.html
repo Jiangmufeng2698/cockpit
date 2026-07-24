@@ -3267,8 +3267,9 @@ function switchPage(id){
 }
 
 function showPage(id){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById('page-'+id)?.classList.add('active');
+  document.querySelectorAll('.page').forEach(p=>{p.classList.remove('active');p.style.opacity='';});
+  var el=document.getElementById('page-'+id);
+  if(el){el.classList.add('active');el.style.opacity='1';}
 }
 
 // 概览KPI（7日折线图）
