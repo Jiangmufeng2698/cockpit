@@ -1022,6 +1022,105 @@ body {
 
 
 
+
+/* 橙分期专区 */
+#page-cf { --cf-primary: #ea580c; --cf-primary-dark: #c2410c; --cf-primary-light: #fed7aa; --cf-primary-bg: #fff7ed; --cf-shadow: 0 4px 20px rgba(234,88,12,0.15); }
+[data-theme="dark"] #page-cf { --cf-primary: #fb923c; --cf-primary-dark: #f97316; --cf-primary-light: rgba(251,146,60,0.15); --cf-primary-bg: rgba(30,20,10,0.6); --cf-shadow: 0 4px 20px rgba(251,146,60,0.1); }
+
+#page-cf .cf-header { background: linear-gradient(135deg, #ea580c 0%, #f97316 40%, #fb923c 100%); padding:48px 32px 36px; text-align:center; color:white; position:relative; overflow:hidden; }
+#page-cf .cf-header::before { content:''; position:absolute; top:-50%; right:-20%; width:400px; height:400px; background:rgba(255,255,255,0.06); border-radius:50%; }
+#page-cf .cf-header h1 { font-size:26px; font-weight:800; margin:0 0 8px; letter-spacing:2px; }
+#page-cf .cf-header .cf-subtitle { font-size:14px; opacity:.9; margin-top:8px; position:relative; z-index:1; letter-spacing:1px; }
+#page-cf .cf-header .cf-badge { display:inline-block; margin-top:14px; padding:6px 18px; background:rgba(255,255,255,0.2); border-radius:20px; font-size:12px; backdrop-filter:blur(10px); }
+
+[data-theme="dark"] #page-cf .cf-header { background: linear-gradient(135deg, #9a3412 0%, #c2410c 40%, #ea580c 100%); }
+
+#page-cf .cf-search-section { padding:20px 24px 12px; background:var(--cf-primary-bg); border-bottom:1px solid var(--border-color); }
+#page-cf .cf-search-box { max-width:720px; margin:0 auto; }
+#page-cf .cf-search-input-wrap { display:flex; gap:8px; }
+#page-cf .cf-search-input-wrap input { flex:1; padding:10px 16px; border:2px solid var(--cf-primary-light); border-radius:8px; font-size:14px; background:var(--bg-card); color:var(--text-primary); outline:none; transition:border-color 0.2s; }
+#page-cf .cf-search-input-wrap input:focus { border-color:var(--cf-primary); }
+#page-cf .cf-search-btn { padding:10px 24px; background:linear-gradient(135deg, #ea580c, #f97316); color:white; border:none; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer; white-space:nowrap; transition:all 0.2s; }
+#page-cf .cf-search-btn:hover { transform:translateY(-1px); box-shadow:0 4px 12px rgba(234,88,12,0.4); }
+#page-cf .cf-search-stats { margin-top:8px; font-size:12px; color:var(--text-tertiary); }
+#page-cf .cf-quick-tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+#page-cf .cf-quick-tag { padding:4px 12px; background:var(--bg-card); border:1px solid var(--border-color); border-radius:16px; font-size:12px; color:var(--text-secondary); cursor:pointer; transition:all 0.15s; }
+#page-cf .cf-quick-tag:hover { border-color:var(--cf-primary); color:var(--cf-primary); background:var(--cf-primary-light); }
+
+[data-theme="dark"] #page-cf .cf-search-section { background:rgba(30,20,10,0.3); }
+[data-theme="dark"] #page-cf .cf-search-btn { background:linear-gradient(135deg, #c2410c, #ea580c); }
+
+#page-cf .cf-flow-nav { display:flex; align-items:center; justify-content:center; gap:0; padding:16px 20px; flex-wrap:wrap; }
+#page-cf .cf-flow-item { padding:6px 16px; background:var(--bg-card); border:1px solid var(--border-color); border-radius:8px; font-size:13px; font-weight:600; color:var(--text-secondary); cursor:pointer; transition:all 0.2s; white-space:nowrap; }
+#page-cf .cf-flow-item:hover { border-color:var(--cf-primary); color:var(--cf-primary); background:var(--cf-primary-light); }
+#page-cf .cf-flow-item.active { background:var(--cf-primary); color:white; border-color:var(--cf-primary); }
+#page-cf .cf-flow-arrow { font-size:18px; color:var(--text-tertiary); margin:0 6px; }
+
+#page-cf .cf-module { background:var(--bg-card); border-radius:12px; margin-bottom:16px; box-shadow:var(--shadow-sm); border:1px solid var(--border-color); overflow:visible; }
+#page-cf .cf-module-header { display:flex; align-items:center; gap:12px; padding:16px 20px; cursor:pointer; transition:background 0.2s; }
+#page-cf .cf-module-header:hover { background:var(--bg-hover); }
+#page-cf .cf-module-num { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:16px; color:white; flex-shrink:0; }
+#page-cf .cf-module-1 .cf-module-num { background:linear-gradient(135deg,#ea580c,#f97316); }
+#page-cf .cf-module-2 .cf-module-num { background:linear-gradient(135deg,#f97316,#fb923c); }
+#page-cf .cf-module-3 .cf-module-num { background:linear-gradient(135deg,#fb923c,#fdba74); }
+#page-cf .cf-module-4 .cf-module-num { background:linear-gradient(135deg,#c2410c,#ea580c); }
+#page-cf .cf-module-title { font-size:16px; font-weight:700; color:var(--text-primary); }
+#page-cf .cf-module-desc { font-size:12px; color:var(--text-tertiary); margin-top:2px; }
+#page-cf .cf-module-arrow { margin-left:auto; font-size:12px; color:var(--text-tertiary); transition:transform 0.3s; }
+#page-cf .cf-module.collapsed .cf-module-arrow { transform:rotate(-90deg); }
+#page-cf .cf-module.collapsed .cf-module-body { display:none; }
+
+#page-cf .cf-level-1 { margin-bottom:12px; padding-left:8px; border-left:3px solid var(--cf-primary-light); }
+#page-cf .cf-level-1-title { font-size:15px; font-weight:700; color:var(--cf-primary-dark); padding:8px 0 4px 12px; }
+#page-cf .cf-level-2 { margin:4px 0 4px 12px; }
+#page-cf .cf-level-2-title { font-size:14px; font-weight:600; color:var(--text-primary); padding:8px 12px; background:var(--bg-hover); border-radius:8px; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; gap:6px; }
+#page-cf .cf-level-2-title:hover { background:var(--cf-primary-light); color:var(--cf-primary); }
+#page-cf .cf-level-2-title .cf-expand-icon { font-size:10px; transition:transform 0.2s; }
+#page-cf .cf-level-2-title .cf-expand-icon.collapsed { transform:rotate(-90deg); }
+#page-cf .cf-level-3 { padding:6px 12px 6px 24px; }
+#page-cf .cf-level-3-item { padding:6px 0; font-size:13px; line-height:1.7; color:var(--text-secondary); border-bottom:1px dashed var(--border-light); }
+#page-cf .cf-level-3-item:last-child { border-bottom:none; }
+#page-cf .cf-level-3-item strong { color:var(--text-primary); }
+
+#page-cf .cf-tag { display:inline-block; padding:1px 8px; border-radius:4px; font-size:11px; font-weight:600; margin-left:6px; }
+#page-cf .cf-tag-red { background:#fef2f2; color:#dc2626; border:1px solid #fecaca; }
+#page-cf .cf-tag-blue { background:#eff6ff; color:#2563eb; border:1px solid #bfdbfe; }
+#page-cf .cf-tag-green { background:#f0fdf4; color:#16a34a; border:1px solid #bbf7d0; }
+#page-cf .cf-tag-orange { background:#fff7ed; color:#ea580c; border:1px solid #fed7aa; }
+#page-cf .cf-highlight { background:#fef08a; padding:0 2px; border-radius:2px; }
+#page-cf .cf-hidden-by-search { display:none; }
+#page-cf .cf-no-result { text-align:center; padding:40px 20px; color:var(--text-tertiary); }
+#page-cf .cf-no-result .cf-icon { font-size:40px; margin-bottom:12px; }
+
+[data-theme="dark"] #page-cf .cf-level-1 { border-left-color:rgba(251,146,60,0.3); }
+[data-theme="dark"] #page-cf .cf-level-1-title { color:var(--cf-primary); }
+[data-theme="dark"] #page-cf .cf-level-2-title { background:rgba(251,146,60,0.06); }
+[data-theme="dark"] #page-cf .cf-tag-red { background:rgba(220,38,38,0.15); border-color:rgba(220,38,38,0.3); }
+[data-theme="dark"] #page-cf .cf-tag-blue { background:rgba(37,99,235,0.15); border-color:rgba(37,99,235,0.3); }
+[data-theme="dark"] #page-cf .cf-tag-green { background:rgba(22,163,74,0.15); border-color:rgba(22,163,74,0.3); }
+[data-theme="dark"] #page-cf .cf-tag-orange { background:rgba(234,88,12,0.15); border-color:rgba(234,88,12,0.3); }
+[data-theme="dark"] #page-cf .cf-highlight { background:rgba(251,146,60,0.3); }
+
+#page-cf .cf-back-top { position:fixed; bottom:30px; right:30px; width:44px; height:44px; border-radius:50%; background:var(--cf-primary); color:white; border:none; cursor:pointer; font-size:20px; display:none; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(234,88,12,0.4); z-index:50; transition:all 0.3s; }
+#page-cf .cf-back-top:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(234,88,12,0.5); }
+
+@media (max-width:768px) {
+  #page-cf .cf-header { padding:32px 16px 24px; }
+  #page-cf .cf-header h1 { font-size:20px; }
+  #page-cf .cf-search-section { padding:16px 12px 8px; }
+  #page-cf .cf-flow-nav { gap:4px; }
+  #page-cf .cf-flow-item { padding:4px 10px; font-size:12px; }
+  #page-cf .cf-level-2-title { font-size:13px; }
+}
+
+/* 橙分期表格样式 */
+#page-cf .cf-table { width:100%; border-collapse:collapse; font-size:13px; margin:8px 0; }
+#page-cf .cf-table th { background:var(--cf-primary-light); color:var(--cf-primary-dark); padding:8px 10px; text-align:left; font-weight:600; border:1px solid var(--border-color); }
+#page-cf .cf-table td { padding:6px 10px; border:1px solid var(--border-color); color:var(--text-secondary); }
+#page-cf .cf-table tr:hover td { background:var(--bg-hover); }
+[data-theme="dark"] #page-cf .cf-table th { background:rgba(234,88,12,0.15); color:var(--cf-primary); }
+
+
 /* ============ 登录系统 ============ */
 .login-overlay {
   position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:99999;
@@ -1670,6 +1769,636 @@ body {
 </div>
   </div>
 </div>
+
+
+<div class="page" id="page-cf">
+<!-- 顶部 -->
+<div class="cf-header">
+  <h1>橙分期业务知识查询平台</h1>
+  <div class="cf-subtitle">翼支付 · 橙分期全流程操作指引与常见问题解答</div>
+  <div class="cf-badge">产品介绍 → 下单流程 → 常见报错 → 热点答疑</div>
+</div>
+
+<!-- 搜索区域 -->
+<div class="cf-search-section">
+  <div class="cf-search-box">
+    <div class="cf-search-input-wrap">
+      <input type="text" id="cfSearchInput" placeholder="输入关键词搜索，如：信用分期、花呗先享、人脸识别、代扣失败、7天退订..." />
+      <button class="cf-search-btn" onclick="cf_doSearch()">搜索</button>
+    </div>
+    <div class="cf-search-stats" id="cfSearchStats"></div>
+    <div class="cf-quick-tags">
+      <span class="cf-quick-tag" onclick="cf_quickSearch('信用分期')">信用分期</span>
+      <span class="cf-quick-tag" onclick="cf_quickSearch('政企分期')">政企分期</span>
+      <span class="cf-quick-tag" onclick="cf_quickSearch('小额分期')">小额分期</span>
+      <span class="cf-quick-tag" onclick="cf_quickSearch('花呗先享')">花呗先享</span>
+      <span class="cf-quick-tag" onclick="cf_quickSearch('人脸识别')">人脸识别</span>
+      <span class="cf-quick-tag" onclick="cf_quickSearch('代扣失败')">代扣失败</span>
+      <span class="cf-quick-tag" onclick="cf_quickSearch('7天退订')">7天退订</span>
+      <span class="cf-quick-tag" onclick="cf_quickSearch('风控')">风控</span>
+      <span class="cf-quick-tag" onclick="cf_quickSearch('换号')">换号</span>
+      <span class="cf-quick-tag" onclick="cf_quickSearch('竣工')">竣工</span>
+    </div>
+  </div>
+</div>
+
+<!-- 流程导航 -->
+<div class="cf-main-content">
+  <div class="cf-flow-nav" id="cfFlowNav"></div>
+
+  <div id="cfNoResult" class="cf-no-result" style="display:none;">
+    <div class="cf-icon">🔍</div>
+    <p>未找到相关内容，请尝试其他关键词</p>
+  </div>
+
+  <div id="cfModulesContainer">
+
+  <!-- 模块1: 橙分期产品介绍 -->
+  <div class="cf-module cf-module-1" id="cfm1">
+    <div class="cf-module-header" onclick="cf_toggleModule(this)">
+      <div class="cf-module-num">1</div>
+      <div>
+        <div class="cf-module-title">橙分期产品介绍</div>
+        <div class="cf-module-desc">产品类型 · 业务模式 · 全类产品特点 · 代扣规则 · 一户多单</div>
+      </div>
+      <div class="cf-module-arrow">▼</div>
+    </div>
+    <div class="cf-module-body">
+
+      <div class="cf-level-1">
+        <div class="cf-level-1-title">1.1 橙分期产品类型梳理</div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>信用分期 <span class="cf-tag cf-tag-orange">主要模式</span></div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div><strong>适用对象：</strong>个人用户，办理红包套餐享受套餐对应的直降金额，用于购买手机、智能产品、家电等。</div></div>
+            <div class="cf-level-3-item"><div><strong>核心特点：</strong>橙分期主要模式，授信放款自主性较强，无贷款记录、不上征信。</div></div>
+          </div>
+        </div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>预授信（花呗/余额宝/京东）</div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div><strong>适用对象：</strong>个人用户，用于5G融合套餐赠送的智家权益，办理WIFI路由器、门铃、摄像头等产品。</div></div>
+            <div class="cf-level-3-item"><div><strong>核心特点：</strong>无需授信，冻结用户余额宝金额/花呗/京东额度，分月解冻。2022年12月以后的储蓄卡冻结订单到期后一次性解冻。</div></div>
+          </div>
+        </div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>政企分期 <span class="cf-tag cf-tag-blue">企业用户</span></div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div><strong>适用对象：</strong>单位用户，办理红包套餐享受套餐对应的直降金额，用于购买手机等。</div></div>
+            <div class="cf-level-3-item"><div><strong>核心特点：</strong>可根据地市诉求申请多种费率配置，灵活开展业务；100%通过，无需换号。</div></div>
+          </div>
+        </div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>小额分期 <span class="cf-tag cf-tag-green">存量优选</span></div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div><strong>适用对象：</strong>电信存量用户优先选择甜橙分，能看到甜橙分通道，通过率90%以上。</div></div>
+            <div class="cf-level-3-item"><div><strong>包含模式：</strong>甜橙分、芝麻预授权/芝麻go、小额实时授信。</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cf-level-1">
+        <div class="cf-level-1-title">1.2 全类产品特点介绍</div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>产品对比表</div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item">
+              <table class="cf-table">
+                <tr><th>产品</th><th>付款方式</th><th>办理条件</th><th>支持账期</th></tr>
+                <tr><td rowspan="7"><strong>信用分期</strong></td><td>实时授信</td><td>22-65岁</td><td>24/36</td></tr>
+                <tr><td>微粒贷实时授信</td><td>23-55周岁</td><td>24/36</td></tr>
+                <tr><td>VIP用户专享</td><td>VIP白名单用户，22-65岁</td><td>24/36</td></tr>
+                <tr><td>花呗冻结（花呗先享）</td><td>支付宝花呗用户，22周岁以上</td><td>24/36</td></tr>
+                <tr><td>京东白条冻结</td><td>京东白条用户，22周岁以上</td><td>24/36</td></tr>
+                <tr><td>余额宝冻结</td><td>余额宝用户，22周岁以上</td><td>24/36</td></tr>
+                <tr><td>新网储蓄卡冻结</td><td>22周岁以上</td><td>24/36</td></tr>
+                <tr><td><strong>政企分期</strong></td><td>授信</td><td>政企白名单用户，22-65周岁</td><td>24/36</td></tr>
+                <tr><td rowspan="3"><strong>小额分期</strong></td><td>甜橙分</td><td>限电信存量用户，22周岁以上</td><td>24/36</td></tr>
+                <tr><td>芝麻预授权/芝麻go</td><td>芝麻分600以上有机会，22周岁以上</td><td>24/36</td></tr>
+                <tr><td>小额实时授信</td><td>22周岁以上</td><td>24/36</td></tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cf-level-1">
+        <div class="cf-level-1-title">1.3 橙分期代扣规则 <span class="cf-tag cf-tag-red">重要</span></div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>代扣时间规则</div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div><strong>1-8日：</strong>红包金（电信返费）实时代扣</div></div>
+            <div class="cf-level-3-item"><div><strong>8-10日：</strong>系统代扣（代扣红包金+翼支付账户余额+其他授权支付渠道+全账户轮询代扣）</div></div>
+            <div class="cf-level-3-item"><div><strong>11-25日：</strong>逾期补扣</div></div>
+            <div class="cf-level-3-item"><div><strong>26日：</strong>预授信逾期转支付</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cf-level-1">
+        <div class="cf-level-1-title">1.4 橙分期一户多单梳理</div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>一户多单规则</div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div>已打开一户多单地市，扫码渠道办单时支持同一身份证下：<strong>1笔实时授信订单</strong>、<strong>2笔预授信订单</strong>、<strong>3笔信用分订单</strong>并存。</div></div>
+            <div class="cf-level-3-item"><div>扫码渠道办单时，系统会判断地市已开通支付方式是否可用，如不可用则置灰。用户点击已置灰的支付方式页面会提示"该类业务笔数已达上限，请您办理其他类型业务"。</div></div>
+            <div class="cf-level-3-item"><div><strong>一户多单办理顺序无要求。</strong>同一账号下多笔订单，系统监控红包充值消息，按设定的顺序依次代扣。</div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 模块2: 橙分期业务流程 -->
+  <div class="cf-module cf-module-2" id="cfm2">
+    <div class="cf-module-header" onclick="cf_toggleModule(this)">
+      <div class="cf-module-num">2</div>
+      <div>
+        <div class="cf-module-title">橙分期业务流程</div>
+        <div class="cf-module-desc">信用分期下单 · 政企分期下单 · 小额分期下单</div>
+      </div>
+      <div class="cf-module-arrow">▼</div>
+    </div>
+    <div class="cf-module-body">
+
+      <div class="cf-level-1">
+        <div class="cf-level-1-title">2.1 信用分期下单流程</div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>步骤1：获取下单二维码 <span class="cf-tag cf-tag-blue">营业员操作</span></div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div>1、以<strong>客户经理身份</strong>登录翼支付APP</div></div>
+            <div class="cf-level-3-item"><div>2、下单界面中选择<strong>信用分期</strong></div></div>
+            <div class="cf-level-3-item"><div>3、选择商品类型填写订单信息</div></div>
+            <div class="cf-level-3-item"><div>4、生成订单二维码</div></div>
+          </div>
+        </div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>步骤2：用户扫码 <span class="cf-tag cf-tag-green">用户操作</span></div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div>5、点击扫一扫，扫描订单二维码</div></div>
+            <div class="cf-level-3-item"><div>6、确认订单信息</div></div>
+            <div class="cf-level-3-item"><div>7、已高级实名用户可直接确认授权；<strong>未高级实名用户需进行OCR认证</strong></div></div>
+          </div>
+        </div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>步骤3：用户支付订单（上） <span class="cf-tag cf-tag-green">用户操作</span></div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div>8、选择支付方式</div></div>
+            <div class="cf-level-3-item"><div>9、阅读温馨提示</div></div>
+            <div class="cf-level-3-item"><div>10、绑定还款卡</div></div>
+            <div class="cf-level-3-item"><div>11、人脸认证</div></div>
+            <div class="cf-level-3-item"><div>12、补充页面信息</div></div>
+          </div>
+        </div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>步骤3：用户支付订单（下） <span class="cf-tag cf-tag-green">用户操作</span></div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div>13、授信审核</div></div>
+            <div class="cf-level-3-item"><div>14、点击服务协议</div></div>
+            <div class="cf-level-3-item"><div>15、阅读至底部并满8秒</div></div>
+            <div class="cf-level-3-item"><div>16、手写签名确认</div></div>
+            <div class="cf-level-3-item"><div>17、输入支付密码</div></div>
+            <div class="cf-level-3-item"><div>18、完成支付</div></div>
+          </div>
+        </div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>步骤4：营业员竣工订单 <span class="cf-tag cf-tag-blue">营业员操作</span></div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div>营业员在翼支付APP中进入橙分期订单界面，找到对应订单提交竣工。</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cf-level-1">
+        <div class="cf-level-1-title">2.2 政企分期下单流程</div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>步骤1：营业员下单 <span class="cf-tag cf-tag-blue">营业员操作</span></div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div>1、营业员登陆翼支付-橙分期，进入<strong>政企分期</strong>下单页面</div></div>
+            <div class="cf-level-3-item"><div>2、配置商品套餐期数</div></div>
+            <div class="cf-level-3-item"><div>3、生成订单二维码</div></div>
+            <div class="cf-level-3-item"><div><strong>注意：</strong>营业员仅需配置一次，生成的二维码可对任何想要办理该套餐和商品的政企用户使用，<strong>不限使用次数</strong>。</div></div>
+          </div>
+        </div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>步骤2：用户扫码 <span class="cf-tag cf-tag-green">用户操作</span></div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div>1、打开翼支付扫一扫</div></div>
+            <div class="cf-level-3-item"><div>2、信息授权（用户授权使用身份信息进行政企白名单匹配）</div></div>
+            <div class="cf-level-3-item"><div>3、绑卡实名（绑定银行卡完成实名，保障权益金可抵扣还款）。OCR已完成翼支付实名→直接通过；OCR未完成→需完成实名认证。</div></div>
+            <div class="cf-level-3-item"><div>4、用户下单（订单信息自动载入，确认订单后支付）</div></div>
+          </div>
+        </div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>步骤3：营业员竣工 <span class="cf-tag cf-tag-blue">营业员操作</span></div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div>营业员打开翼支付客户端→选择应用区【橙分期】→选择【分期订单】中用户订单→在订单详情页面输入客户合约手机号并验证→【提交竣工】。</div></div>
+            <div class="cf-level-3-item"><div><strong>注意：</strong>如订单未竣工，当日24时订单自动取消。</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cf-level-1">
+        <div class="cf-level-1-title">2.3 小额分期下单流程</div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>步骤1：营业员下单 <span class="cf-tag cf-tag-blue">营业员操作</span></div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div>1、营业员登录，类型选择<strong>小额分期</strong></div></div>
+            <div class="cf-level-3-item"><div>2、录入商品、套餐、期数等信息</div></div>
+            <div class="cf-level-3-item"><div>3、生成订单二维码</div></div>
+          </div>
+        </div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>步骤2：用户扫码 <span class="cf-tag cf-tag-green">用户操作</span></div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div>1、用户打开翼支付，扫一扫</div></div>
+            <div class="cf-level-3-item"><div>2、自动带出订单信息，确认</div></div>
+            <div class="cf-level-3-item"><div>3、已实名的用户直接确认授权，未实名的需完成身份证OCR</div></div>
+          </div>
+        </div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>步骤3：用户授权及营业员竣工</div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div>4、选择实时授信，阅读征信授权书</div></div>
+            <div class="cf-level-3-item"><div>5、选择需要的办理模式，根据页面提示操作绑卡授权等，输入支付密码</div></div>
+            <div class="cf-level-3-item"><div>6、展示授权结果</div></div>
+            <div class="cf-level-3-item"><div><strong>自动竣工：</strong>部分模式支付完自动竣工；页面有竣工流程的，支付完为待取货状态，需营业员侧提交竣工。</div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 模块3: 常见报错 -->
+  <div class="cf-module cf-module-3" id="cfm3">
+    <div class="cf-module-header" onclick="cf_toggleModule(this)">
+      <div class="cf-module-num">3</div>
+      <div>
+        <div class="cf-module-title">橙分期常见报错</div>
+        <div class="cf-module-desc">下单报错 · 授信报错 · 人脸识别 · 预授信 · 政企 · 还款</div>
+      </div>
+      <div class="cf-module-arrow">▼</div>
+    </div>
+    <div class="cf-module-body">
+
+      <div class="cf-level-1">
+        <div class="cf-level-1-title">3.1 下单常见报错</div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>提示"学生不能办理橙分期订单" <span class="cf-tag cf-tag-red">常见</span></div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div><strong>原因：</strong>用户实名认证时，职业填写的是学生。</div></div>
+            <div class="cf-level-3-item"><div><strong>解决：</strong>在翼支付APP-我的-点击头像-实名认证-我的信息-点进去修改职业类别，修改之后再办理即可。</div></div>
+          </div>
+        </div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>提示"用户年龄不满22岁"</div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div><strong>解决：</strong>根据最新准入年龄办理相关业务，不同产品年龄限制不同。</div></div>
+          </div>
+        </div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>提示"您已存在未完成的订单，无法继续办理"</div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div><strong>解决：</strong>需用户登录翼支付→橙分期右下角→我的→我的订单→提交订单。</div></div>
+            <div class="cf-level-3-item"><div>我的订单内没有订单，用户身份证号码在消金平台查询待提交订单。</div></div>
+            <div class="cf-level-3-item"><div>如查询不到，需提供信息给在线商服于消金平台协查是否存在订单。</div></div>
+          </div>
+        </div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>提示"该类业务笔数已达上限"</div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div><strong>原因：</strong>该用户名下已经办理过橙分期订单，并且尚未结清。</div></div>
+            <div class="cf-level-3-item"><div><strong>解决：</strong>使用用户身份证号码在消金平台查询名下未结清订单，如查询不到，需提供信息给在线商服协查。</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cf-level-1">
+        <div class="cf-level-1-title">3.2 授信环节报错</div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>绑还款卡报错："抱歉，信息异常，绑卡失败"</div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div><strong>解决：</strong>需要深度认证→翼支付APP-我的-点击头像-身份信息-实名信息会有深度认证的提示，根据提示上传资料进行深度实名认证。</div></div>
+            <div class="cf-level-3-item"><div>可致电95106咨询或翼支付客户端咨询在线客服人工协助解决。</div></div>
+            <div class="cf-level-3-item"><div>确认非用户翼支付原因后，还出现相关报错，可联系用户发卡行。</div></div>
+          </div>
+        </div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>身份证认证异常 <span class="cf-tag cf-tag-red">常见</span></div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div>1、核实用户翼支付侧是否绑卡，未绑卡请绑卡</div></div>
+            <div class="cf-level-3-item"><div>2、核实用户翼支付星级是否是游客，如星级为游客，请绑卡升级到二星以上再办理订单</div></div>
+            <div class="cf-level-3-item"><div>3、核实此界面用户是否与翼支付实名信息一致</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cf-level-1">
+        <div class="cf-level-1-title">3.3 人脸识别报错</div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>人脸与身份证照片对比失败 / 人脸识别未通过</div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div><strong>人脸识别无法人工干预</strong>，请营业员按注意事项再操作一次：</div></div>
+            <div class="cf-level-3-item"><div>1）人脸识别照片、身份证正反面证件照必须<strong>清晰有效</strong></div></div>
+            <div class="cf-level-3-item"><div>2）不拍不相干物品</div></div>
+            <div class="cf-level-3-item"><div>3）人脸识别必须采集<strong>本人正面照</strong></div></div>
+            <div class="cf-level-3-item"><div>4）将人脸全部移入框内，界面中采集框变红后按照提示做动作</div></div>
+            <div class="cf-level-3-item"><div>5）动作自然，幅度不宜过大，动作不宜过快</div></div>
+            <div class="cf-level-3-item"><div>6）避免人脸识别时光线不足，避免拍摄身份证时证件照反光</div></div>
+            <div class="cf-level-3-item"><div><strong>注：人脸识别需与实名认证为同一人，且照片与真人差距小</strong></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cf-level-1">
+        <div class="cf-level-1-title">3.4 预授信业务报错</div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>花呗/余额宝/京东白条：无可用支付方式</div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div><strong>原因：</strong>被支付宝/京东风控拦截，无法选择该方式支付。</div></div>
+            <div class="cf-level-3-item"><div><strong>解决：</strong>引导用户办理其他类型订单。</div></div>
+          </div>
+        </div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>花呗/余额宝/京东白条：冻结次数已达上限</div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div><strong>原因：</strong>用户使用花呗/余额宝冻结次数已达3次，无法选择该方式办理。</div></div>
+            <div class="cf-level-3-item"><div><strong>解决：</strong>引导用户办理其他类型订单。减少订单取消或退货后重复下单的操作。</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cf-level-1">
+        <div class="cf-level-1-title">3.5 政企业务报错</div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>"您尚不满足政企客户准入要求，请联系管理员"</div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div><strong>原因：</strong>客户政企白名单信息匹配失败。</div></div>
+            <div class="cf-level-3-item"><div><strong>解决：</strong>先核实提交的白名单信息与翼支付实名信息是否一致，如不一致请联系客户经理或管理员添加或修改白名单信息。</div></div>
+          </div>
+        </div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>"未查询到政企分期企业或费率信息"</div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div><strong>原因：</strong>该用户没有被添加为白名单，或该企业被管控了。</div></div>
+            <div class="cf-level-3-item"><div><strong>解决：</strong>联系微信公众号"甜橙商户通"-咨询服务-在线服务，进行核实。</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cf-level-1">
+        <div class="cf-level-1-title">3.6 芝麻预授权业务报错</div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>"综合评估不通过"</div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div><strong>原因：</strong>用户名下办理信用分订单笔数已超过3笔或用户资质未通过支付宝审核。</div></div>
+            <div class="cf-level-3-item"><div><strong>解决：</strong>引导用户办理其他类型订单。</div></div>
+          </div>
+        </div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>"订单超时"</div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div><strong>原因：</strong>拉起支付宝收银台后，需在5分钟内支付完成，否则提示订单超时。</div></div>
+            <div class="cf-level-3-item"><div><strong>解决：</strong>超时后需联系营业员取消当前订单，并重新扫码下单。</div></div>
+          </div>
+        </div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>"业务类型不支持"</div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div><strong>原因：</strong>支付宝小程序当前仅支持办理花呗、余额宝、芝麻分、芝麻预授权，其他业务暂不支持。</div></div>
+            <div class="cf-level-3-item"><div>微信扫码亦不支持芝麻预授权，不会显示芝麻预授权入口。</div></div>
+            <div class="cf-level-3-item"><div><strong>解决：</strong>引导用户通过翼支付APP渠道办理。</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cf-level-1">
+        <div class="cf-level-1-title">3.7 甜橙分业务报错</div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>"甜橙分综合评估未达标"</div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div><strong>原因：</strong>用户资质未通过审核。</div></div>
+            <div class="cf-level-3-item"><div><strong>解决：</strong>引导用户办理其他类型订单，可以点击重新申请，回到订单授权页面，可选择通过芝麻分或小额实时授信继续办理。</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cf-level-1">
+        <div class="cf-level-1-title">3.8 还款环节报错</div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>"您有正在还款中的还款操作，请20分钟再试"</div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div><strong>原因：</strong>用户有一笔还款中的记录，需要等20分钟出来还款结果。用户操作还款没有成功就退出或返回导致。</div></div>
+            <div class="cf-level-3-item"><div><strong>解决：</strong>提醒用户在操作还款时不要轻易退出返回，或多次发起还款。</div></div>
+          </div>
+        </div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>如何提前结清？ <span class="cf-tag cf-tag-green">实用</span></div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div><strong>用户自己结清：</strong>翼支付→橙分期→服务→当月待还/解约还款（冻结的剩余金额原路退回）</div></div>
+            <div class="cf-level-3-item"><div><strong>加急结清：</strong>任意用户翼支付→橙分期→我的→加急结清（输入身份证或订单号）→帮用户还款</div></div>
+            <div class="cf-level-3-item"><div><strong>注意：</strong>订单逾期未还款情况下，若想进行加急结清，需先偿还已经逾期的账单，才能进行加急结清，否则加急结清页面不会显示结清金额。</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cf-level-1">
+        <div class="cf-level-1-title">3.9 营业员营销合规</div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>告知书上传 <span class="cf-tag cf-tag-red">合规要求</span></div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div>营业员办理橙分期订单时，需按要求上传告知书。未上传或格式不规范将触发风控。</div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 模块4: 热点问题答疑 -->
+  <div class="cf-module cf-module-4" id="cfm4">
+    <div class="cf-module-header" onclick="cf_toggleModule(this)">
+      <div class="cf-module-num">4</div>
+      <div>
+        <div class="cf-module-title">橙分期热点问题答疑</div>
+        <div class="cf-module-desc">取消订单 · 7天退订 · 代扣失败 · 换号 · 结算 · 配置工号 · 风控 · 补差金额 · 花呗先享还款 · 预授信解冻</div>
+      </div>
+      <div class="cf-module-arrow">▼</div>
+    </div>
+    <div class="cf-module-body">
+
+      <div class="cf-level-1">
+        <div class="cf-level-1-title">4.1 取消订单</div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>取消订单流程 <span class="cf-tag cf-tag-orange">重要</span></div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div><strong>情况1（待确认）：</strong>客户扫码后订单状态为"待确认"，营业员可点击"待确认"订单→"取消订单"。</div></div>
+            <div class="cf-level-3-item"><div><strong>情况2（待支付）：</strong>客户已确认但未支付。路径：用户翼支付APP→橙分期→我的→我的订单→"取消订单"。</div></div>
+            <div class="cf-level-3-item"><div><strong>情况3（已支付）：</strong>已付款但未竣工。路径：营业员翼支付APP→橙分期→我的→"待取货"订单→竣工界面→"取消订单"。</div></div>
+            <div class="cf-level-3-item"><div><strong>自动取消：</strong>以上3种情况，如不主动操作取消，次日0点后系统自动取消，可次日重新下单办理。</div></div>
+            <div class="cf-level-3-item"><div><strong>注意：</strong>已竣工订单无法取消，如符合退货规则请申请退货。解绑或注销翼支付账户前请确认橙分期订单状态是否已取消。</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cf-level-1">
+        <div class="cf-level-1-title">4.2 七天无理由退订</div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>7天无理由退订规则 <span class="cf-tag cf-tag-red">重要</span></div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div><strong>计算时间：</strong>从订单竣工次日开始到第7天结束。例：1号竣工的订单，最晚8号23:59:59可申请退订。</div></div>
+            <div class="cf-level-3-item"><div><strong>超过7天：</strong>不展示退订入口，不允许退订。</div></div>
+            <div class="cf-level-3-item"><div><strong>已结算/已还款订单：</strong>只要在7天内均可以发起退订申请。已还款项退还至翼支付可提现余额。</div></div>
+            <div class="cf-level-3-item"><div><strong>冻结额度退订：</strong>花呗、余额宝、京东等冻结额度的订单，当日退订次日凌晨解冻冻结金额。</div></div>
+            <div class="cf-level-3-item"><div><strong>退订渠道：</strong>①竣工短信链接→橙服务平台微信公众号 ②翼支付APP ③甜橙融租微信小程序 ④橙服务平台微信公众号</div></div>
+            <div class="cf-level-3-item"><div><strong>营业员提醒：</strong>用户申请7天退订时，营业员会收到退货提醒短信，可在翼支付APP→橙分期→退订订单中查看及审核。</div></div>
+            <div class="cf-level-3-item"><div><strong>48小时未处理：</strong>用户可致电95106申请客服介入协商，在满足合理诉求的情况下，客服会通过平台强制退订。</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cf-level-1">
+        <div class="cf-level-1-title">4.3 代扣失败原因</div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>"添益宝账户未开通"等代扣失败提示</div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div><strong>含义：</strong>月度代扣提示添益宝账户未开通/余额不足/银行卡余额不足等，均表示<strong>用户翼支付余额不足</strong>导致代扣失败。</div></div>
+            <div class="cf-level-3-item"><div><strong>返费正常时排查：</strong>①核实返费（红包金）是否被提前使用 ②核实橙分期还款号码是否为电信返费号码</div></div>
+            <div class="cf-level-3-item"><div><strong>未返费时排查：</strong>①如因用户欠费未返费→提醒用户缴纳话费后联系计费补返 ②如因翼支付账户解绑→找回解绑账户后补返 ③如因用户在黑名单→先扫脸解除</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cf-level-1">
+        <div class="cf-level-1-title">4.4 更换号码</div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>更换订单合约号</div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div>合约号填写错误会导致用户收不到扣款短信通知，可以联系地市管理员申请修改为正确的合约号。</div></div>
+          </div>
+        </div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>更换翼支付号码 <span class="cf-tag cf-tag-blue">操作指引</span></div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div>1、橙分期订单竣工后，使用新号码登录翼支付→橙分期，点击我的</div></div>
+            <div class="cf-level-3-item"><div>2、选择"我要换号"，订单列表展示可换号订单</div></div>
+            <div class="cf-level-3-item"><div>3、设置橙分期还款银行卡</div></div>
+            <div class="cf-level-3-item"><div>4、输入短信验证码，点击确认</div></div>
+            <div class="cf-level-3-item"><div>5、更换成功，点击"完成"</div></div>
+            <div class="cf-level-3-item"><div><strong>要求：</strong>新号码的翼支付账户实名必须为授信人本人，且需实名认证+绑卡，账户星级提升至二星级及以上。</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cf-level-1">
+        <div class="cf-level-1-title">4.5 结算规则</div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>结算方式</div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div><strong>个体商户：</strong>结算至代理商翼支付账户（如开通橙意宝则结算至钱到啦账户）</div></div>
+            <div class="cf-level-3-item"><div><strong>企业账户：</strong>结算至企业对公账户（如开通橙意宝则需至钱到啦提现至银行卡）</div></div>
+            <div class="cf-level-3-item"><div><strong>换绑结算账户：</strong>个体商户→翼支付端-我的-头像-手机号-更换手机号；企业商户→门户网站变更</div></div>
+            <div class="cf-level-3-item"><div><strong>到账时间：</strong>一般提交结算后T+2结算款到账</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cf-level-1">
+        <div class="cf-level-1-title">4.6 配置工号</div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>自主配置流程</div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div><strong>个体商户：</strong>翼支付APP→我要加盟→选择橙分期→人员管理→输入人员信息，选择对应角色工号完成配置。</div></div>
+            <div class="cf-level-3-item"><div><strong>企业商户：</strong>商家服务→商户增值服务→消金→人员管理→输入人员信息，选择对应角色工号（先配地市再配置人员）。</div></div>
+            <div class="cf-level-3-item"><div><strong>无法自主配置：</strong>请联系当地地市管理员进行配置。信息修改：人员管理→详情→修改信息。</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cf-level-1">
+        <div class="cf-level-1-title">4.7 工号状态</div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>营业员工号状态</div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div><strong>正常状态：</strong>激活→已审核→未归档</div></div>
+            <div class="cf-level-3-item"><div><strong>未激活：</strong>登录翼支付APP→橙分期→定位信息→实名认证→扫身份证→人脸识别→确认信息→等待激活结果（审核3-5分钟）</div></div>
+            <div class="cf-level-3-item"><div><strong>未审核：</strong>需等待审核</div></div>
+            <div class="cf-level-3-item"><div><strong>已归档：</strong>需重新配置工号</div></div>
+          </div>
+        </div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>结算员工号状态</div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div><strong>正常：</strong>启用</div></div>
+            <div class="cf-level-3-item"><div><strong>冻结：</strong>输入结算员账号密码→验证码→登录→解除限制，或联系地市管理员在消金平台解冻</div></div>
+            <div class="cf-level-3-item"><div><strong>停用：</strong>地市管理员可在消金平台删除并重新添加，或通过自主配置流程配置工号</div></div>
+            <div class="cf-level-3-item"><div><strong>密码错误：</strong>消金登录界面点击找回密码，或联系在线商服重置为初始密码</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cf-level-1">
+        <div class="cf-level-1-title">4.8 风控规则 <span class="cf-tag cf-tag-red">重要</span></div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>风控对象与原因</div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div><strong>风控对象：</strong>①营业员→办单时显示风控 ②代理商→名下营业员办单/结算时提示风控</div></div>
+            <div class="cf-level-3-item"><div><strong>a.业务违规：</strong>营业员未上传告知书/格式不规范。每周二统计一次，核实违规→工号风控3天→3天后自动复开。违规清单同步到地市。</div></div>
+            <div class="cf-level-3-item"><div><strong>b.高逾期：</strong>营业员或代理商名下订单逾期次数过多。需联系地市管理员获取逾期清单→联系用户还款→将逾期率降到4%以下→系统第二天晚上自动复开。</div></div>
+            <div class="cf-level-3-item"><div><strong>c.欺诈套现/违规牟利：</strong>结清风险订单（高风险地区需缴纳违约金）→降低逾期率到4%→填写复开申请表→签署整改承诺函（营业员不用写）→发到风控公邮(xfjr-risk@bestpay.com.cn)申请复开→风控邮件回复</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cf-level-1">
+        <div class="cf-level-1-title">4.9 补差金额</div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>什么是"补差金额"？</div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div><strong>含义：</strong>"补差金额"指客户订单金额超过授信额度，因此需要补足超额度的这部分金额。</div></div>
+            <div class="cf-level-3-item"><div><strong>结算方式：</strong>由营业员告知客户现场支付现金或转账给营业员，不纳入结算金额。</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cf-level-1">
+        <div class="cf-level-1-title">4.10 花呗先享还款规则</div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>花呗先享还款说明 <span class="cf-tag cf-tag-orange">2021.12.6后订单</span></div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div><strong>还款规则：</strong>电信返的红包先还翼支付账单。翼支付侧还款成功后，会给用户下发花呗还款券到支付宝卡包。</div></div>
+            <div class="cf-level-3-item"><div><strong>还款券制作时间：</strong>1-10日还款成功→13日制作；11-25日还款成功→27日制作。</div></div>
+            <div class="cf-level-3-item"><div><strong>26日转支付：</strong>无论橙分期侧是否代扣成功，用户冻结的花呗额度都将在每月26日逐月转为花呗消费记录，次月生成花呗账单，可用还款券抵扣。</div></div>
+            <div class="cf-level-3-item"><div><strong>查询还款券：</strong>①未使用→支付宝-卡包-优惠券 ②已使用→支付宝-卡包-优惠券-历史-历史记录</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cf-level-1">
+        <div class="cf-level-1-title">4.11 预授信业务解冻时间</div>
+        <div class="cf-level-2">
+          <div class="cf-level-2-title" onclick="cf_toggleLevel2(this)"><span class="cf-expand-icon">▼</span>各类预授信解冻规则</div>
+          <div class="cf-level-3">
+            <div class="cf-level-3-item"><div><strong>花呗先享：</strong>花呗侧还款成功即时解冻；提前还款部分一般当日解冻，最迟不超过T+2</div></div>
+            <div class="cf-level-3-item"><div><strong>余额宝：</strong>一般当日解冻，最迟不超过T+2</div></div>
+            <div class="cf-level-3-item"><div><strong>京东预授权：</strong>一般当日解冻，最迟不超过T+2</div></div>
+            <div class="cf-level-3-item"><div><strong>储蓄卡质押：</strong>22年12月1日后办理的，订单结清后一次性解冻（退回至用户绑定银行卡）。查看冻结金额路径：翼支付→橙分期→我的→我的订单→我的保证金</div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  </div><!-- /cfModulesContainer -->
+
+  <button class="cf-back-top" id="cfBackToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+</div><!-- /cf-main-content -->
+</div><!-- /page-cf -->
+
 
 <!-- 模态框 -->
 <div class="modal" id="ml"><div class="mbox" id="mbox"></div></div>
@@ -2429,6 +3158,7 @@ const ZONES = [
   { id:'marketing', label:'营销数据', pages:['overview','daily','monthly','yoy_channel','yoy_zq'] },
   { id:'stock', label:'存量质态', pages:['stock'] },
   { id:'video', label:'视联网专区', pages:['video'] },
+  { id:'cf', label:'橙分期专区', pages:['cf'] },
 ];
 
 let currentZone = 'marketing';
@@ -3117,6 +3847,182 @@ window.vw_scrollToModule = scrollToModule;
 window.vw_doSearch = doSearch;
 window.vw_quickSearch = quickSearch;
 })();
+
+
+/* 橙分期专区 - 独立模块 */
+(function(){
+  // DOM引用
+  var searchInput = document.getElementById('cfSearchInput');
+  var searchStats = document.getElementById('cfSearchStats');
+  var noResult = document.getElementById('cfNoResult');
+  var modulesContainer = document.getElementById('cfModulesContainer');
+  var originalHTML = '';
+
+  // 折叠/展开模块
+  function toggleModule(headerEl) {
+    headerEl.parentElement.classList.toggle('collapsed');
+  }
+
+  // 折叠/展开二级层级
+  function toggleLevel2(titleEl) {
+    var level3 = titleEl.nextElementSibling;
+    var icon = titleEl.querySelector('.cf-expand-icon');
+    if (level3) {
+      var isHidden = level3.style.display === 'none';
+      level3.style.display = isHidden ? '' : 'none';
+      if (icon) icon.classList.toggle('collapsed', !isHidden);
+    }
+  }
+
+  // 点击流程导航滚动到模块
+  function scrollToModule(id) {
+    var el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // 高亮效果
+      el.style.boxShadow = '0 0 0 3px var(--cf-primary)';
+      setTimeout(function(){ el.style.boxShadow = ''; }, 1500);
+    }
+    // 更新流程导航高亮
+    document.querySelectorAll('#cfFlowNav .cf-flow-item').forEach(function(item) {
+      item.classList.toggle('active', item.dataset.target === id);
+    });
+  }
+
+  // 核心搜索
+  function doSearch() {
+    var keyword = (searchInput.value || '').trim();
+    if (!keyword) {
+      restoreOriginal();
+      searchStats.textContent = '';
+      noResult.style.display = 'none';
+      return;
+    }
+
+    // 先恢复原始内容
+    restoreOriginal();
+
+    var modules = modulesContainer.querySelectorAll('.cf-module');
+    var totalMatch = 0;
+    var visibleModules = 0;
+
+    modules.forEach(function(mod) {
+      var text = mod.textContent.toLowerCase();
+      var idx = text.indexOf(keyword.toLowerCase());
+      if (idx === -1) {
+        mod.classList.add('cf-hidden-by-search');
+      } else {
+        visibleModules++;
+        // 统计匹配次数
+        var regex = new RegExp(keyword.replace(/[.*+?^${}()|[\]\]/g, '\$&'), 'gi');
+        var matches = text.match(regex);
+        totalMatch += matches ? matches.length : 0;
+        // 展开模块
+        mod.classList.remove('collapsed');
+        // 展开所有二级
+        mod.querySelectorAll('.cf-level-3').forEach(function(l3){ l3.style.display = ''; });
+        mod.querySelectorAll('.cf-expand-icon').forEach(function(ic){ ic.classList.remove('collapsed'); });
+        // 高亮关键词
+        highlightText(mod, keyword);
+      }
+    });
+
+    noResult.style.display = visibleModules === 0 ? '' : 'none';
+    searchStats.textContent = '找到 ' + totalMatch + ' 处匹配，共 ' + visibleModules + ' 个模块';
+  }
+
+  // 高亮关键词
+  function highlightText(element, keyword) {
+    var walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null, false);
+    var nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(function(node) {
+      if (node.parentElement && node.parentElement.classList.contains('cf-highlight')) return;
+      var text = node.textContent;
+      var regex = new RegExp('(' + keyword.replace(/[.*+?^${}()|[\]\]/g, '\$&') + ')', 'gi');
+      if (regex.test(text)) {
+        var span = document.createElement('span');
+        span.innerHTML = text.replace(regex, '<span class="cf-highlight">$1</span>');
+        node.parentNode.replaceChild(span, node);
+      }
+    });
+  }
+
+  // 恢复原始HTML
+  function restoreOriginal() {
+    if (originalHTML) {
+      modulesContainer.innerHTML = originalHTML;
+    }
+    // 重新缓存
+    originalHTML = modulesContainer.innerHTML;
+  }
+
+  // 快捷搜索
+  function quickSearch(keyword) {
+    searchInput.value = keyword;
+    doSearch();
+  }
+
+  // 渲染流程导航
+  function renderFlowNav() {
+    var nav = document.getElementById('cfFlowNav');
+    var modules = modulesContainer.querySelectorAll('.cf-module');
+    var html = '';
+    modules.forEach(function(mod, i) {
+      if (i > 0) html += '<span class="cf-flow-arrow">→</span>';
+      var title = mod.querySelector('.cf-module-title').textContent;
+      html += '<span class="cf-flow-item" data-target="' + mod.id + '" onclick="cf_scrollToModule('' + mod.id + '')">' + title + '</span>';
+    });
+    nav.innerHTML = html;
+  }
+
+  // 事件监听
+  if (searchInput) {
+    searchInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') doSearch();
+    });
+    var searchTimer;
+    searchInput.addEventListener('input', function() {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(doSearch, 300);
+    });
+  }
+
+  // 回到顶部按钮
+  var backToTop = document.getElementById('cfBackToTop');
+  if (backToTop) {
+    window.addEventListener('scroll', function() {
+      backToTop.style.display = window.scrollY > 400 ? 'flex' : 'none';
+    });
+  }
+
+  // 流程导航滚动高亮
+  window.addEventListener('scroll', function() {
+    var modules = modulesContainer.querySelectorAll('.cf-module');
+    var current = '';
+    modules.forEach(function(mod) {
+      var rect = mod.getBoundingClientRect();
+      if (rect.top < 200) current = mod.id;
+    });
+    if (current) {
+      document.querySelectorAll('#cfFlowNav .cf-flow-item').forEach(function(item) {
+        item.classList.toggle('active', item.dataset.target === current);
+      });
+    }
+  });
+
+  // 初始化
+  originalHTML = modulesContainer.innerHTML;
+  renderFlowNav();
+
+  // 暴露全局函数
+  window.cf_toggleModule = toggleModule;
+  window.cf_toggleLevel2 = toggleLevel2;
+  window.cf_scrollToModule = scrollToModule;
+  window.cf_doSearch = doSearch;
+  window.cf_quickSearch = quickSearch;
+})();
+
 
 function init(){
   initTheme();
