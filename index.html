@@ -3095,7 +3095,7 @@ function buildActiveDrillTable(title,data,nameLabel,cn,drillLevel){
     var drAttr=isL5?'':' data-dr="2" data-cn="'+cn+'" data-fn="'+d.name+'"';
     html+='<tr><td class="'+tdCls+'"'+drAttr+' style="text-align:left;font-weight:700;color:var(--b)">'+d.name+'</td>';
     A_SUB.forEach(function(s){html+='<td class="'+s.db+'">'+fmtNum(d.cells[s.k])+'</td>';});
-    html+='<td class="'+s.db+'">'+d.cells.加载率.toFixed(1)+'%</td></tr>';
+    html+='<td class="db5">'+d.cells.加载率.toFixed(1)+'%</td></tr>';
   });
   var sRate=sums.宽带合计>0?sums.FTTR同装/sums.宽带合计*100:0;
   html+='<tr class="drt-sum"><td style="text-align:left;font-weight:700">合计</td>';
