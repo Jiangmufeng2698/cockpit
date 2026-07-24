@@ -88,16 +88,20 @@ body {
 }
 .scope-item:hover { background:var(--bg-hover); color:var(--b); }
 .scope-item.active { color:var(--b); font-weight:700; background:var(--accent-blue-light); }
+/* 一级模块导航栏 */
 .nav-tabs {
-  display:flex; align-items:center; gap:2px; margin:0 auto; padding:3px;
-  background: var(--bg-hover); border-radius: var(--radius-sm);
+  position: fixed; top:52px; left:0; right:0; z-index:95;
+  background: var(--bg-nav); backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-color);
+  display:flex; align-items:center; justify-content:center; padding:0 16px;
+  height:44px; gap:4px;
 }
 .nav-tab {
-  padding:5px 12px; border:none; background:transparent; color:var(--text-secondary);
-  font-size:13px; font-weight:500; cursor:pointer; border-radius:var(--radius-sm);
+  padding:6px 18px; border:none; background:transparent; color:var(--text-secondary);
+  font-size:14px; font-weight:500; cursor:pointer; border-radius:var(--radius-sm);
   transition: all 0.2s; white-space:nowrap;
 }
-.nav-tab:hover { color:var(--text-primary); background:var(--bg-card); }
+.nav-tab:hover { color:var(--text-primary); background:var(--bg-hover); }
 .nav-tab.active {
   background: var(--bg-nav-active); color:var(--text-on-accent);
   box-shadow: 0 2px 8px rgba(37,99,235,0.3);
@@ -110,7 +114,7 @@ body {
 
 /* 二级导航栏 */
 .sub-nav {
-  position: fixed; top:52px; left:0; right:0; z-index:90;
+  position: fixed; top:96px; left:0; right:0; z-index:90;
   background: var(--bg-card); border-bottom:1px solid var(--border-color);
   display:flex; align-items:center; padding:0 16px; height:40px; gap:2px;
   overflow-x:auto; overflow-y:hidden; -webkit-overflow-scrolling:touch;
@@ -140,8 +144,8 @@ body {
 .nav-date { font-size:13px; color:var(--text-secondary); font-weight:500; white-space:nowrap; }
 
 /* 主内容 */
-.main-content { margin-top:92px; padding:16px; min-height: calc(100vh - 92px); }
-.main-content.no-subnav { margin-top:52px; min-height: calc(100vh - 52px); }
+.main-content { margin-top:136px; padding:16px; min-height: calc(100vh - 136px); }
+.main-content.no-subnav { margin-top:96px; min-height: calc(100vh - 96px); }
 .page { display:none; animation: fadeIn 0.4s ease; }
 .page.active { display:block; }
 @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
@@ -419,8 +423,8 @@ body {
   .nav-tabs {
     overflow-x: auto; overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
-    scrollbar-width: none; /* Firefox */
-    flex: 1; min-width: 0;
+    scrollbar-width: none;
+    justify-content: flex-start;
   }
   .nav-tabs::-webkit-scrollbar { display: none; }
   .sub-nav { padding:0 10px; }
@@ -1127,12 +1131,14 @@ body {
     </button>
     <div class="scope-dropdown" id="scopeDropdown"></div>
   </div>
-  <div class="nav-tabs" id="navTabs"></div>
   <div class="nav-right">
     <button class="theme-toggle" id="themeToggle" title="切换主题"></button>
     <span class="nav-date" id="navDate"></span>
   </div>
 </nav>
+
+<!-- 一级模块导航栏 -->
+<nav class="nav-tabs" id="navTabs"></nav>
 
 <!-- 二级导航栏 -->
 <nav class="sub-nav" id="subNav"></nav>
