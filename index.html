@@ -1118,11 +1118,6 @@ body {
 
 <nav class="top-nav">
   <div class="nav-brand">
-    <svg viewBox="0 0 28 28" fill="none">
-      <rect x="2" y="2" width="24" height="24" rx="6" fill="currentColor" opacity="0.15"/>
-      <path d="M8 18V10l6 4-6 4z" fill="currentColor"/>
-      <path d="M16 18V10l6 4-6 4z" fill="currentColor" opacity="0.5"/>
-    </svg>
     <span>营销驾驶舱</span>
   </div>
   <div class="scope-selector">
@@ -3351,7 +3346,7 @@ function enterApp() {
   var nav = document.querySelector('.top-nav');
   var userBar = document.createElement('div');
   userBar.className = 'login-user-bar';
-  userBar.innerHTML = '<span class="user-name">' + currentUser.name + '</span><span class="user-scope">' + scopeText + '</span><button class="login-logout-btn" onclick="handleLogout()">退出</button>';
+  userBar.innerHTML = '<span class="user-name">' + currentUser.name + '</span><button class="login-logout-btn" onclick="handleLogout()">退出</button>';
   nav.querySelector('.nav-right').insertBefore(userBar, nav.querySelector('.nav-right').firstChild);
 
   init();
