@@ -1297,13 +1297,13 @@ body {
     <div class="bulletin" id="yoyZqBulletin"></div>
   </div>
 
-  <!-- 存量质态 -->
-  <div class="page" id="page-stock">
-    <div class="empty-zone">
-      <div class="ez-icon">&#x1F4CA;</div>
-      <div class="ez-title">存量质态</div>
-      <div class="ez-hint">模块建设中，敬请期待</div>
+  <!-- 存量质态 - 两网活跃 -->
+  <div class="page" id="page-stock_active">
+    <div class="report-header">
+      <div class="report-title" id="activeTitle">两网活跃用户分析</div>
+      <div class="report-meta"><span class="dot"></span> 2026年6月数据</div>
     </div>
+    <div class="tw" id="activeTableWrap"></div>
   </div>
 
   <!-- 视联网专区 -->
@@ -2939,8 +2939,196 @@ document.addEventListener('click', function(e) {
   else if (dr==='2' && _drSrc==='yoy') drill2yoy(cn, fn);
   else if (dr==='1' && _drSrc==='yoy_zq') drill1yoyZq(cn);
   else if (dr==='2' && _drSrc==='yoy_zq') drill2yoyZq(cn, fn);
+  else if (dr==='1' && _drSrc==='active') drill1active(cn);
+  else if (dr==='2' && _drSrc==='active') drill2active(cn, fn);
 });
 document.getElementById('ml').addEventListener('click', function(e) { if (e.target === this) cM(); });
+
+/* ================================================================
+ *  两网活跃 — 存量质态
+ * ================================================================ */
+function fmtNum(n){return typeof n==='number'?n.toLocaleString():n;}
+var A_MHB='hb1',A_MHBS='hb1s',A_FHB='hb2',A_FHBS='hb2s',A_THB='hb5',A_THBS='hb5s';
+var A_SUB=[
+  {l:'单C主卡',k:'单C主卡',hs:A_MHBS,db:'db1'},
+  {l:'单C副卡',k:'单C副卡',hs:A_MHBS,db:'db1'},
+  {l:'融合主卡',k:'融合主卡',hs:A_MHBS,db:'db1'},
+  {l:'融合副卡',k:'融合副卡',hs:A_MHBS,db:'db1'},
+  {l:'合计',k:'移动合计',hs:A_MHBS,db:'db1'},
+  {l:'单宽活跃',k:'单宽',hs:A_FHBS,db:'db2'},
+  {l:'融合活跃',k:'融合',hs:A_FHBS,db:'db2'},
+  {l:'合计',k:'宽带合计',hs:A_FHBS,db:'db2'},
+  {l:'FTTR同装',k:'FTTR同装',hs:A_THBS,db:'db5'}
+];
+function activeHeaderHTML(nameLabel){
+  var h='<thead><tr class="rh1">';
+  h+='<th style="text-align:left;background:var(--bl);color:var(--bd);position:sticky;left:0;z-index:15">'+nameLabel+'</th>';
+  h+='<th class="'+A_MHB+'" colspan="5">移动活跃用户数</th>';
+  h+='<th class="'+A_FHB+'" colspan="3">宽带活跃用户数</th>';
+  h+='<th class="'+A_THB+'" colspan="2">FTTR</th>';
+  h+='</tr><tr class="rh2">';
+  h+='<th style="text-align:left;background:var(--bl);color:var(--bd);position:sticky;left:0;z-index:15">'+nameLabel+'</th>';
+  A_SUB.forEach(function(s){h+='<th class="'+s.hs+'">'+s.l+'</th>';});
+  h+='<th class="'+A_THBS+'">加载率</th>';
+  h+='</tr></thead>';
+  return h;
+}
+// 获取全市汇总（区县级）
+function getActiveData(){
+  var result=[],mobSum=DATA.activeSummary?DATA.activeSummary.mobile:{},fixSum=DATA.activeSummary?DATA.activeSummary.fixed:{};
+  for(var i=0;i<SCOPE_LIST.length;i++){
+    var dist=SCOPE_LIST[i];if(dist==='全市')continue;
+    var m=mobSum[dist]||{},f=fixSum[dist]||{};
+    if(!mobSum[dist]&&!fixSum[dist])continue;
+    var bbsl=f.宽带活跃||0,fttr=f.FTTR同装||0;
+    result.push({district:dist,cells:{单C主卡:m.单C主卡||0,单C副卡:m.单C副卡||0,融合主卡:m.融合主卡||0,融合副卡:m.融合副卡||0,移动合计:m.移动活跃||0,单宽:f.单宽活跃||0,融合:f.融合活跃||0,宽带合计:bbsl,FTTR同装:fttr,加载率:bbsl>0?fttr/bbsl*100:0}});
+  }
+  result.sort(function(a,b){if(a.district==='政企')return 1;if(b.district==='政企')return -1;return b.cells.移动合计-a.cells.移动合计;});
+  var am=mobSum['全市']||{},af=fixSum['全市']||{},ab=af.宽带活跃||0;
+  result.push({district:'全市',cells:{单C主卡:am.单C主卡||0,单C副卡:am.单C副卡||0,融合主卡:am.融合主卡||0,融合副卡:am.融合副卡||0,移动合计:am.移动活跃||0,单宽:af.单宽活跃||0,融合:af.融合活跃||0,宽带合计:ab,FTTR同装:af.FTTR同装||0,加载率:ab>0?(af.FTTR同装||0)/ab*100:0}});
+  return result;
+}
+// 获取四级数据
+function getActiveLevel4(dist){
+  var result=[],roster=DATA.activeRoster&&DATA.activeRoster[dist]?DATA.activeRoster[dist]:{},mob=DATA.activeMobile&&DATA.activeMobile[dist]?DATA.activeMobile[dist]:{},fix=DATA.activeFixed&&DATA.activeFixed[dist]?DATA.activeFixed[dist]:{};
+  for(var l4 in roster){
+    var l5List=Array.isArray(roster[l4])?roster[l4]:Object.keys(roster[l4]||{});
+    var c={单C主卡:0,单C副卡:0,融合主卡:0,融合副卡:0,移动合计:0,单宽:0,融合:0,宽带合计:0,FTTR同装:0,加载率:0};
+    for(var i=0;i<l5List.length;i++){
+      var l5=l5List[i];var m=mob[l4]&&mob[l4][l5]?mob[l4][l5]:{};var f=fix[l4]&&fix[l4][l5]?fix[l4][l5]:{};
+      c.单C主卡+=m.单C主卡||0;c.单C副卡+=m.单C副卡||0;c.融合主卡+=m.融合主卡||0;c.融合副卡+=m.融合副卡||0;
+      c.移动合计+=m.移动活跃||0;c.单宽+=f.单宽活跃||0;c.融合+=f.融合活跃||0;
+      c.宽带合计+=f.宽带活跃||0;c.FTTR同装+=f.FTTR同装||0;
+    }
+    c.加载率=c.宽带合计>0?c.FTTR同装/c.宽带合计*100:0;
+    result.push({name:l4,cells:c});
+  }
+  result.sort(function(a,b){return b.cells.移动合计-a.cells.移动合计;});
+  return result;
+}
+// 获取五级数据
+function getActiveLevel5(dist,l4){
+  var result=[],roster=DATA.activeRoster&&DATA.activeRoster[dist]&&DATA.activeRoster[dist][l4]?DATA.activeRoster[dist][l4]:[];
+  var l5List=Array.isArray(roster)?roster:Object.keys(roster);
+  var mobL5=DATA.activeMobile&&DATA.activeMobile[dist]&&DATA.activeMobile[dist][l4]?DATA.activeMobile[dist][l4]:{};
+  var fixL5=DATA.activeFixed&&DATA.activeFixed[dist]&&DATA.activeFixed[dist][l4]?DATA.activeFixed[dist][l4]:{};
+  for(var i=0;i<l5List.length;i++){
+    var l5=l5List[i];var m=mobL5[l5]||{};var f=fixL5[l5]||{};var bbsl=f.宽带活跃||0;
+    result.push({name:l5,cells:{单C主卡:m.单C主卡||0,单C副卡:m.单C副卡||0,融合主卡:m.融合主卡||0,融合副卡:m.融合副卡||0,移动合计:m.移动活跃||0,单宽:f.单宽活跃||0,融合:f.融合活跃||0,宽带合计:bbsl,FTTR同装:f.FTTR同装||0,加载率:bbsl>0?(f.FTTR同装||0)/bbsl*100:0}});
+  }
+  result.sort(function(a,b){return b.cells.移动合计-a.cells.移动合计;});
+  return result;
+}
+// 计算加载率排名(前三红/后三绿，排除全市和政企)
+function calcActiveRank(data){
+  var valid=data.filter(function(r){return r.district!=='全市'&&r.district!=='政企';});
+  var sorted=valid.slice().sort(function(a,b){return b.cells.加载率-a.cells.加载率;});
+  var top3=new Set(),bottom3=new Set();
+  if(sorted.length>=6){
+    var tc=sorted[2].cells.加载率;sorted.forEach(function(r){if(r.cells.加载率>=tc)top3.add(r.district);});
+    var bc=sorted[sorted.length-3].cells.加载率;sorted.forEach(function(r){if(r.cells.加载率<=bc)bottom3.add(r.district);});
+  }else if(sorted.length>=3){
+    var tc2=sorted[0].cells.加载率;sorted.forEach(function(r){if(r.cells.加载率>=tc2)top3.add(r.district);});
+    var bc2=sorted[sorted.length-1].cells.加载率;
+    if(bc2<tc2)sorted.forEach(function(r){if(r.cells.加载率<=bc2)bottom3.add(r.district);});
+  }
+  return{top3:top3,bottom3:bottom3};
+}
+// 渲染主表（全市模式）
+function renderActiveMainTable(wrap,data){
+  var rank=calcActiveRank(data);
+  var html='<table style="width:100%;border-collapse:separate;border-spacing:0;font-size:12px;border-radius:6px">';
+  html+=activeHeaderHTML('经营单位');
+  html+='<tbody>';
+  data.forEach(function(row){
+    var isExcluded=row.district==='全市';
+    var tdCls=isExcluded?'no-drill':'cl';
+    var drillAttr=isExcluded?'':' data-dr="1" data-cn="'+row.district+'" data-src="active"';
+    html+='<tr><td class="'+tdCls+'"'+drillAttr+'>'+row.district+'</td>';
+    A_SUB.forEach(function(s){html+='<td class="'+s.db+'">'+fmtNum(row.cells[s.k])+'</td>';});
+    if(isExcluded){
+      html+='<td class="db5"><span class="rate-cell">'+row.cells.加载率.toFixed(1)+'%</span></td>';
+    }else{
+      var isT=rank.top3.has(row.district),isB=rank.bottom3.has(row.district);
+      var rCls=isT?'high':isB?'low':'';
+      html+='<td class="db5"><span class="rate-cell '+rCls+'">'+row.cells.加载率.toFixed(1)+'%</span></td>';
+    }
+    html+='</tr>';
+  });
+  html+='</tbody></table>';
+  wrap.innerHTML=html;
+}
+// 四级内联表（区县scope模式）
+function renderActiveLevel4Inline(wrap,data,cn){
+  var html='<table class="tw-table"><thead><tr class="rh1"><th style="text-align:left;background:var(--bl);color:var(--bd);position:sticky;left:0;z-index:15">四级承包体</th>';
+  html+='<th class="'+A_MHB+'" colspan="5">移动活跃用户数</th><th class="'+A_FHB+'" colspan="3">宽带活跃用户数</th><th class="'+A_THB+'" colspan="2">FTTR</th>';
+  html+='</tr><tr class="rh2"><th style="text-align:left;background:var(--bl);color:var(--bd);position:sticky;left:0;z-index:15">四级承包体</th>';
+  A_SUB.forEach(function(s){html+='<th class="'+s.hs+'">'+s.l+'</th>';});
+  html+='<th class="'+A_THBS+'">加载率</th></tr></thead><tbody>';
+  var sums={单C主卡:0,单C副卡:0,融合主卡:0,融合副卡:0,移动合计:0,单宽:0,融合:0,宽带合计:0,FTTR同装:0};
+  data.forEach(function(d){A_SUB.forEach(function(s){sums[s.k]+=d.cells[s.k];});});
+  data.forEach(function(d){
+    html+='<tr><td class="cl" data-dr="2" data-cn="'+cn+'" data-fn="'+d.name+'" data-src="active" style="text-align:left;font-weight:700;color:var(--b)">'+d.name+'</td>';
+    A_SUB.forEach(function(s){html+='<td class="'+s.db+'">'+fmtNum(d.cells[s.k])+'</td>';});
+    html+='<td class="db5">'+d.cells.加载率.toFixed(1)+'%</td></tr>';
+  });
+  var sRate=sums.宽带合计>0?sums.FTTR同装/sums.宽带合计*100:0;
+  html+='<tr class="drt-sum"><td style="text-align:left;font-weight:700">合计</td>';
+  A_SUB.forEach(function(s){html+='<td class="'+s.db+'">'+fmtNum(sums[s.k])+'</td>';});
+  html+='<td class="db5">'+sRate.toFixed(1)+'%</td></tr></tbody></table>';
+  wrap.innerHTML=html;
+}
+// 模态框下钻表
+function buildActiveDrillTable(title,data,nameLabel,cn,drillLevel){
+  var html='<div class="mbox-head"><h3>'+title+'</h3></div>';
+  html+='<div class="mbox-body"><div style="overflow:auto;max-height:60vh"><table class="drt">';
+  html+='<thead><tr class="rh1"><th style="text-align:left;background:var(--bl);color:var(--bd);position:sticky;left:0;z-index:15">'+nameLabel+'</th>';
+  html+='<th class="'+A_MHB+'" colspan="5">移动活跃用户数</th><th class="'+A_FHB+'" colspan="3">宽带活跃用户数</th><th class="'+A_THB+'" colspan="2">FTTR</th>';
+  html+='</tr><tr class="rh2"><th style="text-align:left;background:var(--bl);color:var(--bd);position:sticky;left:0;z-index:15">'+nameLabel+'</th>';
+  A_SUB.forEach(function(s){html+='<th class="'+s.hs+'">'+s.l+'</th>';});
+  html+='<th class="'+A_THBS+'">加载率</th></tr></thead><tbody>';
+  var sums={单C主卡:0,单C副卡:0,融合主卡:0,融合副卡:0,移动合计:0,单宽:0,融合:0,宽带合计:0,FTTR同装:0};
+  data.forEach(function(d){A_SUB.forEach(function(s){sums[s.k]+=d.cells[s.k];});});
+  data.forEach(function(d){
+    var isL5=drillLevel===5;
+    var tdCls=isL5?'drt-fn':'cl';
+    var drAttr=isL5?'':' data-dr="2" data-cn="'+cn+'" data-fn="'+d.name+'"';
+    html+='<tr><td class="'+tdCls+'"'+drAttr+' style="text-align:left;font-weight:700;color:var(--b)">'+d.name+'</td>';
+    A_SUB.forEach(function(s){html+='<td class="'+s.db+'">'+fmtNum(d.cells[s.k])+'</td>';});
+    html+='<td class="'+s.db+'">'+d.cells.加载率.toFixed(1)+'%</td></tr>';
+  });
+  var sRate=sums.宽带合计>0?sums.FTTR同装/sums.宽带合计*100:0;
+  html+='<tr class="drt-sum"><td style="text-align:left;font-weight:700">合计</td>';
+  A_SUB.forEach(function(s){html+='<td class="'+s.db+'">'+fmtNum(sums[s.k])+'</td>';});
+  html+='<td class="db5">'+sRate.toFixed(1)+'%</td></tr></tbody></table></div></div>';
+  html+='<div class="mbox-foot">';
+  if(drillLevel===5)html+='<span class="bk" onclick="drill1active(\''+cn+'\')">← 返回四级</span> ';
+  html+='<button class="bcbtn" onclick="cM()">关闭</button></div>';
+  return html;
+}
+// 下钻函数
+function drill1active(cn){
+  if(currentScope!=='全市'){cM();return;}
+  _drSrc='active';
+  document.getElementById('mbox').innerHTML=buildActiveDrillTable(cn+' · 四级承包体（两网活跃）',getActiveLevel4(cn),'四级承包体',cn,2);
+  openModal();
+}
+function drill2active(cn,fn){
+  document.getElementById('mbox').innerHTML=buildActiveDrillTable(cn+' / '+fn+' · 五级明细（两网活跃）',getActiveLevel5(cn,fn),'五级明细',cn,5);
+  openModal();
+}
+// 主渲染函数
+function renderActiveReport(){
+  var titleEl=document.getElementById('activeTitle');
+  var wrap=document.getElementById('activeTableWrap');
+  if(currentScope==='全市'){
+    if(titleEl)titleEl.textContent='两网活跃用户分析（全市）';
+    renderActiveMainTable(wrap,getActiveData());
+  }else{
+    if(titleEl)titleEl.textContent='两网活跃用户分析（'+currentScope+'）';
+    renderActiveLevel4Inline(wrap,getActiveLevel4(currentScope),currentScope);
+  }
+}
 
 /* ================================================================
  *  范围模式：内联四级表渲染
@@ -3152,11 +3340,12 @@ moduleRegistry.register({id:'daily',navLabel:'营销日报',order:1});
 moduleRegistry.register({id:'monthly',navLabel:'营销月报',order:2});
 moduleRegistry.register({id:'yoy_channel',navLabel:'渠道条线营销月报',order:3});
 moduleRegistry.register({id:'yoy_zq',navLabel:'政企条线营销月报',order:4});
+moduleRegistry.register({id:'stock_active',navLabel:'两网活跃',order:10});
 
 // 一级大板块：3大导航
 const ZONES = [
   { id:'marketing', label:'营销数据', pages:['overview','daily','monthly','yoy_channel','yoy_zq'] },
-  { id:'stock', label:'存量质态', pages:['stock'] },
+  { id:'stock', label:'存量质态', pages:['stock_active'] },
   { id:'video', label:'视联网专区', pages:['video'] },
   { id:'cf', label:'橙分期专区', pages:['cf'] },
 ];
@@ -3194,6 +3383,7 @@ function rerenderAll(){
   renderMonthlyReport();
   renderYoYChannelReport();
   renderYoYZQReport();
+  renderActiveReport();
 }
 
 function renderNav(){
@@ -4064,6 +4254,7 @@ function init(){
   renderYoYChannelReport();
   renderYoYZQDatePicker();
   renderYoYZQReport();
+  renderActiveReport();
   switchPage('overview');
 }
 
