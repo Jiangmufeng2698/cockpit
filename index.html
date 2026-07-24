@@ -462,9 +462,9 @@ body {
   --vw-primary-light: var(--accent-cyan);
   --vw-primary-bg: var(--accent-blue-light);
   --vw-shadow: 0 2px 12px rgba(37,99,235,0.06);
-  margin-top: -16px;
-  padding: 0;
 }
+/* 视联网/橙分期专区激活时，main-content紧贴一级导航 */
+.main-content.cf-zone-active { margin-top:96px !important; padding-top:0 !important; padding-left:0 !important; padding-right:0 !important; }
 
 /* 深色模式视联网变量覆盖 */
 [data-theme="dark"] #page-video {
@@ -3217,11 +3217,18 @@ function renderSubNav(){
     // 没有子页面（或只有一个），隐藏二级导航
     subNav.classList.add('sub-nav-hidden');
     mainContent.classList.add('no-subnav');
+    // 视联网/橙分期专区自带header，去掉main-content的padding让它紧贴导航栏
+    if(currentZone==='video' || currentZone==='cf'){
+      mainContent.classList.add('cf-zone-active');
+    } else {
+      mainContent.classList.remove('cf-zone-active');
+    }
     return;
   }
   // 营销数据下展示二级tab
   subNav.classList.remove('sub-nav-hidden');
   mainContent.classList.remove('no-subnav');
+  mainContent.classList.remove('cf-zone-active');
   const mods = moduleRegistry.getAll();
   subNav.innerHTML = zone.pages.map(pid=>{
     const m = mods.find(m=>m.id===pid);
