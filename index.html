@@ -1350,6 +1350,18 @@ body {
     <div class="tw" id="activeTableWrap"></div>
   </div>
 
+  <!-- 存量质态 - 其他 -->
+  <div class="page" id="page-stock_other">
+    <div class="report-header">
+      <div class="report-title" id="stockOtherTitle">其他</div>
+      <div class="report-meta"><span class="dot"></span> 敬请期待</div>
+    </div>
+    <div class="kpi-section" style="text-align:center;padding:80px 20px;color:var(--text-secondary);font-size:15px;line-height:2;">
+      <div style="font-size:48px;margin-bottom:16px;">🚧</div>
+      <div>更多存量质态分析功能开发中</div>
+    </div>
+  </div>
+
   <!-- 视联网专区 -->
   <div class="page" id="page-video">
 <!-- 顶部 -->
@@ -3384,12 +3396,13 @@ moduleRegistry.register({id:'daily',navLabel:'营销日报',order:1});
 moduleRegistry.register({id:'monthly',navLabel:'营销月报',order:2});
 moduleRegistry.register({id:'yoy_channel',navLabel:'渠道条线营销月报',order:3});
 moduleRegistry.register({id:'yoy_zq',navLabel:'政企条线营销月报',order:4});
-moduleRegistry.register({id:'stock_active',navLabel:'两网活跃',order:10});
+moduleRegistry.register({id:'stock_active',navLabel:'两网活跃用户',order:10});
+moduleRegistry.register({id:'stock_other',navLabel:'其他',order:11});
 
 // 一级大板块：3大导航
 const ZONES = [
   { id:'marketing', label:'营销数据', pages:['overview','daily','monthly','yoy_channel','yoy_zq'] },
-  { id:'stock', label:'存量质态', pages:['stock_active'] },
+  { id:'stock', label:'存量质态', pages:['stock_active','stock_other'] },
   { id:'video', label:'视联网专区', pages:['video'] },
   { id:'cf', label:'橙分期专区', pages:['cf'] },
 ];
