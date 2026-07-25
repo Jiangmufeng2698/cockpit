@@ -484,6 +484,8 @@ body {
 [data-theme="dark"] .pw-table tbody tr.pw-sum td:first-child{background:rgba(255,255,255,0.06);}
 .pw-up{color:var(--r);}
 .pw-dn{color:var(--accent-green);}
+.pw-table .pw-trend{padding:2px 4px;line-height:0;}
+.pw-table .pw-trend svg{display:block;vertical-align:middle;}
 .product-analysis{background:var(--bg-card);border-radius:8px;padding:12px 16px;box-shadow:var(--shadow-card);font-size:13px;line-height:1.8;color:var(--text-primary);}
 .product-analysis .pa-title{font-size:14px;font-weight:700;color:var(--bd);margin-bottom:4px;}
 [data-theme="dark"] .product-analysis .pa-title{color:var(--text-primary);}
@@ -3756,16 +3758,41 @@ function renderProductTabs(containerId, activeTab, callback) {
   el.querySelectorAll('.ptab').forEach(b => b.addEventListener('click', () => callback(b.dataset.ptab)));
 }
 
+// 迷你趋势图（无标签，用于表格行内）
+function miniSparkSvg(values, color) {
+  const w = 70, h = 22, pad = 3;
+  const n = values.length;
+  if (n < 2) return '<svg width="'+w+'" height="'+h+'"></svg>';
+  const max = Math.max(...values, 0), min = Math.min(...values, 0);
+  const range = (max - min) || 1;
+  const pts = values.map((v, i) => ({
+    x: pad + (i / (n - 1)) * (w - pad * 2),
+    y: pad + (h - pad * 2) - ((v - min) / range) * (h - pad * 2)
+  }));
+  const pathD = 'M' + pts.map(p => p.x.toFixed(1) + ',' + p.y.toFixed(1)).join(' L');
+  const areaD = pathD + ' L' + pts[n-1].x.toFixed(1) + ',' + (h-pad) + ' L' + pts[0].x.toFixed(1) + ',' + (h-pad) + ' Z';
+  const gid = 'mini' + Math.random().toString(36).slice(2, 8);
+  return '<svg width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'">'+
+    '<defs><linearGradient id="'+gid+'" x1="0" y1="0" x2="0" y2="1">'+
+    '<stop offset="0%" stop-color="'+color+'" stop-opacity="0.22"/>'+
+    '<stop offset="100%" stop-color="'+color+'" stop-opacity="0.02"/></linearGradient></defs>'+
+    '<path d="'+areaD+'" fill="url(#'+gid+')"/>'+
+    '<path d="'+pathD+'" fill="none" stroke="'+color+'" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>'+
+    '<circle cx="'+pts[n-1].x.toFixed(1)+'" cy="'+pts[n-1].y.toFixed(1)+'" r="2" fill="'+color+'"/>'+
+    '</svg>';
+}
+
 // 渲染产品表格（日报/月报共用）
 function renderProductTable(tableData, mode) {
-  const { headers, rows, summaryRow, scope, isCity } = tableData;
+  const { headers, rows, summaryRow, scope, isCity, ind } = tableData;
   const drillSrc = mode === 'day' ? 'day' : 'month';
   const exclude = isCity ? ['全市', '政企'] : [];
   const sumLabel = mode === 'day' ? '累计' : '总均';
+  const color = IND_COLORS[CH_IND.indexOf(ind)];
   let html = '<table class="pw-table"><thead><tr>';
   html += '<th>' + (isCity ? '经营单位' : '四级承包体') + '</th>';
   headers.forEach(h => html += '<th>'+h+'</th>');
-  html += '<th>'+sumLabel+'</th></tr></thead><tbody>';
+  html += '<th>'+sumLabel+'</th><th>趋势</th></tr></thead><tbody>';
   rows.forEach(row => {
     const isEx = exclude.includes(row.name);
     let attr = '';
@@ -3775,12 +3802,14 @@ function renderProductTable(tableData, mode) {
     }
     html += '<tr><td class="'+(isEx?'':'cl')+'"'+attr+'>'+row.name+'</td>';
     row.values.forEach(v => html += '<td>'+fmtProdVal(v)+'</td>');
-    html += '<td><b>'+fmtProdVal(row.sum)+'</b></td></tr>';
+    html += '<td><b>'+fmtProdVal(row.sum)+'</b></td>';
+    html += '<td class="pw-trend">'+miniSparkSvg(row.values, color)+'</td></tr>';
   });
   if (summaryRow) {
     html += '<tr class="pw-sum"><td>'+summaryRow.name+'</td>';
     summaryRow.values.forEach(v => html += '<td>'+fmtProdVal(v)+'</td>');
-    html += '<td><b>'+fmtProdVal(summaryRow.sum)+'</b></td></tr>';
+    html += '<td><b>'+fmtProdVal(summaryRow.sum)+'</b></td>';
+    html += '<td class="pw-trend">'+miniSparkSvg(summaryRow.values, color)+'</td></tr>';
   }
   html += '</tbody></table>';
   return html;
