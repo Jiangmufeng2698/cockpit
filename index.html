@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN" data-theme="light">
 <head>
 <meta charset="UTF-8">
@@ -465,8 +465,8 @@ body {
 [data-theme="dark"] .product-trend-card .ptc-title{color:var(--text-primary);}
 .product-trend-card .ptc-stats{font-size:12px;color:var(--text-secondary);font-weight:400;display:inline-flex;gap:12px;}
 .product-trend-card .ptc-stats b{color:var(--b);}
-.product-trend-card .ptc-chart{width:100%;overflow-x:auto;padding-top:4px;}
-.product-trend-card svg{max-width:none;}
+  .product-trend-card .ptc-chart{width:100%;overflow-x:auto;padding-top:4px;}
+  .product-trend-card svg{max-width:none;display:inline-block;}
 /* 产品页宽表格 */
 .pw-table{width:100%;border-collapse:separate;border-spacing:0;font-size:11px;border-radius:6px;box-shadow:0 1px 6px rgba(30,58,95,0.06);}
 .pw-table thead th{background:var(--bl);color:var(--bd);padding:6px 4px;text-align:center;font-weight:600;border-bottom:1px solid var(--bd2);white-space:nowrap;position:sticky;top:0;z-index:10;}
@@ -3676,10 +3676,11 @@ function getIndValue(ind, dateInt, scope, name, l4name, l5name) {
   return t;
 }
 
-// 日报产品页 — 趋势数据（当月1日至选定日期）
+// 日报产品页 — 趋势数据（最近7天）
 function getDailyProductTrend(ind, dateInt, scope) {
   const month = Math.floor(dateInt/100), ms = month*100+1;
-  const dates = DATA_DATES.filter(d => d >= ms && d <= dateInt);
+  const allDates = DATA_DATES.filter(d => d >= ms && d <= dateInt);
+  const dates = allDates.slice(-7);
   const values = dates.map(d => scope === '全市' ? getIndValue(ind, d) : getIndValue(ind, d, null, scope));
   return { dates, values, labels: dates.map(d => formatMD(d)) };
 }
@@ -3831,19 +3832,24 @@ function renderProductTable(tableData, mode) {
 // 日报产品页 — 渲染
 function renderDailyProductPage(wrap, ind, dateInt) {
   const color = IND_COLORS[CH_IND.indexOf(ind)];
-  const trend = getDailyProductTrend(ind, dateInt, currentScope);
+  const trend7 = getDailyProductTrend(ind, dateInt, currentScope);
   const tableData = getDailyProductTable(ind, dateInt, currentScope);
-  const trendW = Math.max(trend.values.length * 40 + 20, 280);
-  const total = trend.values.reduce((a,b)=>a+b, 0);
-  const avg = trend.values.length > 0 ? (total / trend.values.length).toFixed(1) : 0;
-  const maxVal = Math.max(...trend.values, 0);
-  const maxIdx = trend.values.indexOf(maxVal);
-  const lastVal = trend.values[trend.values.length-1];
+
+  // 全月统计（累计/日均/峰值取全月，图表只取近7天）
+  const allValues = tableData.summaryRow ? tableData.summaryRow.values : [];
+  const allLabels = tableData.dates.map(d => formatMD(d));
+  const total = allValues.reduce((a,b)=>a+b, 0);
+  const avg = allValues.length > 0 ? (total / allValues.length).toFixed(1) : 0;
+  const maxVal = Math.max(...allValues, 0);
+  const maxIdx = allValues.indexOf(maxVal);
+  const lastVal = allValues[allValues.length-1] || 0;
+
+  const trendW = Math.max(trend7.values.length * 50 + 20, 320);
 
   let analysis = '<div class="pa-title">'+ind+' 日发展分析</div>';
   analysis += '<p>本月1日至今'+currentScope+'累计'+ind+'发展<b>'+total+'</b>，日均<b>'+avg+'</b>。';
-  if (maxVal > 0) analysis += '最高日为'+trend.labels[maxIdx]+'（<b>'+maxVal+'</b>），';
-  analysis += '最近一日（'+trend.labels[trend.labels.length-1]+'）发展<b>'+lastVal+'</b>。</p>';
+  if (maxVal > 0) analysis += '最高日为'+allLabels[maxIdx]+'（<b>'+maxVal+'</b>），';
+  analysis += '最近一日（'+allLabels[allLabels.length-1]+'）发展<b>'+lastVal+'</b>。</p>';
   if (currentScope === '全市') {
     const valid = tableData.rows.filter(r => r.name !== '政企');
     const sorted = [...valid].sort((a,b) => b.sum - a.sum);
@@ -3856,7 +3862,7 @@ function renderDailyProductPage(wrap, ind, dateInt) {
   wrap.innerHTML =
     '<div class="product-trend-card"><div class="ptc-title">'+
     currentScope+' '+ind+'日发展趋势<span class="ptc-stats">累计<b>'+total+'</b> 日均<b>'+avg+'</b> 峰值<b>'+maxVal+'</b></span></div>'+
-    '<div class="ptc-chart">'+sparklineSvg(trend.values, color, trendW, 100, trend.labels)+'</div></div>'+
+    '<div class="ptc-chart" style="text-align:center">'+sparklineSvg(trend7.values, color, trendW, 100, trend7.labels)+'</div></div>'+
     '<div style="overflow:auto;max-height:480px;margin-bottom:12px;border-radius:6px;box-shadow:var(--shadow-card)">'+
     renderProductTable(tableData, 'day')+'</div>'+
     '<div class="product-analysis">'+analysis+'</div>';
@@ -3896,7 +3902,7 @@ function renderMonthlyProductPage(wrap, ind, dateInt) {
     '<div class="product-trend-card"><div class="ptc-title">'+
     currentScope+' '+ind+'月日均趋势<span class="ptc-stats">'+
     months.map((m,i)=>m.label+'<b>'+trend.values[i]+'</b>').join(' ')+'</span></div>'+
-    '<div class="ptc-chart">'+sparklineSvg(trend.values, color, trendW, 100, trend.labels)+'</div></div>'+
+    '<div class="ptc-chart" style="text-align:center">'+sparklineSvg(trend.values, color, trendW, 100, trend.labels)+'</div></div>'+
     '<div style="overflow:auto;max-height:480px;margin-bottom:12px;border-radius:6px;box-shadow:var(--shadow-card)">'+
     renderProductTable(tableData, 'month')+'</div>'+
     '<div class="product-analysis">'+analysis+'</div>';
