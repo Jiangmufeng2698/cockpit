@@ -3685,16 +3685,18 @@ function getDailyProductTrend(ind, dateInt, scope) {
   return { dates, values, labels: dates.map(d => formatMD(d)) };
 }
 
-// 日报产品页 — 表格数据（区县/四级 × 日期）
+// 日报产品页 — 表格数据（区县/四级 × 最近7天，累计为全月）
 function getDailyProductTable(ind, dateInt, scope) {
   const month = Math.floor(dateInt/100), ms = month*100+1;
-  const dates = DATA_DATES.filter(d => d >= ms && d <= dateInt);
+  const allDates = DATA_DATES.filter(d => d >= ms && d <= dateInt);
+  const dates = allDates.slice(-7);
   const headers = dates.map(d => parseInt(String(d).slice(6,8))+'日');
   const isCity = scope === '全市';
   const names = isCity ? Object.keys(DATA.target) : Object.keys(DATA.roster?.[scope] || {});
   const rows = names.map(name => {
     const values = dates.map(d => isCity ? getIndValue(ind, d, null, name) : getIndValue(ind, d, scope, null, name));
-    return { name, values, sum: values.reduce((a,b)=>a+b, 0), trendValues: values.slice(-7) };
+    const allSum = allDates.reduce((s,d) => s + (isCity ? getIndValue(ind, d, null, name) : getIndValue(ind, d, scope, null, name)), 0);
+    return { name, values, sum: allSum, trendValues: values };
   });
   rows.sort((a, b) => {
     if (a.name === '政企') return 1;
@@ -3704,12 +3706,14 @@ function getDailyProductTable(ind, dateInt, scope) {
   let summaryRow;
   if (isCity) {
     const sv = dates.map(d => getIndValue(ind, d));
-    summaryRow = { name: '全市', values: sv, sum: sv.reduce((a,b)=>a+b, 0), trendValues: sv.slice(-7) };
+    const allSum = allDates.reduce((s,d) => s + getIndValue(ind, d), 0);
+    summaryRow = { name: '全市', values: sv, sum: allSum, trendValues: sv };
   } else {
     const sv = dates.map((_, i) => rows.reduce((s, r) => s + r.values[i], 0));
-    summaryRow = { name: '合计', values: sv, sum: sv.reduce((a,b)=>a+b, 0), trendValues: sv.slice(-7) };
+    const sumTotal = rows.reduce((s, r) => s + r.sum, 0);
+    summaryRow = { name: '合计', values: sv, sum: sumTotal, trendValues: sv };
   }
-  return { headers, rows, summaryRow, dates, scope, ind, isCity };
+  return { headers, rows, summaryRow, dates, allDates, scope, ind, isCity };
 }
 
 // 月报产品页 — 趋势数据（各月日均）
@@ -3835,9 +3839,10 @@ function renderDailyProductPage(wrap, ind, dateInt) {
   const trend7 = getDailyProductTrend(ind, dateInt, currentScope);
   const tableData = getDailyProductTable(ind, dateInt, currentScope);
 
-  // 全月统计（累计/日均/峰值取全月，图表只取近7天）
-  const allValues = tableData.summaryRow ? tableData.summaryRow.values : [];
-  const allLabels = tableData.dates.map(d => formatMD(d));
+  // 全月统计（累计/日均/峰值取全月，图表和表格只取近7天）
+  const allDates = tableData.allDates;
+  const allValues = allDates.map(d => currentScope === '全市' ? getIndValue(ind, d) : getIndValue(ind, d, null, currentScope));
+  const allLabels = allDates.map(d => formatMD(d));
   const total = allValues.reduce((a,b)=>a+b, 0);
   const avg = allValues.length > 0 ? (total / allValues.length).toFixed(1) : 0;
   const maxVal = Math.max(...allValues, 0);
