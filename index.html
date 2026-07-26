@@ -484,8 +484,8 @@ body {
 [data-theme="dark"] .pw-table tbody tr.pw-sum td:first-child{background:rgba(255,255,255,0.06);}
 .pw-up{color:var(--r);}
 .pw-dn{color:var(--accent-green);}
-.pw-table .pw-trend{padding:2px 4px;line-height:0;}
-.pw-table .pw-trend svg{display:block;vertical-align:middle;}
+.pw-table .pw-trend{padding:2px 4px;line-height:0;text-align:center;}
+.pw-table .pw-trend svg{display:inline-block;vertical-align:middle;}
 .product-analysis{background:var(--bg-card);border-radius:8px;padding:12px 16px;box-shadow:var(--shadow-card);font-size:13px;line-height:1.8;color:var(--text-primary);}
 .product-analysis .pa-title{font-size:14px;font-weight:700;color:var(--bd);margin-bottom:4px;}
 [data-theme="dark"] .product-analysis .pa-title{color:var(--text-primary);}
@@ -3694,7 +3694,7 @@ function getDailyProductTable(ind, dateInt, scope) {
   const names = isCity ? Object.keys(DATA.target) : Object.keys(DATA.roster?.[scope] || {});
   const rows = names.map(name => {
     const values = dates.map(d => isCity ? getIndValue(ind, d, null, name) : getIndValue(ind, d, scope, null, name));
-    return { name, values, sum: values.reduce((a,b)=>a+b, 0) };
+    return { name, values, sum: values.reduce((a,b)=>a+b, 0), trendValues: values.slice(-7) };
   });
   rows.sort((a, b) => {
     if (a.name === '政企') return 1;
@@ -3704,10 +3704,10 @@ function getDailyProductTable(ind, dateInt, scope) {
   let summaryRow;
   if (isCity) {
     const sv = dates.map(d => getIndValue(ind, d));
-    summaryRow = { name: '全市', values: sv, sum: sv.reduce((a,b)=>a+b, 0) };
+    summaryRow = { name: '全市', values: sv, sum: sv.reduce((a,b)=>a+b, 0), trendValues: sv.slice(-7) };
   } else {
     const sv = dates.map((_, i) => rows.reduce((s, r) => s + r.values[i], 0));
-    summaryRow = { name: '合计', values: sv, sum: sv.reduce((a,b)=>a+b, 0) };
+    summaryRow = { name: '合计', values: sv, sum: sv.reduce((a,b)=>a+b, 0), trendValues: sv.slice(-7) };
   }
   return { headers, rows, summaryRow, dates, scope, ind, isCity };
 }
@@ -3817,13 +3817,13 @@ function renderProductTable(tableData, mode) {
     html += '<tr><td class="'+(isEx?'':'cl')+'"'+attr+'>'+row.name+'</td>';
     row.values.forEach(v => html += '<td>'+fmtProdVal(v)+'</td>');
     html += '<td><b>'+fmtProdVal(row.sum)+'</b></td>';
-    html += '<td class="pw-trend">'+miniSparkSvg(row.values, color)+'</td></tr>';
+    html += '<td class="pw-trend">'+miniSparkSvg(row.trendValues || row.values, color)+'</td></tr>';
   });
   if (summaryRow) {
     html += '<tr class="pw-sum"><td>'+summaryRow.name+'</td>';
     summaryRow.values.forEach(v => html += '<td>'+fmtProdVal(v)+'</td>');
     html += '<td><b>'+fmtProdVal(summaryRow.sum)+'</b></td>';
-    html += '<td class="pw-trend">'+miniSparkSvg(summaryRow.values, color)+'</td></tr>';
+    html += '<td class="pw-trend">'+miniSparkSvg(summaryRow.trendValues || summaryRow.values, color)+'</td></tr>';
   }
   html += '</tbody></table>';
   return html;
