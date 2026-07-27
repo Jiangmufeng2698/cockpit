@@ -6,15 +6,23 @@ from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException, Request, UploadFile, File
 from fastapi.security import HTTPBearer
 from sqlalchemy.orm import Session
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 
 from database import get_db, ReportData, User
 from auth import get_current_user, log_operation
+from config import settings
 
 router = APIRouter(prefix="/api/data", tags=["数据"])
 security = HTTPBearer()
+limiter = Limiter(key_func=get_remote_address)
+
+# report_data.js 本地降级方案的XOR解密密钥（不在前端暴露，仅登录后通过API下发）
+DECRYPT_KEY = "DQCockpit2026!@#"
 
 
 @router.get("/report")
+@limiter.limit("30/minute")
 async def get_report_data(
     request: Request,
     token: str = Depends(security),
@@ -48,6 +56,7 @@ async def get_report_data(
 
 
 @router.post("/upload")
+@limiter.limit("5/minute")
 async def upload_report_data(
     request: Request,
     file: UploadFile = File(...),
@@ -89,6 +98,7 @@ async def upload_report_data(
 
 
 @router.get("/history")
+@limiter.limit("30/minute")
 async def get_history_dates(
     token: str = Depends(security),
     db: Session = Depends(get_db),
@@ -134,3 +144,11 @@ def filter_by_scope(data: dict, scope: str) -> dict:
         else:
             filtered[key] = value
     return filtered
+
+
+@router.get("/decrypt-key")
+@limiter.limit("30/minute")
+async def get_decrypt_key(request: Request, token: str = Depends(security), db: Session = Depends(get_db)):
+    """获取本地降级数据的解密密钥（仅登录用户可用）"""
+    user = get_current_user(token.credentials, db)
+    return {"key": DECRYPT_KEY}
