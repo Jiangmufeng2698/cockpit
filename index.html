@@ -1228,7 +1228,7 @@ body {
     <div class="login-subtitle">大庆分公司 · 请登录您的账号</div>
     <input type="text" id="loginUsername" placeholder="请输入账号" autocomplete="off" />
     <input type="password" id="loginPassword" placeholder="请输入密码" />
-    <button class="login-btn" id="loginBtn" onclick="handleLogin()">登 录</button>
+    <button class="login-btn" id="loginBtn">登 录</button>
     <div class="login-error" id="loginError"></div>
     <button class="login-link-btn" onclick="showChangePwdForm()">修改密码</button>
   </div>
@@ -4743,6 +4743,8 @@ function tryAutoLogin() {
 }
 
 async function handleLogin() {
+  var loginBtn = document.getElementById('loginBtn');
+  if(loginBtn && loginBtn.disabled) return;
   var errEl = document.getElementById('loginError');
   try {
     var usernameEl = document.getElementById('loginUsername');
@@ -4760,7 +4762,6 @@ async function handleLogin() {
     if(!USER_DB[username]) { errEl.textContent = '用户不存在，请联系管理员'; return; }
 
     errEl.textContent = '正在验证...';
-    var loginBtn = document.getElementById('loginBtn');
     if(loginBtn) loginBtn.disabled = true;
     var inputHash = encodePwd(password);
 
@@ -4784,7 +4785,7 @@ async function handleLogin() {
 
     enterApp();
     if(loginBtn) loginBtn.disabled = false;
-  } catch(e) { if(errEl) errEl.textContent = '登录失败：' + (e.message || e); var lb = document.getElementById('loginBtn'); if(lb) lb.disabled = false; }
+  } catch(e) { if(errEl) errEl.textContent = '登录失败：' + (e.message || e); if(loginBtn) loginBtn.disabled = false; }
 }
 
 async function handleChangePwd() {
@@ -4869,10 +4870,13 @@ function enterApp() {
 
   var scopeText = currentUser.scope === '全市' ? '全市' : currentUser.scope;
   var nav = document.querySelector('.top-nav');
+  var navRight = nav.querySelector('.nav-right');
+  var existingBar = navRight.querySelector('.login-user-bar');
+  if(existingBar) existingBar.remove();
   var userBar = document.createElement('div');
   userBar.className = 'login-user-bar';
   userBar.innerHTML = '<span class="user-name">' + currentUser.name + '</span><button class="login-logout-btn" onclick="handleLogout()">退出</button>';
-  nav.querySelector('.nav-right').insertBefore(userBar, nav.querySelector('.nav-right').firstChild);
+  navRight.insertBefore(userBar, navRight.firstChild);
 
   init();
 }
