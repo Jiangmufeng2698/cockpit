@@ -1240,7 +1240,7 @@ body {
   <div class="login-card">
     <div style="font-size:36px;margin-bottom:8px;">&#128272;</div>
     <h2>首次登录，请修改密码</h2>
-    <div class="login-subtitle">默认密码123456已失效，请设置您的新密码</div>
+    <div class="login-subtitle">请设置您的新密码，请设置您的新密码</div>
     <input type="password" id="newPwd1" placeholder="请输入新密码" />
     <input type="password" id="newPwd2" placeholder="请再次确认新密码" />
     <div class="pwd-rules">提示：请设置您的新密码</div>
@@ -2461,13 +2461,14 @@ body {
 <div class="modal" id="ml"><div class="mbox" id="mbox"></div></div>
 
 <script src="report_data.js"></script>
-<script>var USER_DB ={"xujiahong":{"name":"徐嘉鸿","dept":"财务部","scope":"全市"},"taorui":{"name":"陶瑞","dept":"财务部","scope":"全市"},"weilei":{"name":"魏磊","dept":"市场部","scope":"全市"},"yangyu":{"name":"杨雨","dept":"市场部","scope":"全市"},"zhaohongwei":{"name":"赵洪伟","dept":"市场部","scope":"全市"},"liuyanjie":{"name":"刘艳杰","dept":"市场部","scope":"全市"},"mengwanqiu":{"name":"孟婉秋","dept":"市场部","scope":"全市"},"liqinghui":{"name":"李庆会","dept":"市场部","scope":"全市"},"liying":{"name":"李颖","dept":"市场部","scope":"全市"},"zhaodongbing":{"name":"赵东兵","dept":"市场部","scope":"全市"},"haojiuyuan":{"name":"郝久源","dept":"市场部","scope":"全市"},"wangyingqian":{"name":"王英乾","dept":"市场部","scope":"全市"},"liubingyan":{"name":"刘冰焱","dept":"市场部","scope":"全市"},"wangchunquan":{"name":"王春泉","dept":"大数据应用及AI+推广","scope":"全市"},"zhangyueyue":{"name":"张跃越","dept":"大数据应用及AI+推广","scope":"全市"},"gaodazhi":{"name":"高大治","dept":"大数据应用及AI+推广","scope":"全市"},"lixiaodan":{"name":"李晓丹","dept":"大数据应用及AI+推广","scope":"全市"},"gexiao":{"name":"葛晓","dept":"大数据应用及AI+推广","scope":"全市"},"caoweiwei":{"name":"曹微微","dept":"大数据应用及AI+推广","scope":"全市"},"zhouyilu":{"name":"周一璐","dept":"大数据应用及AI+推广","scope":"全市"},"caoyuanchi":{"name":"曹源池","dept":"大数据应用及AI+推广","scope":"全市"},"yangshumei":{"name":"杨淑梅","dept":"大数据应用及AI+推广","scope":"全市"},"zhangjing":{"name":"张静","dept":"大数据应用及AI+推广","scope":"全市"},"renyuan":{"name":"任媛","dept":"大数据应用及AI+推广","scope":"全市"},"qiuyuwen":{"name":"邱玉文","dept":"大数据应用及AI+推广","scope":"全市"},"lichunli":{"name":"李春利","dept":"大数据应用及AI+推广","scope":"全市"},"lubaohai":{"name":"鲁宝海","dept":"云中台","scope":"全市"},"shenqiuming":{"name":"沈秋铭","dept":"云中台","scope":"全市"},"songzeyu":{"name":"宋泽玉","dept":"云中台","scope":"全市"},"liuxiaolei":{"name":"刘晓磊","dept":"云中台","scope":"全市"},"wuyinbing":{"name":"吴垠冰","dept":"云中台","scope":"全市"},"qinyifan":{"name":"秦一凡","dept":"云中台","scope":"全市"},"sunruinan":{"name":"孙瑞南","dept":"云中台","scope":"全市"},"sunzhigang":{"name":"孙志刚","dept":"云中台","scope":"全市"},"wangjian":{"name":"王健","dept":"云中台","scope":"全市"},"rongruotong":{"name":"荣若桐","dept":"云中台","scope":"全市"},"lishuhang":{"name":"李抒航","dept":"云中台","scope":"全市"},"renzexu":{"name":"任泽旭","dept":"云中台","scope":"全市"},"wangsongbo":{"name":"王嵩博","dept":"云中台","scope":"全市"},"jinyimeng":{"name":"金祎萌","dept":"云中台","scope":"全市"},"xurui":{"name":"许睿","dept":"云中台","scope":"全市"},"suichenyang":{"name":"隋辰阳","dept":"云中台","scope":"全市"},"zhaochengxin":{"name":"赵成信","dept":"云中台","scope":"全市"},"zhaoyuhang":{"name":"赵宇航","dept":"云中台","scope":"全市"},"wangxinxin":{"name":"王鑫鑫","dept":"云中台","scope":"全市"},"miaojunpeng":{"name":"苗钧芃","dept":"云中台","scope":"全市"},"wangbaoxin":{"name":"王宝昕","dept":"云中台","scope":"全市"},"yaoruizhu":{"name":"姚睿珠","dept":"云中台","scope":"全市"},"zhangjing2":{"name":"张婧","dept":"云中台","scope":"全市"},"sunyong":{"name":"孙墉","dept":"云中台","scope":"全市"},"chaizexin":{"name":"柴泽鑫","dept":"云中台","scope":"全市"},"rentianqi":{"name":"任天奇","dept":"云中台","scope":"全市"},"wangyu":{"name":"王玉","dept":"市场部","scope":"全市"},"zhangxiaofeng":{"name":"张晓峰","dept":"云网部","scope":"全市"}};</script>
+<script>var USER_DB = {}; // 用户名册从后端获取，不再硬编码</script>
 <script>
 /* 后端API配置 - 部署时修改为实际后端地址 */
 var API_BASE = ''; // 同源部署，使用相对路径
 /* 数据加载：优先从后端获取，失败则用本地加密数据 */
 window.REPORT_DATA = null;
-window.loadDataPromise = (async function(){
+/* 可重复调用的数据加载函数（替代IIFE，登录后可重新调用以获取解密密钥） */
+async function loadLocalData() {
   try {
     var token = localStorage.getItem('cockpit_jwt');
     if(token){
@@ -2482,16 +2483,30 @@ window.loadDataPromise = (async function(){
       }
     }
   } catch(e) { console.warn('[cockpit] backend unavailable, falling back to local data'); }
-  /* 降级：使用本地加密数据 */
+  /* 降级：使用本地加密数据（密钥从后端获取，不在前端硬编码） */
   var _e = window.__ED || "";
   if(!_e){ console.error("[cockpit] 数据加载失败：后端和本地均不可用"); return; }
-  var _b = atob(_e);
-  var _d = new Uint8Array(_b.length);
-  var _k = "DQCockpit2026!@#";
-  for(var i=0;i<_b.length;i++){ _d[i]=_b.charCodeAt(i)^_k.charCodeAt(i%_k.length); }
-  window.REPORT_DATA = JSON.parse(new TextDecoder("utf-8").decode(_d));
-  console.log('[cockpit] data loaded from local fallback');
-})();
+  // 尝试从后端获取解密密钥（需要已登录）
+  try {
+    var _token = localStorage.getItem('cockpit_jwt');
+    if(_token) {
+      var _keyResp = await fetch(API_BASE + '/api/data/decrypt-key', {
+        headers: { 'Authorization': 'Bearer ' + _token }
+      });
+      if(_keyResp.ok) {
+        var _keyData = await _keyResp.json();
+        var _k = _keyData.key || "";
+        var _b = atob(_e);
+        var _d = new Uint8Array(_b.length);
+        for(var i=0;i<_b.length;i++){ _d[i]=_b.charCodeAt(i)^_k.charCodeAt(i%_k.length); }
+        window.REPORT_DATA = JSON.parse(new TextDecoder("utf-8").decode(_d));
+        console.log('[cockpit] data loaded from local fallback (key from backend)');
+      }
+    }
+  } catch(e2) { console.error('[cockpit] 本地数据解密失败:', e2.message); }
+}
+/* 页面加载时先尝试一次（可能因未登录而失败，后续登录后再调用） */
+window.loadDataPromise = loadLocalData();
 </script>
 <script>
 /* ================================================================
@@ -4568,7 +4583,9 @@ window.vw_quickSearch = quickSearch;
       var regex = new RegExp('(' + keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
       if (regex.test(text)) {
         var span = document.createElement('span');
-        span.innerHTML = text.replace(regex, '<span class="cf-highlight">$1</span>');
+        // XSS安全：先转义HTML，再标记高亮
+          var safeText = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+          span.innerHTML = safeText.replace(regex, '<span class="cf-highlight">$1</span>');
         node.parentNode.replaceChild(span, node);
       }
     });
@@ -4842,8 +4859,8 @@ async function handleLogin() {
       return;
     }
 
-    // 重新从后端加载数据（带上JWT令牌）
-    try { await window.loadDataPromise; } catch(e) {}
+    // 重新加载数据（此时已有JWT令牌，可以获取解密密钥）
+    await loadLocalData();
     await reloadFromBackend();
     if(window.REPORT_DATA) {
       try { Object.assign(DATA, window.REPORT_DATA);
@@ -4920,8 +4937,8 @@ async function handleChangePwd() {
     }
 
     errEl.textContent = '';
-    // 改密成功后刷新数据并进入应用
-    try { await window.loadDataPromise; } catch(e) {}
+    // 改密成功后重新加载数据（此时已有JWT令牌）
+    await loadLocalData();
     await reloadFromBackend();
     if(window.REPORT_DATA) {
       try { Object.assign(DATA, window.REPORT_DATA);
@@ -4997,7 +5014,22 @@ async function handleManualChangePwd() {
 
 // ==================== 应用入口 ====================
 
+
+// 从后端获取用户名册
+async function loadUserDB() {
+  try {
+    var token = getToken();
+    if(!token) return;
+    var resp = await fetch(API_BASE + '/api/auth/users', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    if(resp.ok) {
+      USER_DB = await resp.json();
+    }
+  } catch(e) { console.warn('[cockpit] 获取用户名册失败，使用本地缓存'); }
+}
 function enterApp() {
+  loadUserDB(); // 异步加载用户名册
   document.getElementById('loginOverlay').style.display = 'none';
   document.getElementById('changePwdOverlay').style.display = 'none';
   document.getElementById('manualChangePwdOverlay').style.display = 'none';
@@ -5079,8 +5111,8 @@ function handleLogout() {
 (async function autoLoginCheck(){
   var ok = await tryAutoLogin();
   if(ok){
-    // 等待初始数据加载完成（含本地加密降级）
-    try { await window.loadDataPromise; } catch(e) {}
+    // 重新加载数据（此时已有JWT令牌，可以获取解密密钥）
+    await loadLocalData();
     await reloadFromBackend();
     // 用最终数据更新DATA（DATA是对象，可以修改属性）
     if(window.REPORT_DATA) {
