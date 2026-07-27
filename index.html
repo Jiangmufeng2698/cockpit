@@ -2515,6 +2515,8 @@ window.loadDataPromise = loadLocalData();
 const DATA = window.REPORT_DATA || {dates:[], dateRange:{start:'',end:''}, newdev:{}, fttrb:{}, fttrbZq:{}, zq:{}, dianqu:{}, roster:{}, summary:{}};
 const CH_IND = ['宽带','融合','融合副卡','FTTR-H','FTTR-B','智屏','高清'];
 const ZQ_IND = ['FTTR-B','双线新增','移动新增'];
+// 中文指标名→英文缩写映射（newdev/fttrb/fttrbZq数据中使用英文缩写key）
+const IND_KEY_MAP = {'宽带':'bb','融合':'rh','融合副卡':'fk','FTTR-H':'ftrh','FTTR-B':'ftrb','智屏':'zp','高清':'gq'};
 const IND_COLORS = ['#14B8A6','#2563EB','#22C55E','#F59E0B','#06B6D4','#8B5CF6','#F43F5E'];
 const HB_CLS = ['hb1','hb2','hb3','hb4','hb5','hb6','hb7'];
 const HBS_CLS = ['hb1s','hb2s','hb3s','hb4s','hb5s','hb6s','hb7s'];
@@ -2541,6 +2543,7 @@ function sparklineSvg(values, color, w, h, dateLabels) {
   w=w||260; h=h||80;
   const padL=8, padR=8, padT=14, padB=dateLabels?18:8;
   const chartH=h-padT-padB;
+  if (!values || values.length === 0) return '<svg width="'+w+'" height="'+h+'"></svg>';
   const max=Math.max(...values,1), min=Math.min(...values,0);
   const range=max-min||1;
   const pts=values.map((v,i)=>({
@@ -2586,18 +2589,19 @@ function getDailyData(dateInt) {
     for (const ind of CH_IND) {
       if (ind === 'FTTR-B') continue;
       let cnt = 0;
-      for (const l4 in dayData[dist]) for (const l5 in dayData[dist][l4]) cnt += dayData[dist][l4][l5][ind] || 0;
+      const ik = IND_KEY_MAP[ind] || ind;
+      for (const l4 in dayData[dist]) for (const l5 in dayData[dist][l4]) cnt += dayData[dist][l4][l5][ik] || 0;
       districts[dist][ind] = cnt;
     }
   }
-  // FTTR-B渠道侧
+  // FTTR-B渠道侧（格式：{区县: {四级: {五级: 数值}}}）
   for (const dist in dayFttrb) {
     if (!districts[dist]) districts[dist] = {};
     let cnt = 0;
     for (const l4 in dayFttrb[dist]) for (const l5 in dayFttrb[dist][l4]) cnt += dayFttrb[dist][l4][l5] || 0;
     districts[dist]['FTTR-B'] = cnt;
   }
-  // FTTR-B政企侧 → 归入各自区县
+  // FTTR-B政企侧 → 归入各自区县（格式：{区县: {四级: {五级: 数值}}}）
   for (const dist in dayFttrbZq) {
     if (!districts[dist]) districts[dist] = {};
     let cnt = 0;
@@ -2638,10 +2642,10 @@ function getMonthlyData(dateInt) {
     const d = parseInt(dstr); if (d<monthStart||d>dateInt) continue;
     for (const dist in DATA.newdev[dstr]) {
       if (!districts[dist]) { districts[dist]={}; inds.forEach(i=>districts[dist][i]=0); }
-      for (const l4 in DATA.newdev[dstr][dist]) for (const l5 in DATA.newdev[dstr][dist][l4]) for (const ind of inds) districts[dist][ind] += DATA.newdev[dstr][dist][l4][l5][ind]||0;
+      for (const l4 in DATA.newdev[dstr][dist]) for (const l5 in DATA.newdev[dstr][dist][l4]) for (const ind of inds) { const ik = IND_KEY_MAP[ind] || ind; districts[dist][ind] += DATA.newdev[dstr][dist][l4][l5][ik]||0; }
     }
   }
-  // FTTR-B渠道侧
+  // FTTR-B渠道侧（格式：{区县: {四级: {五级: 数值}}}）
   for (const dstr in DATA.fttrb) {
     const d = parseInt(dstr); if (d<monthStart||d>dateInt) continue;
     for (const dist in DATA.fttrb[dstr]) {
@@ -2650,7 +2654,7 @@ function getMonthlyData(dateInt) {
       for (const l4 in DATA.fttrb[dstr][dist]) for (const l5 in DATA.fttrb[dstr][dist][l4]) districts[dist]['FTTR-B'] += DATA.fttrb[dstr][dist][l4][l5]||0;
     }
   }
-  // FTTR-B政企侧 → 归入各自区县
+  // FTTR-B政企侧 → 归入各自区县（格式：{区县: {四级: {五级: 数值}}}）
   for (const dstr in DATA.fttrbZq) {
     const d = parseInt(dstr); if (d<monthStart||d>dateInt) continue;
     for (const dist in DATA.fttrbZq[dstr]) {
@@ -2703,7 +2707,7 @@ function getYoYChannelData(dateInt) {
       for (const dist in DATA.newdev[dstr]) {
         if(dist==='政企') continue;
         if(!districts[dist]) { districts[dist]={}; inds.forEach(i=>districts[dist][i]=0); districts[dist]['FTTR-B']=0; }
-        for (const l4 in DATA.newdev[dstr][dist]) { if(l4.includes('政企')) continue; for (const l5 in DATA.newdev[dstr][dist][l4]) for (const ind of inds) districts[dist][ind] += DATA.newdev[dstr][dist][l4][l5][ind]||0; }
+        for (const l4 in DATA.newdev[dstr][dist]) { if(l4.includes('政企')) continue; for (const l5 in DATA.newdev[dstr][dist][l4]) for (const ind of inds) { const ik=IND_KEY_MAP[ind]||ind; districts[dist][ind] += DATA.newdev[dstr][dist][l4][l5][ik]||0; } }
       }
     }
     for (const dstr in DATA.fttrb) {
@@ -2804,7 +2808,7 @@ function getDailyLevel4(dateInt, district) {
   // 先用花名册初始化所有四级
   for (const l4 in rosterL4) l4Map[l4] = {};
   // 填充数据
-  for (const l4 in dayData) { if(!l4Map[l4]) l4Map[l4]={}; for (const ind of CH_IND) { if(ind==='FTTR-B') continue; let cnt=0; for (const l5 in dayData[l4]) cnt+=dayData[l4][l5][ind]||0; l4Map[l4][ind]=cnt; } }
+  for (const l4 in dayData) { if(!l4Map[l4]) l4Map[l4]={}; for (const ind of CH_IND) { if(ind==='FTTR-B') continue; const ik=IND_KEY_MAP[ind]||ind; let cnt=0; for (const l5 in dayData[l4]) cnt+=dayData[l4][l5][ik]||0; l4Map[l4][ind]=cnt; } }
   for (const l4 in dayFttrb) { if(!l4Map[l4]) l4Map[l4]={}; let cnt=0; for (const l5 in dayFttrb[l4]) cnt+=dayFttrb[l4][l5]||0; l4Map[l4]['FTTR-B']=cnt; }
   for (const l4 in dayFttrbZq) { if(!l4Map[l4]) l4Map[l4]={}; let cnt=0; for (const l5 in dayFttrbZq[l4]) cnt+=dayFttrbZq[l4][l5]||0; l4Map[l4]['FTTR-B']=(l4Map[l4]['FTTR-B']||0)+cnt; }
   return Object.entries(l4Map).map(([name,cells])=>({ name, cells: Object.fromEntries(CH_IND.map(ind=>[ind,{val:cells[ind]||0}])) })).sort((a,b)=>(b.cells['宽带']?.val||0)-(a.cells['宽带']?.val||0));
@@ -2818,7 +2822,7 @@ function getDailyLevel5(dateInt, district, level4) {
   // 先用花名册初始化所有五级
   rosterL5.forEach(l5 => { l5Map[l5] = {}; });
   // 填充数据
-  for (const l5 in dayData) { if(!l5Map[l5]) l5Map[l5]={}; for (const ind of CH_IND) { if(ind==='FTTR-B') continue; l5Map[l5][ind]=dayData[l5][ind]||0; } }
+  for (const l5 in dayData) { if(!l5Map[l5]) l5Map[l5]={}; for (const ind of CH_IND) { if(ind==='FTTR-B') continue; const ik=IND_KEY_MAP[ind]||ind; l5Map[l5][ind]=dayData[l5][ik]||0; } }
   for (const l5 in dayFttrb) { if(!l5Map[l5]) l5Map[l5]={}; l5Map[l5]['FTTR-B']=(l5Map[l5]['FTTR-B']||0)+(dayFttrb[l5]||0); }
   for (const l5 in dayFttrbZq) { if(!l5Map[l5]) l5Map[l5]={}; l5Map[l5]['FTTR-B']=(l5Map[l5]['FTTR-B']||0)+(dayFttrbZq[l5]||0); }
   return Object.entries(l5Map).map(([name,cells])=>({ name, cells: Object.fromEntries(CH_IND.map(ind=>[ind,{val:cells[ind]||0}])) })).sort((a,b)=>(b.cells['宽带']?.val||0)-(a.cells['宽带']?.val||0));
@@ -2830,7 +2834,7 @@ function getMonthlyLevel4(dateInt, district) {
   const rosterL4 = (DATA.roster?.[district]) || {};
   // 先用花名册初始化
   for (const l4 in rosterL4) { l4Map[l4]={}; inds.forEach(i=>l4Map[l4][i]=0); l4Map[l4]['FTTR-B']=0; }
-  for (const dstr in DATA.newdev) { const d=parseInt(dstr); if(d<ms||d>dateInt) continue; const dd=DATA.newdev[dstr]?.[district]||{}; for (const l4 in dd) { if(!l4Map[l4]) { l4Map[l4]={}; inds.forEach(i=>l4Map[l4][i]=0); l4Map[l4]['FTTR-B']=0; } for (const l5 in dd[l4]) for (const ind of inds) l4Map[l4][ind]+=dd[l4][l5][ind]||0; } }
+  for (const dstr in DATA.newdev) { const d=parseInt(dstr); if(d<ms||d>dateInt) continue; const dd=DATA.newdev[dstr]?.[district]||{}; for (const l4 in dd) { if(!l4Map[l4]) { l4Map[l4]={}; inds.forEach(i=>l4Map[l4][i]=0); l4Map[l4]['FTTR-B']=0; } for (const l5 in dd[l4]) for (const ind of inds) { const ik=IND_KEY_MAP[ind]||ind; l4Map[l4][ind]+=dd[l4][l5][ik]||0; } } }
   for (const dstr in DATA.fttrb) { const d=parseInt(dstr); if(d<ms||d>dateInt) continue; const ff=DATA.fttrb[dstr]?.[district]||{}; for (const l4 in ff) { if(!l4Map[l4]) { l4Map[l4]={}; inds.forEach(i=>l4Map[l4][i]=0); l4Map[l4]['FTTR-B']=0; } for (const l5 in ff[l4]) l4Map[l4]['FTTR-B']+=ff[l4][l5]||0; } }
   for (const dstr in DATA.fttrbZq) { const d=parseInt(dstr); if(d<ms||d>dateInt) continue; const fz=DATA.fttrbZq[dstr]?.[district]||{}; for (const l4 in fz) { if(!l4Map[l4]) { l4Map[l4]={}; inds.forEach(i=>l4Map[l4][i]=0); l4Map[l4]['FTTR-B']=0; } for (const l5 in fz[l4]) l4Map[l4]['FTTR-B']+=fz[l4][l5]||0; } }
   return Object.entries(l4Map).map(([name,cells])=>({ name, cells: Object.fromEntries(CH_IND.map(ind=>[ind,{val:cells[ind]||0}])) })).sort((a,b)=>(b.cells['宽带']?.val||0)-(a.cells['宽带']?.val||0));
@@ -2841,7 +2845,7 @@ function getMonthlyLevel5(dateInt, district, level4) {
   const rosterL5 = (DATA.roster?.[district]?.[level4]) || [];
   // 先用花名册初始化
   rosterL5.forEach(l5 => { l5Map[l5]={}; inds.forEach(i=>l5Map[l5][i]=0); l5Map[l5]['FTTR-B']=0; });
-  for (const dstr in DATA.newdev) { const d=parseInt(dstr); if(d<ms||d>dateInt) continue; const dd=DATA.newdev[dstr]?.[district]?.[level4]||{}; for (const l5 in dd) { if(!l5Map[l5]) { l5Map[l5]={}; inds.forEach(i=>l5Map[l5][i]=0); l5Map[l5]['FTTR-B']=0; } for (const ind of inds) l5Map[l5][ind]+=dd[l5][ind]||0; } }
+  for (const dstr in DATA.newdev) { const d=parseInt(dstr); if(d<ms||d>dateInt) continue; const dd=DATA.newdev[dstr]?.[district]?.[level4]||{}; for (const l5 in dd) { if(!l5Map[l5]) { l5Map[l5]={}; inds.forEach(i=>l5Map[l5][i]=0); l5Map[l5]['FTTR-B']=0; } for (const ind of inds) { const ik=IND_KEY_MAP[ind]||ind; l5Map[l5][ind]+=dd[l5][ik]||0; } } }
   for (const dstr in DATA.fttrb) { const d=parseInt(dstr); if(d<ms||d>dateInt) continue; const ff=DATA.fttrb[dstr]?.[district]?.[level4]||{}; for (const l5 in ff) { if(!l5Map[l5]) { l5Map[l5]={}; inds.forEach(i=>l5Map[l5][i]=0); l5Map[l5]['FTTR-B']=0; } l5Map[l5]['FTTR-B']+=ff[l5]||0; } }
   for (const dstr in DATA.fttrbZq) { const d=parseInt(dstr); if(d<ms||d>dateInt) continue; const fz=DATA.fttrbZq[dstr]?.[district]?.[level4]||{}; for (const l5 in fz) { if(!l5Map[l5]) { l5Map[l5]={}; inds.forEach(i=>l5Map[l5][i]=0); l5Map[l5]['FTTR-B']=0; } l5Map[l5]['FTTR-B']+=fz[l5]||0; } }
   return Object.entries(l5Map).map(([name,cells])=>({ name, cells: Object.fromEntries(CH_IND.map(ind=>[ind,{val:cells[ind]||0}])) })).sort((a,b)=>(b.cells['宽带']?.val||0)-(a.cells['宽带']?.val||0));
@@ -2858,7 +2862,7 @@ function getYoYLevel4(dateInt, district, useZqFttrb) {
     const rosterL4 = (DATA.roster?.[district]) || {};
     // 先用花名册初始化（排除政企四级如果useZqFttrb=false）
     for (const l4 in rosterL4) { if(!useZqFttrb&&l4.includes('政企')) continue; m[l4]={}; inds.forEach(i=>m[l4][i]=0); m[l4]['FTTR-B']=0; }
-    for (const dstr in DATA.newdev) { const d=parseInt(dstr); if(d<start||d>end) continue; const dd=DATA.newdev[dstr]?.[district]||{}; for (const l4 in dd) { if(!useZqFttrb&&l4.includes('政企')) continue; if(!m[l4]) { m[l4]={}; inds.forEach(i=>m[l4][i]=0); m[l4]['FTTR-B']=0; } for (const l5 in dd[l4]) for (const ind of inds) m[l4][ind]+=dd[l4][l5][ind]||0; } }
+    for (const dstr in DATA.newdev) { const d=parseInt(dstr); if(d<start||d>end) continue; const dd=DATA.newdev[dstr]?.[district]||{}; for (const l4 in dd) { if(!useZqFttrb&&l4.includes('政企')) continue; if(!m[l4]) { m[l4]={}; inds.forEach(i=>m[l4][i]=0); m[l4]['FTTR-B']=0; } for (const l5 in dd[l4]) for (const ind of inds) { const ik=IND_KEY_MAP[ind]||ind; m[l4][ind]+=dd[l4][l5][ik]||0; } } }
     for (const dstr in DATA.fttrb) { const d=parseInt(dstr); if(d<start||d>end) continue; const ff=DATA.fttrb[dstr]?.[district]||{}; for (const l4 in ff) { if(!useZqFttrb&&l4.includes('政企')) continue; if(!m[l4]) { m[l4]={}; inds.forEach(i=>m[l4][i]=0); m[l4]['FTTR-B']=0; } for (const l5 in ff[l4]) m[l4]['FTTR-B']+=ff[l4][l5]||0; } }
     if (useZqFttrb) { for (const dstr in DATA.fttrbZq) { const d=parseInt(dstr); if(d<start||d>end) continue; const fz=DATA.fttrbZq[dstr]?.[district]||{}; for (const l4 in fz) { if(!m[l4]) { m[l4]={}; inds.forEach(i=>m[l4][i]=0); m[l4]['FTTR-B']=0; } for (const l5 in fz[l4]) m[l4]['FTTR-B']+=fz[l4][l5]||0; } } }
     return m;
@@ -2876,7 +2880,7 @@ function getYoYLevel5Channel(dateInt, district, level4) {
     const m = {};
     const rosterL5 = (DATA.roster?.[district]?.[level4]) || [];
     rosterL5.forEach(l5 => { m[l5]={}; inds.forEach(i=>m[l5][i]=0); m[l5]['FTTR-B']=0; });
-    for (const dstr in DATA.newdev) { const d=parseInt(dstr); if(d<start||d>end) continue; const dd=DATA.newdev[dstr]?.[district]?.[level4]||{}; for (const l5 in dd) { if(!m[l5]) { m[l5]={}; inds.forEach(i=>m[l5][i]=0); m[l5]['FTTR-B']=0; } for (const ind of inds) m[l5][ind]+=dd[l5][ind]||0; } }
+    for (const dstr in DATA.newdev) { const d=parseInt(dstr); if(d<start||d>end) continue; const dd=DATA.newdev[dstr]?.[district]?.[level4]||{}; for (const l5 in dd) { if(!m[l5]) { m[l5]={}; inds.forEach(i=>m[l5][i]=0); m[l5]['FTTR-B']=0; } for (const ind of inds) { const ik=IND_KEY_MAP[ind]||ind; m[l5][ind]+=dd[l5][ik]||0; } } }
     for (const dstr in DATA.fttrb) { const d=parseInt(dstr); if(d<start||d>end) continue; const ff=DATA.fttrb[dstr]?.[district]?.[level4]||{}; for (const l5 in ff) { if(!m[l5]) { m[l5]={}; inds.forEach(i=>m[l5][i]=0); m[l5]['FTTR-B']=0; } m[l5]['FTTR-B']+=ff[l5]||0; } }
     return m;
   }
@@ -3422,7 +3426,7 @@ function renderMainTable(tableWrap, data, mode, drillSrc) {
 /* ================================================================
  *  导航与渲染
  * ================================================================ */
-const DATA_DATES = DATA.dates;
+let DATA_DATES = DATA.dates;
 let DEFAULT_DATE = DATA.dateRange.end;
 
 const moduleRegistry = { _m:[], register(m){this._m.push(m)}, getAll(){return this._m} };
@@ -3665,7 +3669,7 @@ function getIndValue(ind, dateInt, scope, name, l4name, l5name) {
     if (ind === 'FTTR-B')
       return ((DATA.fttrb[dstr]?.[scope]?.[l4name]?.[l5name]) || 0) +
              ((DATA.fttrbZq[dstr]?.[scope]?.[l4name]?.[l5name]) || 0);
-    return (DATA.newdev[dstr]?.[scope]?.[l4name]?.[l5name]?.[ind]) || 0;
+    return (DATA.newdev[dstr]?.[scope]?.[l4name]?.[l5name]?.[IND_KEY_MAP[ind]||ind]) || 0;
   }
   if (l4name) {
     if (ind === 'FTTR-B') {
@@ -3677,8 +3681,9 @@ function getIndValue(ind, dateInt, scope, name, l4name, l5name) {
       return t;
     }
     const nd = DATA.newdev[dstr]?.[scope]?.[l4name] || {};
+    const ik = IND_KEY_MAP[ind] || ind;
     let t = 0;
-    for (const l5 in nd) t += nd[l5][ind] || 0;
+    for (const l5 in nd) t += nd[l5][ik] || 0;
     return t;
   }
   if (name) {
@@ -3691,8 +3696,9 @@ function getIndValue(ind, dateInt, scope, name, l4name, l5name) {
       return t;
     }
     const nd = DATA.newdev[dstr]?.[name] || {};
+    const ik = IND_KEY_MAP[ind] || ind;
     let t = 0;
-    for (const l4 in nd) for (const l5 in nd[l4]) t += nd[l4][l5][ind] || 0;
+    for (const l4 in nd) for (const l5 in nd[l4]) t += nd[l4][l5][ik] || 0;
     return t;
   }
   // 全市（含电渠）
@@ -3706,7 +3712,8 @@ function getIndValue(ind, dateInt, scope, name, l4name, l5name) {
   }
   let t = 0;
   const nd = DATA.newdev[dstr] || {};
-  for (const d in nd) for (const l4 in nd[d]) for (const l5 in nd[d][l4]) t += nd[d][l4][l5][ind] || 0;
+  const ik = IND_KEY_MAP[ind] || ind;
+  for (const d in nd) for (const l4 in nd[d]) for (const l5 in nd[d][l4]) t += nd[d][l4][l5][ik] || 0;
   t += (DATA.dianqu[dstr]?.[ind]) || 0;
   return t;
 }
@@ -4864,10 +4871,10 @@ async function handleLogin() {
     await reloadFromBackend();
     if(window.REPORT_DATA) {
       try { Object.assign(DATA, window.REPORT_DATA);
-        if(window.REPORT_DATA.dateRange) DEFAULT_DATE = window.REPORT_DATA.dateRange.end;
+        if(window.REPORT_DATA.dateRange) { DEFAULT_DATE = window.REPORT_DATA.dateRange.end; dailyDate = DEFAULT_DATE; monthlyDate = DEFAULT_DATE; }
+        DATA_DATES = DATA.dates;
       } catch(e) {}
     }
-
     enterApp();
     if(loginBtn) loginBtn.disabled = false;
   } catch(e) {
@@ -4942,7 +4949,7 @@ async function handleChangePwd() {
     await reloadFromBackend();
     if(window.REPORT_DATA) {
       try { Object.assign(DATA, window.REPORT_DATA);
-        if(window.REPORT_DATA.dateRange) DEFAULT_DATE = window.REPORT_DATA.dateRange.end;
+        if(window.REPORT_DATA.dateRange) { DEFAULT_DATE = window.REPORT_DATA.dateRange.end; dailyDate = DEFAULT_DATE; monthlyDate = DEFAULT_DATE; }
       } catch(e) {}
     }
     enterApp();
@@ -5116,8 +5123,9 @@ function handleLogout() {
     await reloadFromBackend();
     // 用最终数据更新DATA（DATA是对象，可以修改属性）
     if(window.REPORT_DATA) {
-      try { Object.assign(DATA, window.REPORT_DATA); 
-        if(window.REPORT_DATA.dateRange) DEFAULT_DATE = window.REPORT_DATA.dateRange.end;
+      try { Object.assign(DATA, window.REPORT_DATA);
+        if(window.REPORT_DATA.dateRange) { DEFAULT_DATE = window.REPORT_DATA.dateRange.end; dailyDate = DEFAULT_DATE; monthlyDate = DEFAULT_DATE; }
+        DATA_DATES = DATA.dates;
       } catch(e) {}
     }
     enterApp();
