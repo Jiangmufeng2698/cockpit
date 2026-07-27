@@ -1,0 +1,46 @@
+version: "3.8"
+
+services:
+  # MySQL数据库
+  db:
+    image: mysql:8.0
+    container_name: cockpit-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root_strong_password}
+      MYSQL_DATABASE: ${DB_NAME:-cockpit}
+      MYSQL_USER: ${DB_USER:-cockpit}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-change_me_in_production}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "127.0.0.1:3306:3306"  # 仅本地可访问，不暴露到公网
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # FastAPI后端
+  api:
+    build: .
+    container_name: cockpit-api
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: ${DB_USER:-cockpit}
+      DB_PASSWORD: ${DB_PASSWORD:-change_me_in_production}
+      DB_NAME: ${DB_NAME:-cockpit}
+      JWT_SECRET: ${JWT_SECRET:-dpcCockpit_Secret_Key_2026!@#_change_me}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./.env:/app/.env:ro
+
+volumes:
+  mysql_data:
